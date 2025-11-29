@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+    <div class="login-page">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-10 col-md-6 col-lg-5 col-xl-4">
+                    <div class="login-card p-4 p-sm-5">
+
+                        {# Brand Logo #}
+                        <div class="brand-logo">
+                            C
+                        </div>
+
+                        {# Nagłówek #}
+                        <h1 class="h4 mb-2 fw-bold text-center">Witaj ponownie!</h1>
+                        <p class="text-center text-muted mb-4">
+                            Cieszymy się, że znów Cię widzimy
+                        </p>
+
+                        {# Komunikat o błędzie #}
+                        {% if error %}
+                            <div class="alert alert-danger mb-3" role="alert">
+                                <strong>Błąd logowania:</strong><br>
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            </div>
+                        {% endif %}
+
+                        {# Info: użytkownik już zalogowany #}
+                        {% if app.user %}
+                            <div class="alert alert-info mb-3" role="alert">
+                                <strong>Jesteś zalogowany jako:</strong> {{ app.user.userIdentifier }}<br>
+                                <a href="{{ path('app_logout') }}" class="alert-link">Wyloguj się</a>
+                            </div>
+                        {% endif %}
+
+                        {# Formularz logowania #}
+                        <form method="post">
+
+                            {# Email #}
+                            <div class="mb-3">
+                                <label for="inputEmail" class="form-label fw-semibold small text-uppercase" style="color: #4e5058; letter-spacing: 0.5px;">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    value="{{ last_username }}"
+                                    name="_username"
+                                    id="inputEmail"
+                                    class="form-control form-control-lg"
+                                    autocomplete="email"
+                                    required
+                                    autofocus
+                                    placeholder="twoj@email.com">
+                            </div>
+
+                            {# Hasło #}
+                            <div class="mb-3">
+                                <label for="inputPassword" class="form-label fw-semibold small text-uppercase" style="color: #4e5058; letter-spacing: 0.5px;">
+                                    Hasło
+                                </label>
+                                <input
+                                    type="password"
+                                    name="_password"
+                                    id="inputPassword"
+                                    class="form-control form-control-lg"
+                                    autocomplete="current-password"
+                                    required
+                                    placeholder="••••••••">
+                            </div>
+
+                            {# CSRF Token #}
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                            {# Przycisk logowania #}
+                            <button class="btn btn-app-primary btn-lg w-100 mt-2 mb-3" type="submit">
+                                Zaloguj się
+                            </button>
+
+                            {# Link "Zapomniałeś hasła?" - opcjonalny #}
+                            <div class="text-center">
+                                <a href="#" class="text-decoration-none small" style="color: var(--app-accent);">
+                                    Zapomniałeś hasła?
+                                </a>
+                            </div>
+
+                        </form>
+
+                        {# Separator #}
+                        <div class="position-relative my-4">
+                            <hr class="text-muted">
+                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">
+                                lub
+                            </span>
+                        </div>
+
+                        {# Link do rejestracji - opcjonalny #}
+                        <div class="text-center">
+                            <span class="text-muted small">Nie masz konta?</span>
+                            <a href="#" class="text-decoration-none small fw-semibold" style="color: var(--app-accent);">
+                                Zarejestruj się
+                            </a>
+                        </div>
+
+                    </div>
+
+                    {# Stopka - opcjonalna #}
+                    <div class="text-center mt-4">
+                        <small class="text-white-50">
+                            &copy; 2024 ChatApp. Wszystkie prawa zastrzeżone.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
