@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -40,10 +42,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    /**
+     * @var Collection<int, Server>
+     */
+    #[ORM\OneToMany(targetEntity: Server::class, mappedBy: 'owner')]
+    private Collection $ownedServers;
+
+    #[ORM\OneToMany(targetEntity: ServerMember::class, mappedBy: 'user')]
+    private Collection $memberships;
+
     public function __construct()
     {
         $this->id = Uuid::v7();
         $this->roles = [];
+        $this->ownedServers = new ArrayCollection();
+        $this->memberships = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -137,5 +150,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    /**
+     * @return Collection<int, Server>
+     */
+    public function getOwnedServers(): Collection
+    {
+        return $this->ownedServers;
+    }
+
+    public function addOwnedServer(Server $ownedServer): static
+    {
+        if (!$this->ownedServers->contains($ownedServer)) {
+            $this->ownedServers->add($ownedServer);
+            $ownedServer->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOwnedServer(Server $ownedServer): static
+    {
+        if ($this->ownedServers->removeElement($ownedServer)) {
+            // set the owning side to null (unless already changed)
+            if ($ownedServer->getOwner() === $this) {
+                $ownedServer->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getMemberships(): Collection
+    {
+        return $this->memberships;
     }
 }
