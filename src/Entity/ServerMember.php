@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ServerMemberRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
@@ -23,12 +24,12 @@ class ServerMember
     private ?Server $server = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $joinedAt = null;
+    private ?DateTimeImmutable $joinedAt = null;
 
     public function __construct()
     {
         $this->id = Uuid::v7();
-        $this->joinedAt = new \DateTimeImmutable();
+        $this->joinedAt = new DateTimeImmutable();
     }
 
 
@@ -56,7 +57,7 @@ class ServerMember
         return $this;
     }
 
-    public function getJoinedAt(): ?\DateTimeImmutable
+    public function getJoinedAt(): ?DateTimeImmutable
     {
         return $this->joinedAt;
     }

@@ -29,10 +29,27 @@ class Server
     #[ORM\OneToMany(targetEntity: ServerMember::class, mappedBy: 'server', orphanRemoval: true)]
     private Collection $members;
 
+    /**
+     * @var Collection<int, Channel>
+     */
+    #[ORM\OneToMany(targetEntity: Channel::class, mappedBy: 'server', orphanRemoval: true)]
+    private Collection $channels;
+
+    public function setMembers(Collection $members): void
+    {
+        $this->members = $members;
+    }
+
+    public function setChannels(Collection $channels): void
+    {
+        $this->channels = $channels;
+    }
+
     public function __construct()
     {
         $this->id = Uuid::v7();
         $this->members = new ArrayCollection();
+        $this->channels = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -88,6 +105,36 @@ class Server
             // set the owning side to null (unless already changed)
             if ($member->getServer() === $this) {
                 $member->setServer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Channel>
+     */
+    public function getChannels(): Collection
+    {
+        return $this->channels;
+    }
+
+    public function addChannel(Channel $channel): static
+    {
+        if (!$this->channels->contains($channel)) {
+            $this->channels->add($channel);
+            $channel->setServer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChannel(Channel $channel): static
+    {
+        if ($this->channels->removeElement($channel)) {
+            // set the owning side to null (unless already changed)
+            if ($channel->getServer() === $this) {
+                $channel->setServer(null);
             }
         }
 
