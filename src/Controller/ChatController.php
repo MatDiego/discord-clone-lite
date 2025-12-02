@@ -7,7 +7,6 @@ use App\Entity\Server;
 use App\Enum\ChannelType;
 use App\Repository\ChannelRepository;
 use App\Repository\MessageRepository;
-use App\Repository\ServerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,8 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ChatController extends AbstractController
 {
     public function __construct(
-        private ServerRepository $serverRepository,
-        private MessageRepository $messageRepository,
+        private readonly MessageRepository $messageRepository,
     ) {}
 
 
@@ -27,7 +25,6 @@ final class ChatController extends AbstractController
     public function dashboard(): Response
     {
         return $this->render('server/view.html.twig', [
-            'servers' => $this->serverRepository->findForUser($this->getUser()),
             'currentServer' => null,
             'currentChannel' => null,
             'messages' => [],
@@ -44,7 +41,6 @@ final class ChatController extends AbstractController
         $messages = $this->messageRepository->findLatestByChannel($channel);
 
         return $this->render('server/view.html.twig', [
-            'servers' => $this->serverRepository->findForUser($this->getUser()),
             'currentServer' => $server,
             'currentChannel' => $channel,
             'messages' => $messages,

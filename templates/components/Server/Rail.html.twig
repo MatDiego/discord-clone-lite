@@ -1,4 +1,4 @@
-{% props servers = [], currentServer = null %}
+{% props currentServer = null %}
 
 <nav class="app-server-rail d-flex flex-column align-items-center py-3 overflow-auto dark-scrollbar">
     <div class="mb-2">
@@ -11,7 +11,7 @@
 
     <div class="server-separator mb-2"></div>
 
-    {% for server in servers %}
+    {% for server in this.servers %}
         <twig:Server:Icon
             :server="server"
             :active="currentServer and currentServer.id == server.id"
