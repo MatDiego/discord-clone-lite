@@ -2,15 +2,15 @@
 
 namespace App\Factory;
 
-use App\Entity\Server;
-use App\Enum\ChannelType;
+use App\Entity\Message;
+use DateTimeImmutable;
 use Override;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<Server>
+ * @extends PersistentProxyObjectFactory<Message>
  */
-final class ServerFactory extends PersistentProxyObjectFactory
+final class MessageFactory extends PersistentProxyObjectFactory
 {
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
@@ -24,7 +24,7 @@ final class ServerFactory extends PersistentProxyObjectFactory
     #[Override]
     public static function class(): string
     {
-        return Server::class;
+        return Message::class;
     }
 
     /**
@@ -36,8 +36,10 @@ final class ServerFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'name' => self::faker()->company(),
-            'owner' => UserFactory::new(),
+            'author' => UserFactory::new(),
+            'channel' => ChannelFactory::new(),
+            'content' => self::faker()->realText(rand(20, 200)),
+            'createdAt' => DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now')),
         ];
     }
 
@@ -48,12 +50,7 @@ final class ServerFactory extends PersistentProxyObjectFactory
     protected function initialize(): static
     {
         return $this
-            ->afterInstantiate(function(Server $server): void {
-                ChannelFactory::createOne([
-                    'name' => 'ogólny',
-                    'type' => ChannelType::TEXT,
-                    'server' => $server,
-                ]);
-            });
+            // ->afterInstantiate(function(Message $message): void {})
+        ;
     }
 }

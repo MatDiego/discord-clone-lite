@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\ServerMember;
+use Override;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -19,7 +20,7 @@ final class ServerMemberFactory extends PersistentProxyObjectFactory
     {
     }
 
-    #[\Override]
+    #[Override]
     public static function class(): string
     {
         return ServerMember::class;
@@ -30,7 +31,7 @@ final class ServerMemberFactory extends PersistentProxyObjectFactory
      *
      * @todo add your default values here
      */
-    #[\Override]
+    #[Override]
     protected function defaults(): array|callable
     {
         return [
@@ -41,7 +42,7 @@ final class ServerMemberFactory extends PersistentProxyObjectFactory
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
      */
-    #[\Override]
+    #[Override]
     protected function initialize(): static
     {
         return $this
