@@ -1,0 +1,30 @@
+{% props servers = [], currentServer = null %}
+
+<nav class="app-server-rail d-flex flex-column align-items-center py-3 overflow-auto dark-scrollbar">
+    <div class="mb-2">
+        <a href="#">
+            <div class="server-icon bg-app-elevated">
+                <i class="bi bi-house-fill text-app-primary"></i>
+            </div>
+        </a>
+    </div>
+
+    <div class="server-separator mb-2"></div>
+
+    {% for server in servers %}
+        <twig:Server:Icon
+            :server="server"
+            :active="currentServer and currentServer.id == server.id"
+        />
+    {% endfor %}
+
+    <div class="mt-auto"></div>
+
+    <div class="mt-2">
+        <a href="#" class="server-icon-wrapper success-hover">
+            <div class="server-icon text-success bg-dark">
+                <i class="bi bi-plus-lg"></i>
+            </div>
+        </a>
+    </div>
+</nav>

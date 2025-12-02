@@ -1,0 +1,21 @@
+{% props message = null %}
+
+<div class="message-item d-flex gap-3 p-2 rounded mb-2">
+    <div class="position-relative flex-shrink-0">
+        <div class="rounded-circle avatar-gradient-{{ random(['blue', 'green', 'red', 'purple', 'orange']) }} d-flex align-items-center justify-content-center fw-semibold"
+             style="width: 40px; height: 40px;">
+            {{ message.author.username|slice(0, 1)|upper }}
+        </div>
+    </div>
+    <div class="flex-grow-1">
+        <div class="d-flex align-items-baseline gap-2">
+            <span class="fw-semibold text-app-primary">{{ message.author.username }}</span>
+            <small class="text-app-muted" style="font-size: 0.7rem;">
+                {{ message.createdAt|date('d.m.Y H:i') }}
+            </small>
+        </div>
+        <div class="text-app-primary" style="line-height: 1.4;">
+            {{ message.content|nl2br }}
+        </div>
+    </div>
+</div>

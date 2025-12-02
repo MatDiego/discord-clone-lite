@@ -1,0 +1,58 @@
+{% props currentServer = null, currentChannel = null %}
+
+<div class="chat-input-wrapper border-top border-app p-3 bg-app-dark">
+    {% if currentChannel and currentServer %}
+
+        <form method="post"
+{#              action="{{ path('', {server: currentServer.id, channel: currentChannel.id}) }}"#}
+              class="d-flex align-items-center gap-2">
+
+            <div class="d-flex align-items-center flex-grow-1 bg-app-elevated rounded-3 px-2 py-1 overflow-hidden border border-app shadow-sm">
+
+                <button class="btn btn-link text-secondary text-decoration-none border-0 p-2 d-flex align-items-center justify-content-center flex-shrink-0"
+                        type="button"
+                        title="Dodaj załącznik"
+                        style="width: 40px; height: 40px;">
+
+                    {{ ux_icon('bi:plus-circle-fill', { class: 'fs-5' }) }}
+
+                </button>
+
+                <input type="text"
+                       name="content"
+                       class="form-control border-0 bg-transparent text-app-primary shadow-none h-100"
+                       placeholder="Napisz wiadomość na #{{ currentChannel.name }}"
+                       autocomplete="off"
+                       required
+                       autofocus
+                       style="box-shadow: none !important;">
+            </div>
+
+            <button class="btn btn-primary d-flex align-items-center justify-content-center flex-shrink-0 rounded-3 shadow-sm"
+                    type="submit"
+                    title="Wyślij"
+                    style="width: 48px; height: 48px;">
+
+                {{ ux_icon('bi:send-fill', { class: 'fs-5' }) }}
+
+            </button>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('send_message') }}">
+        </form>
+
+    {% else %}
+
+        <div class="d-flex align-items-center justify-content-center p-2 text-app-muted disabled-area">
+            {{ ux_icon('bi:slash-circle', { class: 'me-2' }) }}
+
+            <small>
+                {% if currentServer %}
+                    Wybierz kanał
+                {% else %}
+                    Wybierz serwer
+                {% endif %}
+            </small>
+        </div>
+
+    {% endif %}
+</div>

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {% if currentServer %}
+        {{ currentServer.name }} - ChatApp
+    {% else %}
+        Strona główna - ChatApp
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="app-layout d-flex overflow-hidden">
+
+        <twig:Server:Rail
+            :servers="servers"
+            :currentServer="currentServer"
+        />
+
+        <twig:Server:Sidebar
+        :currentServer="currentServer"
+        :currentChannel="currentChannel"
+        />
+
+        <twig:Chat:Header
+            :currentChannel="currentChannel"
+        />
+
+        <twig:Chat:MessageList
+            :messages="messages"
+            :currentChannel="currentChannel"
+        />
+
+        <twig:Chat:Area
+            :currentServer="currentServer"
+            :currentChannel="currentChannel"
+        />
+    </div>
+{% endblock %}

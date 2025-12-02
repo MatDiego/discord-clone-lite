@@ -1,0 +1,25 @@
+{% props messages = null, currentChannel = null %}
+
+<div class="messages-area flex-grow-1 overflow-auto dark-scrollbar p-3" id="messages-area">
+
+    {% if messages and messages|length > 0 %}
+        {% for message in messages %}
+            <twig:Chat:MessageItem
+                :message="message"
+            />
+        {% endfor %}
+    {% else %}
+        <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
+            <i class="bi bi-chat-dots fs-1 text-app-muted mb-3"></i>
+            <h5 class="text-app-secondary">Brak wiadomości</h5>
+            <p class="text-app-muted">
+                {% if currentChannel %}
+                    Rozpocznij konwersację na kanale #{{ currentChannel.name }}
+                {% else %}
+                    Wybierz kanał aby zobaczyć wiadomości
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
+
+</div>
