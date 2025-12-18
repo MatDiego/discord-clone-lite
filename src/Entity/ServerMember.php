@@ -13,18 +13,18 @@ class ServerMember
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    private ?Uuid $id = null;
+    private ?Uuid $id;
 
     #[ORM\ManyToOne(inversedBy: 'memberships')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private ?User $user;
 
     #[ORM\ManyToOne(inversedBy: 'members')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Server $server = null;
 
     #[ORM\Column]
-    private ?DateTimeImmutable $joinedAt = null;
+    private ?DateTimeImmutable $joinedAt;
 
     public function __construct()
     {
@@ -60,5 +60,10 @@ class ServerMember
     public function getJoinedAt(): ?DateTimeImmutable
     {
         return $this->joinedAt;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
     }
 }
