@@ -2,17 +2,32 @@
 
 {% set initials = server.name|slice(0, 1)|upper %}
 
-<div class="mb-2 {{ unreadCount > 0 ? 'position-relative' : '' }}">
-    <a href="{{ path('app_chat_server_default', {server: server.id}) }}"
-       class="server-icon-wrapper {{ active ? 'active' : '' }}"
-       title="{{ server.name }}">
+{% set colors = ['blue', 'green', 'red', 'purple', 'orange'] %}
+{% set colorIndex = server.id|length % colors|length %}
+{% set colorClass = 'avatar-gradient-' ~ colors[colorIndex] %}
+<div class="mb-2 position-relative" {{ stimulus_controller('context_menu') }}>
+    <div class="dropdown dropend">
+        <a href="{{ path('app_server_default_channel', {serverId: server.id}) }}"
+           id="server-dropdown-{{ server.id }}"
+           class="server-icon-wrapper {{ active ? 'active' : '' }}"
+           title="{{ server.name }}"
+           data-context-menu-target="trigger"
+           aria-expanded="false"
+        >
 
-        <div class="server-icon avatar-gradient-{{ random(['blue', 'green', 'red', 'purple', 'orange']) }}">
-            {{ initials }}
+            <div class="server-icon {{ colorClass }} text-white shadow-sm">
+                {{ initials }}
+            </div>
+
+            {% if unreadCount > 0 %}
+                <span class="notification-badge">{{ unreadCount }}</span>
+            {% endif %}
+        </a>
+
+        <div class="dropdown show">
+            <div class="dropdown-menu" data-context-menu-target="menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="{{ path('app_server_edit', {serverId: server.id}) }}">Zarządzaj Serwerem</a>
+            </div>
         </div>
-
-        {% if unreadCount > 0 %}
-            <span class="notification-badge">{{ unreadCount }}</span>
-        {% endif %}
-    </a>
+    </div>
 </div>

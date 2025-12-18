@@ -1,40 +1,36 @@
 {% props currentServer = null, currentChannel = null %}
 
-<div class="chat-input-wrapper border-top border-app p-3 bg-app-dark">
+<div class="chat-input-area p-4">
     {% if currentChannel and currentServer %}
 
         <form method="post"
-{#              action="{{ path('', {server: currentServer.id, channel: currentChannel.id}) }}"#}
-              class="d-flex align-items-center gap-2">
+              class="d-flex align-items-center gap-2 h-100">
 
-            <div class="d-flex align-items-center flex-grow-1 bg-app-elevated rounded-3 px-2 py-1 overflow-hidden border border-app shadow-sm">
+            <div class="chat-input-bar d-flex align-items-center flex-grow-1 overflow-hidden rounded-3">
 
-                <button class="btn btn-link text-secondary text-decoration-none border-0 p-2 d-flex align-items-center justify-content-center flex-shrink-0"
+                <button class="chat-action-btn btn btn-link text-decoration-none border-0"
                         type="button"
-                        title="Dodaj załącznik"
-                        style="width: 40px; height: 40px;">
-
-                    {{ ux_icon('bi:plus-circle-fill', { class: 'fs-5' }) }}
-
+                        title="Dodaj załącznik">
+                    {# Klasa .chat-attach-icon obsługuje zmianę koloru przy hoverze buttona #}
+                    <span class="chat-attach-icon d-flex">
+                         {{ ux_icon('bi:plus-circle-fill', { class: 'fs-5' }) }}
+                    </span>
                 </button>
 
                 <input type="text"
                        name="content"
-                       class="form-control border-0 bg-transparent text-app-primary shadow-none h-100"
+                       class="form-control h-100 py-2"
                        placeholder="Napisz wiadomość na #{{ currentChannel.name }}"
+                       aria-label="Wpisz wiadomość"
                        autocomplete="off"
                        required
-                       autofocus
-                       style="box-shadow: none !important;">
+                       autofocus>
             </div>
 
-            <button class="btn btn-primary d-flex align-items-center justify-content-center flex-shrink-0 rounded-3 shadow-sm"
+            <button class="chat-action-btn btn btn-primary rounded-3 shadow-sm flex-shrink-0"
                     type="submit"
-                    title="Wyślij"
-                    style="width: 48px; height: 48px;">
-
-                {{ ux_icon('bi:send-fill', { class: 'fs-5' }) }}
-
+                    title="Wyślij">
+                {{ ux_icon('bi:send-fill', { class: 'fs-6' }) }}
             </button>
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('send_message') }}">
@@ -42,16 +38,15 @@
 
     {% else %}
 
-        <div class="d-flex align-items-center justify-content-center p-2 text-app-muted disabled-area">
-            {{ ux_icon('bi:slash-circle', { class: 'me-2' }) }}
-
-            <small>
+        <div class="d-flex align-items-center justify-content-center h-100 text-app-muted">
+            {{ ux_icon('bi:slash-circle', { class: 'me-2 fs-5' }) }}
+            <span class="fw-medium">
                 {% if currentServer %}
-                    Wybierz kanał
+                    Wybierz kanał, aby rozpocząć rozmowę
                 {% else %}
-                    Wybierz serwer
+                    Wybierz serwer z listy po lewej
                 {% endif %}
-            </small>
+            </span>
         </div>
 
     {% endif %}

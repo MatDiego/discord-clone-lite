@@ -1,0 +1,39 @@
+{# templates/components/Common/FlashToasts.html.twig #}
+<div class="toast-container position-fixed bottom-0 end-0 p-4">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+
+            {% set isSuccess = label == 'success' %}
+            {% set borderColor = isSuccess ? '#00c853' : '#f44336' %}
+            {% set icon = isSuccess ? 'bi:check-circle-fill' : 'bi:exclamation-triangle-fill' %}
+            {% set iconColorClass = isSuccess ? 'text-success' : 'text-danger' %}
+
+            <div class="toast align-items-center show mb-3 d-flex"
+                 role="alert"
+                 data-controller="toast">
+
+                <div class="toast-body d-flex align-items-center w-100 py-3">
+                    <div class="me-3 fs-4 d-flex align-items-center {{ iconColorClass }}">
+                        <twig:ux:icon name="{{ icon }}" />
+                    </div>
+
+                    <div class="flex-grow-1">
+                        <strong class="d-block mb-1">
+                            {{ isSuccess ? 'Sukces!' : 'Błąd!' }}
+                        </strong>
+                        <div>
+                            {{ message }}
+                        </div>
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-link text-decoration-none p-0 ms-3 d-flex align-items-start text-app-muted"
+                            data-action="click->toast#close">
+                        <twig:ux:icon name="bi:x-lg" />
+                    </button>
+                </div>
+            </div>
+
+        {% endfor %}
+    {% endfor %}
+</div>

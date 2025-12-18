@@ -1,20 +1,30 @@
 {% props message = null %}
 
-<div class="message-item d-flex gap-3 p-2 rounded mb-2">
-    <div class="position-relative flex-shrink-0">
-        <div class="rounded-circle avatar-gradient-{{ random(['blue', 'green', 'red', 'purple', 'orange']) }} d-flex align-items-center justify-content-center fw-semibold"
-             style="width: 40px; height: 40px;">
+{% set colors = ['blue', 'green', 'red', 'purple', 'orange'] %}
+{% set colorIndex = message.author.username|length % colors|length %}
+{% set avatarColor = colors[colorIndex] %}
+
+<div class="message-item d-flex gap-3 mt-1">
+
+    <div class="position-relative">
+        <div class="message-avatar-frame rounded-circle avatar-gradient-{{ avatarColor }}">
             {{ message.author.username|slice(0, 1)|upper }}
         </div>
+
     </div>
-    <div class="flex-grow-1">
-        <div class="d-flex align-items-baseline gap-2">
-            <span class="fw-semibold text-app-primary">{{ message.author.username }}</span>
-            <small class="text-app-muted" style="font-size: 0.7rem;">
+
+    <div class="flex-grow-1 overflow-hidden">
+
+        <div class="d-flex align-items-baseline">
+            <span class="fw-semibold text-app-primary cursor-pointer pb-2">
+                {{ message.author.username }}
+            </span>
+            <span class="message-timestamp">
                 {{ message.createdAt|date('d.m.Y H:i') }}
-            </small>
+            </span>
         </div>
-        <div class="text-app-primary" style="line-height: 1.4;">
+
+        <div class="message-content">
             {{ message.content|nl2br }}
         </div>
     </div>

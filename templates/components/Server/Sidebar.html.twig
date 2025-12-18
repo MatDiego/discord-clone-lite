@@ -1,15 +1,12 @@
 {% props currentServer = null, currentChannel = null %}
 
-<div class="app-sidebar d-none d-md-flex flex-column border-end border-dark">
+<div class="app-sidebar d-none d-md-flex flex-column border-end border-end">
     {% if currentServer %}
-        <div class="app-sidebar-header border-bottom border-dark p-3">
+        <div class="app-sidebar-header border-bottom">
             <div class="d-flex align-items-center justify-content-between">
-                <h6 class="text-white fw-bold mb-0 text-truncate">
+                <h6 class=" fw-bold mb-0 text-truncate">
                     {{ currentServer.name }}
                 </h6>
-                <button class="btn btn-link text-app-secondary p-0" title="Ustawienia serwera">
-                    <i class="bi bi-chevron-down"></i>
-                </button>
             </div>
         </div>
     {% endif %}
@@ -19,19 +16,18 @@
         :currentChannel="currentChannel"
     />
 
-    <div class="user-panel border-top border-dark p-2 mt-auto d-flex align-items-center gap-2">
+    <div class="user-panel border-top mt-auto d-flex align-items-center gap-2">
         <div class="position-relative">
-            <div class="rounded-circle avatar-gradient-blue d-flex align-items-center justify-content-center fw-semibold"
-                 style="width: 32px; height: 32px; font-size: 0.875rem;">
+            <div class="avatar rounded-circle avatar-gradient-blue d-flex align-items-center justify-content-center fw-semibold">
                 {{ app.user.username|slice(0, 1)|upper }}
             </div>
             <span class="status-indicator status-online"></span>
         </div>
         <div class="flex-grow-1 overflow-hidden">
-            <div class="text-white small fw-bold text-truncate">{{ app.user.username }}</div>
-            <div class="text-secondary" style="font-size: 0.7rem;">#{{ app.user.id }}</div>
+            <div class="small fw-bold text-truncate">{{ app.user.username }}</div>
+            <div class="text-app-secondary">#{{ app.user.id }}</div>
         </div>
-        <button class="btn btn-link text-secondary p-0" title="Ustawienia">
+        <button class="btn btn-link text-app-secondary p-0" title="Ustawienia">
             <i class="bi bi-gear-fill"></i>
         </button>
     </div>

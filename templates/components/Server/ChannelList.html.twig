@@ -2,44 +2,46 @@
 
 <div class="flex-grow-1 overflow-auto dark-scrollbar p-2">
     {% if currentServer %}
-        <div class="text-uppercase text-secondary small fw-semibold px-2 pt-3 pb-1"
-             style="font-size: 0.75rem; letter-spacing: 0.5px;">
-            Kanały tekstowe
+        <div class="px-2 pt-3 pb-1">
+            <span class="text-uppercase text-app-secondary small fw-bold">
+                Kanały tekstowe
+            </span>
         </div>
 
         {% for channel in currentServer.channels %}
             {% if channel.type.value == 'TEXT' %}
-                <a href="{{ path('app_chat_channel', {server: currentServer.id, channel: channel.id}) }}"
-                   class="channel-item text-decoration-none d-block px-2 py-2 rounded mb-1
-{{ currentChannel is defined and currentChannel.id == channel.id ? 'active' : '' }} position-relative">
-                    <span class="me-2 text-secondary fs-5 align-middle">#</span>
-                    <span class="align-middle">{{ channel.name }}</span>
+                <a href="{{ path('app_chat_channel', {serverId: currentServer.id, channelId: channel.id}) }}"
+                   class="channel-item d-flex align-items-center text-decoration-none px-2 py-2 rounded mb-1
+                          {{ currentChannel and currentChannel.id == channel.id ? 'active' : '' }}">
+                    <span class="fs-5 me-2 lh-1 opacity-75">#</span>
+                    <span class="text-truncate flex-grow-1">{{ channel.name }}</span>
 
 
                     {% if channel.unreadCount is defined and channel.unreadCount > 0 %}
-                        <span class="position-absolute top-50 end-0 translate-middle-y me-2">
-                            <span class="badge bg-danger rounded-pill" style="font-size: 0.65rem;">
-                                    {{ channel.unreadCount }}
-                            </span>
+                        <span class="badge bg-danger rounded-pill ms-2">
+                            {{ channel.unreadCount }}
                         </span>
                     {% endif %}
                 </a>
             {% endif %}
         {% endfor %}
 
-    {#    {% set voiceChannels = currentServer.channels|filter(c => c.type.value == 'VOICE') %}#}
-    {#    {% if voiceChannels|length > 0 %}#}
-    {#        <div class="text-uppercase text-secondary small fw-semibold px-2 pt-3 pb-1"#}
-    {#             style="font-size: 0.75rem; letter-spacing: 0.5px;">#}
-    {#            Kanały głosowe#}
-    {#        </div>#}
+        {#
+        {% set voiceChannels = currentServer.channels|filter(c => c.type.value == 'VOICE') %}
+        {% if voiceChannels|length > 0 %}
+            <div class="px-2 pt-3 pb-1">
+                <span class="text-uppercase text-app-secondary small fw-bold">
+                    Kanały głosowe
+                </span>
+            </div>
 
-    {#        {% for channel in voiceChannels %}#}
-    {#            <a href="#" class="channel-item text-decoration-none d-block px-2 py-2 rounded mb-1">#}
-    {#                <i class="bi bi-volume-up-fill me-2 text-secondary align-middle"></i>#}
-    {#                <span class="align-middle">{{ channel.name }}</span>#}
-    {#            </a>#}
-    {#        {% endfor %}#}
-    {#    {% endif %}#}
+            {% for channel in voiceChannels %}
+                <a href="#" class="channel-item d-flex align-items-center text-decoration-none px-2 py-2 rounded mb-1">
+                    <i class="bi bi-volume-up-fill me-2 opacity-75"></i>
+                    <span class="text-truncate">{{ channel.name }}</span>
+                </a>
+            {% endfor %}
+        {% endif %}
+        #}
     {% endif %}
 </div>
