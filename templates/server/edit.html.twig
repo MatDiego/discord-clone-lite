@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ustawienia: {{ server.name }}{% endblock %}
+
+{% block body %}
+    <div class="app-layout d-flex overflow-hidden">
+
+        <twig:Server:Rail :currentServer="server" />
+        <twig:Server:Sidebar :currentServer="server" />
+
+        <div class="flex-grow-1 bg-app-dark overflow-auto ">
+            <div class="container py-5">
+
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-8 col-xl-7">
+                        <div class="mb-4">
+                            <h2 class="fw-bold text-white mb-1">Przegląd serwera</h2>
+                            <p class="text-app-secondary small">
+                                Zarządzaj podstawowymi ustawieniami i wyglądem.
+                            </p>
+                        </div>
+                        <div class="card-elevated p-4 shadow-sm mb-5">
+                            {% include 'server/_form.html.twig' %}
+                        </div>
+                        <hr class="border-secondary opacity-25 my-5">
+                        <div>
+                            <h5 class="fw-bold text-app-primary mb-3 text-uppercase small">
+                                Strefa niebezpieczna
+                            </h5>
+
+                            <div class="card border border-danger border-opacity-50 bg-transparent rounded-3">
+                                <div class="card-body p-4">
+                                    <div class="row align-items-center g-3">
+                                        <div class="col-12 col-sm-8">
+                                            <h6 class="text-white fw-bold mb-1">Usuń serwer</h6>
+                                            <p class="text-app-secondary small mb-0">
+                                                Ta operacja jest nieodwracalna. Wszystkie kanały, wiadomości i role zostaną trwale usunięte.
+                                            </p>
+                                        </div>
+                                        <div class="col-12 col-sm-4 text-sm-end">
+                                            {# Przycisk wywołujący Modal #}
+                                            <button type="button"
+                                                    class="btn btn-outline-danger px-3 py-2 fw-semibold w-100 w-sm-auto"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteServerModal"
+                                                    data-turbo="false">
+                                                {{ ux_icon('bi:trash3-fill', {class: 'me-1'}) }} Usuń serwer
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteServerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-app-elevated text-app-primary border border-secondary">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold">Usuń '{{ server.name }}'</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning d-flex align-items-center bg-warning bg-opacity-10 border-warning border-opacity-25 text-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+                        <div>
+                            Czy jesteś pewien? Tej akcji nie da się cofnąć. <br>
+                            Serwer <strong>{{ server.name }}</strong> przestanie istnieć.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-secondary bg-app-dark">
+                    <button type="button" class="btn text-white hover-underline" data-bs-dismiss="modal">Anuluj</button>
+
+                    {# Właściwy formularz wysyłający żądanie usunięcia #}
+                    <form method="post"
+                          action="{{ path('app_server_delete', {'serverId': server.id}) }}"
+                          data-turbo="false">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete_server_' ~ server.id) }}">
+                        <button type="submit" class="btn btn-danger px-4">
+                            Tak, usuń serwer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

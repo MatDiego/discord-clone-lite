@@ -7,7 +7,7 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 col-sm-10 col-md-7 col-lg-4">
-                    <div class="login-card p-4 shadow-lg">
+                    <div class="card-elevated p-4 shadow-lg">
                         <div class="brand-logo mb-3">
                             {{ ux_icon('bi:chat-square-dots-fill', {class: 'fs-1'}) }}
                         </div>
@@ -28,7 +28,7 @@
 
                         <form method="post">
                             <div class="mb-2">
-                                <label for="inputEmail" class="form-label text-uppercase fw-bold small text-app-secondary" style="font-size: 0.7rem;">
+                                <label for="inputEmail" class="form-label text-uppercase fw-bold small text-app-secondary">
                                     Email
                                 </label>
                                 <input type="email" value="{{ last_username }}" name="_username" id="inputEmail"
@@ -37,7 +37,7 @@
                             </div>
 
                             <div class="mb-1">
-                                <label for="inputPassword" class="form-label text-uppercase fw-bold small text-app-secondary" style="font-size: 0.7rem;">
+                                <label for="inputPassword" class="form-label text-uppercase fw-bold small text-app-secondary">
                                     Hasło
                                 </label>
                                 <input type="password" name="_password" id="inputPassword"
@@ -46,7 +46,7 @@
                             </div>
 
                             <div class="mb-3 text-start">
-                                <a href="#" class="text-decoration-none small text-app-muted hover-underline" style="font-size: 0.8rem;">
+                                <a href="#" class="text-decoration-none small text-app-muted hover-underline">
                                     Zapomniałeś hasła?
                                 </a>
                             </div>
@@ -57,17 +57,9 @@
                                 Zaloguj się
                             </button>
 
-                            <div class="position-relative my-3">
-                                <hr class="border-secondary opacity-50">
-                                <span class="position-absolute top-50 start-50 translate-middle px-2 text-app-muted small"
-                                      style="background-color: var(--app-bg-elevated); font-size: 0.75rem;">
-                                    lub
-                                </span>
-                            </div>
-
                             <div class="text-center small">
                                 <span class="text-app-secondary">Nie masz konta?</span>
-                                <a href="#" class="text-decoration-none fw-semibold ms-1" style="color: var(--app-accent);">
+                                <a href="#" class="text-decoration-none fw-semibold ms-1">
                                     Zarejestruj się
                                 </a>
                             </div>
@@ -75,8 +67,8 @@
                     </div>
 
                     <div class="text-center mt-3">
-                        <small class="text-white-50 opacity-50" style="font-size: 0.7rem;">
-                            &copy; 2024 ChatApp • Built with Symfony
+                        <small class="text-white-50 opacity-50">
+                            &copy; 2025 ChatApp
                         </small>
                     </div>
 

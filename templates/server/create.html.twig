@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stwórz serwer{% endblock %}
+
+{% block body %}
+    <div class="app-layout d-flex overflow-hidden">
+        <twig:Server:Rail :currentServer="null" />
+        <twig:Server:Sidebar :currentServer="null" />
+
+        <div class="flex-grow-1 bg-app-dark overflow-auto dark-scrollbar">
+
+            <div class="container py-5">
+
+                <div class="mb-4">
+                    <h2 class="fw-bold text-white mb-1">Stwórz nowy serwer</h2>
+                    <p class="text-app-secondary small">
+                        Utwórz nową społeczność. Jako właściciel będziesz miał pełną kontrolę.
+                    </p>
+                </div>
+
+                <div class=" p-4 shadow-sm mb-5">
+                    {% include 'server/_form.html.twig' %}
+                </div>
+
+                {# INFO #}
+                <div class="alert alert-info bg-app-elevated border-secondary text-app-secondary d-flex align-items-center">
+                    <twig:ux:icon name="bi:info-circle-fill" class="me-3 fs-4" />
+                    <div class="small">
+                        Domyślnie utworzymy dla Ciebie kanał tekstowy <strong>#ogólny</strong>, abyś mógł od razu zacząć rozmowę.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
