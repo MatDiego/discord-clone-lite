@@ -1,0 +1,47 @@
+
+$form-text-color: $app-text-primary;
+$input-color: $app-text-secondary;
+
+$body-bg:       $app-bg-dark;
+$body-color:    $app-text-primary;
+
+$font-family-sans-serif: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+$border-color:  $app-border;
+
+// FORMS (Zastępuje plik components/forms.scss)
+$input-bg:                  $app-bg-elevated;
+$input-color:               $app-text-primary;
+$input-border-color:        $app-border;
+$input-border-width:        1px;
+
+// Focus
+$input-focus-bg:            $app-bg-elevated;
+$input-focus-border-color:  $app-accent;
+$input-focus-color:         $app-text-primary;
+$input-focus-box-shadow:    0 0 0 0.2rem rgba($app-accent, 0.25);
+
+// Placeholder
+$input-placeholder-color:   $app-text-secondary;
+
+// Transition (Bootstrap ma to domyślnie, ale jeśli chcesz doprecyzować):
+$input-transition:          background-color 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+
+$dropdown-link-hover-bg: $app-bg-elevated;
+
+
+@import '../../../vendor/twbs/bootstrap/scss/functions';
+@import '../../../vendor/twbs/bootstrap/scss/variables';
+
+$custom-colors: (
+    "app-primary":    $app-text-primary,
+    "app-secondary":  $app-text-secondary,
+    "app-muted":      $app-text-muted,
+    "app-dark":       $app-bg-dark,
+    "app-elevated":   $app-bg-elevated,
+    "app-border":     $app-border
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+@import '../../../vendor/twbs/bootstrap/scss/bootstrap';

@@ -237,3 +237,9 @@ fabric.properties
 /public/bundles
 
 compose.override.yaml
+
+###> symfonycasts/sass-bundle ###
+/public/assets/
+###< symfonycasts/sass-bundle ###
+
+/var/

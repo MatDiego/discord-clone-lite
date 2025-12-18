@@ -1,0 +1,134 @@
+.chat-header {
+    background-color: $app-bg-dark;
+    border-bottom: 1px solid $app-border;
+}
+
+.messages-area {
+    background-color: $app-bg-dark;
+    @include dark-scrollbar;
+    scroll-behavior: smooth;
+}
+
+.message-item {
+    position: relative;
+    padding: 0.25rem 1rem 0.25rem 1rem;
+    margin-bottom: 0.125rem;
+    transition: background-color 0.1s ease;
+    border-radius: 0.25rem;
+
+    &:hover {
+        background-color: $app-bg-elevated;
+    }
+}
+
+.message-avatar-frame {
+    width: 2.5rem; // 40px - standard w komunikatorach (większy niż base 2rem)
+    height: 2.5rem;
+    flex-shrink: 0; // Nie zgniataj avatara
+
+    // Styl tekstu wewnątrz avatara (jeśli brak obrazka)
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: white; // Tekst na kolorowym tle zawsze biały
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.message-timestamp {
+    color: $app-text-muted;
+    font-size: 0.75rem; // 12px
+    margin-left: 0.5rem;
+    font-weight: 400;
+}
+
+.message-content {
+    color: $app-text-primary; // Bazowy kolor tekstu
+
+    // KLUCZOWE dla czatu: zapobieganie wyciekaniu długich ciągów znaków (np. linki)
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+
+    line-height: 1.375; // Trochę luźniejsza linia dla czytelności
+}
+
+
+.chat-input-area {
+    background-color: $app-bg-dark;
+    border-top: 1px solid $app-border;
+}
+
+.chat-input-bar {
+    background-color: $app-bg-elevated;
+    border: 1px solid $app-border;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    .form-control {
+        background-color: transparent;
+        border: none;
+        color: $app-text-primary;
+        box-shadow: none;
+
+        &::placeholder {
+            color: $app-text-secondary;
+        }
+    }
+}
+
+
+.header-action-btn {
+    color: $app-text-secondary;
+    transition: color 0.2s, background-color 0.2s;
+
+    &:hover {
+        color: $app-text-primary;
+        // Opcjonalnie tło przy hoverze
+        background-color: rgba($app-text-primary, 0.05);
+    }
+}
+
+.chat-attach-icon {
+    color: $app-text-secondary;
+    transition: color 0.2s;
+
+    // Obsługa hovera na rodzicu (buttonie)
+    button:hover & {
+        color: $app-text-primary;
+    }
+}
+
+.chat-column {
+    background-color: $app-bg-dark;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; // Rozpycha się na resztę ekranu
+    min-width: 0; // Zapobiega "rozsadzaniu" flexa przez długie treści (text-truncate)
+}
+
+.chat-header {
+    background-color: $app-bg-dark; // Zgodnie z Twoim plikiem, choć często używa się bg-elevated/darkest
+    border-bottom: 1px solid $app-border;
+    // Klucz do uniknięcia schodków:
+    // Min-height powinien być taki sam jak w sidebar-header.
+    // Jeśli tamten ma min-height: 3rem + padding, tutaj musi być tak samo.
+    min-height: 3rem;
+}
+
+.chat-empty-state {
+    max-width: 25rem; // Ograniczamy szerokość tekstu dla czytelności
+    margin: auto;     // Centrowanie w flexie
+    text-align: center;
+
+    .empty-icon {
+        font-size: 4rem; // Duża, wyraźna ikona
+        color: $app-bg-elevated; // Subtelny kolor (ciemniejszy od text-muted)
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    &:hover .empty-icon {
+        transform: scale(1.1) rotate(-10deg);
+        color: $app-text-muted;
+    }
+}

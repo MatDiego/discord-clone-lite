@@ -1,0 +1,17 @@
+@mixin dark-scrollbar {
+    &::-webkit-scrollbar {
+        width: 0.5rem;
+        height: 0.5rem;
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: $app-bg-elevated;
+        border-radius: 0.25rem;
+
+        &:hover {
+            background-color: $app-border;
+        }
+    }
+}

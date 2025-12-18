@@ -1,0 +1,87 @@
+.app-server-rail {
+    width: 4.5rem;
+    background-color: $app-bg-darkest;
+    flex-shrink: 0;
+    border-right: 1px solid $app-border;
+}
+
+.server-icon-wrapper {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    position: relative;
+    cursor: pointer;
+    text-decoration: none;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: -0.75rem;
+        width: 0.25rem;
+        height: 0;
+        background-color: $app-text-primary;
+        border-radius: 0 2px 2px 0;
+        transition: height 0.2s ease;
+    }
+
+    &:hover::before { height: 1.25rem; }
+    &.active::before { height: 2.5rem; }
+}
+
+.server-icon {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: $app-bg-elevated;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: background-color 0.2s ease, border-radius 0.2s ease;
+    color: $app-text-primary;
+
+    .server-icon-wrapper:hover & {
+        border-radius: 1rem;
+        background-color: $app-accent;
+    }
+
+    .server-icon-wrapper.active & {
+        border-radius: 1rem;
+        background-color: $app-accent;
+    }
+
+    .server-icon-wrapper.success-hover:hover & {
+        background-color: $app-success;
+        color: white;
+    }
+}
+
+.server-separator {
+    width: 2rem;
+    height: 0.125rem;
+    background-color: $app-border;
+    border-radius: 1px;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -0.25rem;
+    right: -0.25rem;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    background-color: $app-danger;
+    color: white;
+    border-radius: 0.625rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.375rem;
+    border: 2px solid $app-bg-darkest;
+}
