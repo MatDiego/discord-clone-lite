@@ -1,0 +1,47 @@
+{% props currentServer = null, currentChannel = null %}
+
+<div class="flex-grow-1 overflow-auto dark-scrollbar p-2">
+    {% if currentServer %}
+        <div class="px-2 pt-3 pb-1">
+            <span class="text-uppercase text-app-secondary small fw-bold">
+                Kanały tekstowe
+            </span>
+        </div>
+
+        {% for channel in currentServer.channels %}
+            {% if channel.type.value == 'TEXT' %}
+                <a href="{{ path('app_chat_channel', {serverId: currentServer.id, channelId: channel.id}) }}"
+                   class="channel-item d-flex align-items-center text-decoration-none px-2 py-2 rounded mb-1
+                          {{ currentChannel and currentChannel.id == channel.id ? 'active' : '' }}">
+                    <span class="fs-5 me-2 lh-1 opacity-75">#</span>
+                    <span class="text-truncate flex-grow-1">{{ channel.name }}</span>
+
+
+                    {% if channel.unreadCount is defined and channel.unreadCount > 0 %}
+                        <span class="badge bg-danger rounded-pill ms-2">
+                            {{ channel.unreadCount }}
+                        </span>
+                    {% endif %}
+                </a>
+            {% endif %}
+        {% endfor %}
+
+        {#
+        {% set voiceChannels = currentServer.channels|filter(c => c.type.value == 'VOICE') %}
+        {% if voiceChannels|length > 0 %}
+            <div class="px-2 pt-3 pb-1">
+                <span class="text-uppercase text-app-secondary small fw-bold">
+                    Kanały głosowe
+                </span>
+            </div>
+
+            {% for channel in voiceChannels %}
+                <a href="#" class="channel-item d-flex align-items-center text-decoration-none px-2 py-2 rounded mb-1">
+                    <i class="bi bi-volume-up-fill me-2 opacity-75"></i>
+                    <span class="text-truncate">{{ channel.name }}</span>
+                </a>
+            {% endfor %}
+        {% endif %}
+        #}
+    {% endif %}
+</div>

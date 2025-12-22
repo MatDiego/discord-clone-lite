@@ -1,0 +1,25 @@
+.avatar-gradient-blue   { background: linear-gradient(135deg, #5b7cff, #7289da); }
+.avatar-gradient-green  { background: linear-gradient(135deg, #00c853, #4caf50); }
+.avatar-gradient-red    { background: linear-gradient(135deg, #f44336, #e57373); }
+.avatar-gradient-purple { background: linear-gradient(135deg, #9c27b0, #ba68c8); }
+.avatar-gradient-orange { background: linear-gradient(135deg, #ff9800, #ffb74d); }
+
+.status-indicator {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    border: 0.125rem solid $app-bg-darker;
+    position: absolute;
+    bottom: -0.125rem;
+    right: -0.125rem;
+}
+
+.status-online  { background-color: $app-success; }
+.status-idle    { background-color: $app-warning; }
+.status-offline { background-color: $app-text-muted; }
+
+.avatar {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.875rem;
+}

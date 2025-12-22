@@ -1,0 +1,36 @@
+.app-sidebar {
+    flex: 0 0 15rem;
+    background-color: $app-bg-darker;
+}
+
+.app-sidebar-header {
+    background-color: $app-bg-darkest;
+    min-height: 3rem;
+}
+
+.channel-item {
+    color: $app-text-secondary;
+    transition: all 0.15s ease;
+
+    &:hover,
+    &.active {
+        background-color: $app-bg-elevated;
+        color: $app-text-primary;
+    }
+}
+
+.user-panel {
+    background-color: $app-bg-darkest;
+    border-top: 1px solid $app-border;
+    min-height: 4rem;
+    padding: 0.57rem;
+}
+
+.sidebar-btn-icon {
+    color: $app-text-secondary;
+    transition: color 0.2s;
+
+    &:hover {
+        color: $app-text-primary;
+    }
+}

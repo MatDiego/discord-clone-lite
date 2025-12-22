@@ -1,0 +1,44 @@
+{{ form_start(form, {'attr': {'class': 'd-flex flex-column gap-3'}}) }}
+
+<div>
+    {{ form_label(form.name, null, {
+        'label_attr': {
+            'class': 'form-label text-uppercase fw-bold small text-app-secondary',
+        }
+    }) }}
+
+    {{ form_widget(form.name, {
+        'attr': {
+            'class': 'form-control text-white',
+            'placeholder': 'np. Ekipszta'
+        }
+    }) }}
+
+    <div class="small text-danger mt-1">
+        {{ form_errors(form.name) }}
+    </div>
+</div>
+
+<div class="pt-2">
+
+    <div class="position-relative mb-4">
+        <hr class="border-secondary opacity-25 m-0">
+    </div>
+
+    <div class="d-flex align-items-center justify-content-end gap-3">
+        <a href="{{ path('app_dashboard') }}"
+           class="text-decoration-none small text-app-muted hover-underline">
+            Anuluj
+        </a>
+
+        <button type="submit" class="btn btn-primary px-4 fw-semibold py-2 shadow-sm">
+            {% if form.vars.data.id is defined and form.vars.data.id %}
+                Zapisz zmiany
+            {% else %}
+                Stwórz serwer
+            {% endif %}
+        </button>
+    </div>
+</div>
+
+{{ form_end(form) }}

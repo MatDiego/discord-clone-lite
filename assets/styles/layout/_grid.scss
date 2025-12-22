@@ -1,0 +1,14 @@
+.app-layout {
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+}
+
+.app-sidebar-header,
+.chat-header {
+    min-height: 3rem;
+}
+
+.app-sidebar-header {
+    padding: 1.2rem;
+}

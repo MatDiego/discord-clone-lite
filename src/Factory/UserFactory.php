@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\User;
+use Override;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -22,7 +23,7 @@ final class UserFactory extends PersistentProxyObjectFactory
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public static function class(): string
     {
         return User::class;
@@ -33,7 +34,7 @@ final class UserFactory extends PersistentProxyObjectFactory
      *
      * @todo add your default values here
      */
-    #[\Override]
+    #[Override]
     protected function defaults(): array|callable
     {
         return [
@@ -47,7 +48,7 @@ final class UserFactory extends PersistentProxyObjectFactory
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
      */
-    #[\Override]
+    #[Override]
     protected function initialize(): static
     {
         return $this
