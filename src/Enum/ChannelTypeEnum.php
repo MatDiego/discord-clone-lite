@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum ChannelType: string
+enum ChannelTypeEnum: string
 {
     case TEXT = 'TEXT';
     case VOICE = 'VOICE';

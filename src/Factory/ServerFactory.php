@@ -3,7 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\Server;
-use App\Enum\ChannelType;
+use App\Enum\ChannelTypeEnum;
 use Override;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
@@ -12,11 +12,6 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
  */
 final class ServerFactory extends PersistentProxyObjectFactory
 {
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
-     *
-     * @todo inject services if required
-     */
     public function __construct()
     {
     }
@@ -27,11 +22,6 @@ final class ServerFactory extends PersistentProxyObjectFactory
         return Server::class;
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
-     *
-     * @todo add your default values here
-     */
     #[Override]
     protected function defaults(): array|callable
     {
@@ -41,9 +31,7 @@ final class ServerFactory extends PersistentProxyObjectFactory
         ];
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
-     */
+
     #[Override]
     protected function initialize(): static
     {
@@ -51,7 +39,7 @@ final class ServerFactory extends PersistentProxyObjectFactory
             ->afterInstantiate(function(Server $server): void {
                 ChannelFactory::createOne([
                     'name' => 'ogólny',
-                    'type' => ChannelType::TEXT,
+                    'type' => ChannelTypeEnum::TEXT,
                     'server' => $server,
                 ]);
             });

@@ -6,7 +6,7 @@ use App\Entity\Channel;
 use App\Entity\Server;
 use App\Entity\ServerMember;
 use App\Entity\User;
-use App\Enum\ChannelType;
+use App\Enum\ChannelTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ServerManager
@@ -19,7 +19,7 @@ class ServerManager
 
         $generalChannel = new Channel();
         $generalChannel->setName('ogólny');
-        $generalChannel->setType(ChannelType::TEXT);
+        $generalChannel->setType(ChannelTypeEnum::TEXT);
         $generalChannel->setServer($server);
         $server->addChannel($generalChannel);
 
