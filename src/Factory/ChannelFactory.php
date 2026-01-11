@@ -3,7 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\Channel;
-use App\Enum\ChannelType;
+use App\Enum\ChannelTypeEnum;
 use DateTimeImmutable;
 use Override;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
@@ -13,11 +13,6 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
  */
 final class ChannelFactory extends PersistentProxyObjectFactory
 {
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
-     *
-     * @todo inject services if required
-     */
     public function __construct()
     {
     }
@@ -28,30 +23,20 @@ final class ChannelFactory extends PersistentProxyObjectFactory
         return Channel::class;
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
-     *
-     * @todo add your default values here
-     */
     #[Override]
     protected function defaults(): array|callable
     {
         return [
             'name' => self::faker()->text(255),
             'server' => ServerFactory::new(),
-            'type' => self::faker()->randomElement(ChannelType::cases()),
+            'type' => self::faker()->randomElement(ChannelTypeEnum::cases()),
             'createdAt' => DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now')),
         ];
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
-     */
     #[Override]
     protected function initialize(): static
     {
-        return $this
-            // ->afterInstantiate(function(Channel $channel): void {})
-        ;
+        return $this;
     }
 }
