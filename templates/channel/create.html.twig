@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stwórz kanał - {{ server.name }}{% endblock %}
+
+{% block body %}
+    <div class="app-layout d-flex overflow-hidden">
+        <twig:Server:Rail :currentServer="server" />
+        <twig:Server:Sidebar :currentServer="server" :currentChannel="null" />
+
+        <div class="flex-grow-1 overflow-auto dark-scrollbar">
+
+            <div class="container py-5">
+
+                <div class="mb-4">
+                    <h2 class="fw-bold text-white mb-1">Stwórz nowy kanał</h2>
+                    <p class="text-app-secondary small">
+                        Dodajesz nowy kanał do serwera <strong>{{ server.name }}</strong>.
+                    </p>
+                </div>
+
+                <div class="p-4 shadow-sm mb-5">
+                    {% include 'channel/_form.html.twig' with {
+                        'button_label': 'Stwórz kanał'
+                    } %}
+                </div>
+
+                <div class="alert alert-info bg-app-elevated border-secondary text-app-secondary d-flex align-items-center">
+                    {{ ux_icon('material-symbols:info', {class: 'me-3 fs-4'}) }}
+                    <div class="small">
+                        Możesz tworzyć kanały <strong>Tekstowe</strong> do pisania oraz <strong>Głosowe</strong> do rozmów w czasie rzeczywistym.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

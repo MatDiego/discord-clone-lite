@@ -12,7 +12,7 @@ final class ServerVoter extends Voter
     public const EDIT = 'SERVER_EDIT';
     public const VIEW = 'SERVER_VIEW';
     public const DELETE = 'SERVER_DELETE';
-
+    public const CREATE_CHANNEL = 'SERVER_CREATE_CHANNEL';
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, [self::EDIT, self::VIEW, self::DELETE])
@@ -28,6 +28,7 @@ final class ServerVoter extends Voter
         return match($attribute) {
             self::EDIT, self::DELETE => $this->canEdit($server, $user),
             self::VIEW => $this->canView($server, $user),
+            self::CREATE_CHANNEL => $this->canCreateChannel($server, $user),
             default => false,
         };
     }
@@ -46,13 +47,8 @@ final class ServerVoter extends Voter
         return $server->getMembers()->exists(fn($key, $member) => $member->getUser() === $user);
     }
 
-    public function supportsAttribute(string $attribute): bool
+    private function canCreateChannel(Server $server, User $user): bool
     {
-        return in_array($attribute, [self::VIEW, self::EDIT, self::DELETE], true);
-    }
-
-    public function supportsType(string $subjectType): bool
-    {
-        return is_a($subjectType, Server::class, true);
+        return $server->getOwner() === $user;
     }
 }

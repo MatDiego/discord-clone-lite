@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edytuj kanał - {{ channel.name }}{% endblock %}
+
+{% block body %}
+    <div class="app-layout d-flex overflow-hidden">
+        <twig:Server:Rail :currentServer="server" />
+        <twig:Server:Sidebar :currentServer="server" :currentChannel="channel" />
+
+        <div class="flex-grow-1 overflow-auto dark-scrollbar">
+            <div class="container py-5">
+
+                <div class="mb-4">
+                    <h2 class="fw-bold text-white mb-1">Ustawienia kanału</h2>
+                    <p class="text-app-secondary small">
+                        Edytujesz kanał <span class="fw-bold text-white">#{{ channel.name }}</span>
+                    </p>
+                </div>
+
+                <div class="card-elevated p-4 shadow-sm mb-5">
+                    {% include 'channel/_form.html.twig' with {
+                        'button_label': 'Zapisz zmiany'
+                    } %}
+                </div>
+
+                <hr class="border-secondary opacity-25 my-5">
+
+                <div>
+                    <h5 class="fw-bold text-danger mb-3 text-uppercase small">
+                        Strefa niebezpieczna
+                    </h5>
+
+                    <div class="card border border-danger border-opacity-50 bg-transparent rounded-3">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center g-3">
+                                <div class="col-12 col-sm-8">
+                                    <h6 class="text-white fw-bold mb-1">Usuń kanał</h6>
+                                    <p class="text-app-secondary small mb-0">
+                                        Usunięcie kanału jest nieodwracalne. Wszystkie wiadomości przepadną.
+                                    </p>
+                                </div>
+                                <div class="col-12 col-sm-4 text-sm-end">
+                                    <button type="button"
+                                            class="btn btn-outline-danger px-3 py-2 fw-semibold w-sm-auto"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteChannelModal">
+                                        {{ ux_icon('bi:trash3-fill', {class: 'me-1'}) }} Usuń kanał
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <twig:Modal:DeleteConfirm
+        modalId="deleteChannelModal"
+        title="Usuń kanał"
+        entityName="{{ '#' ~ channel.name }}"
+        actionUrl="{{ path('app_channel_delete', {serverId: server.id, channelId: channel.id}) }}"
+        csrfTokenId="{{ 'delete_channel_' ~ channel.id }}"
+    />
+
+{% endblock %}

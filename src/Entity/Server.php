@@ -132,7 +132,6 @@ class Server
     public function removeChannel(Channel $channel): static
     {
         if ($this->channels->removeElement($channel)) {
-            // set the owning side to null (unless already changed)
             if ($channel->getServer() === $this) {
                 $channel->setServer(null);
             }

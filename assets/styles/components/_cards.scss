@@ -1,10 +1,6 @@
-// Tylko customowy pasek, kolory niech bierze z bootstrapa (bg-danger-subtle itp.)
 .alert-danger {
-    border-left: 0.25rem solid $app-danger; // Używaj zmiennej!
+    border-left: 0.25rem solid $app-danger;
 }
-
-// Jeśli bootstrapowy alert-info Ci nie pasuje, skonfiguruj $info w _bootstrap.scss,
-// zamiast nadpisywać klasę tutaj. Usuń .alert-info stąd.
 
 .card-elevated {
     background-color: $app-bg-elevated;
@@ -12,7 +8,6 @@
     box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.4);
     color: $app-text-primary;
 
-    // Specyficzny input tylko wewnątrz tej karty
     .form-control {
         background-color: $app-bg-darkest;
         border-color: $app-bg-dark;

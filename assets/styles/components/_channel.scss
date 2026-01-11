@@ -1,0 +1,14 @@
+.channel-type-option {
+    background-color: $app-bg-tertiary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: $app-text-primary;
+
+    &:hover {
+        background-color: $app-bg-secondary;
+    }
+
+    .btn-check:checked + & {
+        background-color: $app-bg-primary;
+    }
+}

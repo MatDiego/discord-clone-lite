@@ -9,7 +9,7 @@ $font-family-sans-serif: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
 $border-color:  $app-border;
 
-// FORMS (Zastępuje plik components/forms.scss)
+// FORMS
 $input-bg:                  $app-bg-elevated;
 $input-color:               $app-text-primary;
 $input-border-color:        $app-border;
@@ -24,7 +24,6 @@ $input-focus-box-shadow:    0 0 0 0.2rem rgba($app-accent, 0.25);
 // Placeholder
 $input-placeholder-color:   $app-text-secondary;
 
-// Transition (Bootstrap ma to domyślnie, ale jeśli chcesz doprecyzować):
 $input-transition:          background-color 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
 
 $dropdown-link-hover-bg: $app-bg-elevated;

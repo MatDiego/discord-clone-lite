@@ -16,6 +16,10 @@
     &.active {
         background-color: $app-bg-elevated;
         color: $app-text-primary;
+
+        .settings-icon {
+            opacity: 1;
+        }
     }
 }
 
@@ -32,5 +36,20 @@
 
     &:hover {
         color: $app-text-primary;
+    }
+}
+
+.settings-icon {
+    opacity: 0;
+
+    &:hover {
+        transform: scale(1.1) rotate(-15deg);
+    }
+}
+
+.create-icon {
+
+    &:hover {
+        transform: scale(1.3);
     }
 }

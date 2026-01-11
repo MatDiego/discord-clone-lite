@@ -4,4 +4,7 @@
 
 .dark-scrollbar {
     @include dark-scrollbar;
+
+    overflow-y: auto;
+    overflow-x: hidden;
 }

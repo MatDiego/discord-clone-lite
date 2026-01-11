@@ -1,17 +1,30 @@
 @mixin dark-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: $app-bg-elevated transparent;
+
     &::-webkit-scrollbar {
         width: 0.5rem;
         height: 0.5rem;
     }
+
     &::-webkit-scrollbar-track {
         background: transparent;
+        margin-block: 0.25rem;
     }
+
     &::-webkit-scrollbar-thumb {
         background-color: $app-bg-elevated;
         border-radius: 0.25rem;
 
+        border: 2px solid transparent;
+        background-clip: content-box;
+
         &:hover {
             background-color: $app-border;
         }
+    }
+
+    &::-webkit-scrollbar-corner {
+        background: transparent;
     }
 }
