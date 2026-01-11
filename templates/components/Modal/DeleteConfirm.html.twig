@@ -1,0 +1,40 @@
+{% props
+    modalId,
+    title = 'Usuń element',
+    entityName,
+    actionUrl,
+    csrfTokenId,
+    tokenName = '_csrf_token'
+%}
+
+<div class="modal fade" id="{{ modalId }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-app-elevated text-app-primary border border-secondary">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title fw-bold">{{ title }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="alert alert-warning d-flex align-items-center bg-warning bg-opacity-10 border-warning border-opacity-25 text-warning">
+                    {{ ux_icon('bi:exclamation-triangle-fill', {class: 'me-3 fs-4'}) }}
+                    <div>
+                        Czy jesteś pewien? Tej akcji nie da się cofnąć. <br>
+                        <strong>{{ entityName }}</strong> zostanie trwale usunięty.
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer border-top border-secondary bg-app-dark">
+                <button type="button" class="btn text-white hover-underline" data-bs-dismiss="modal">Anuluj</button>
+
+                <form method="post" action="{{ actionUrl }}" data-turbo="false">
+                    <input type="hidden" name="{{ tokenName }}" value="{{ csrf_token(csrfTokenId) }}">
+                    <button type="submit" class="btn btn-danger px-4">
+                        Tak, usuń
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

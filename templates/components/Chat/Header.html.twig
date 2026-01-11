@@ -13,15 +13,11 @@
         </div>
 
         <div class="d-flex align-items-center gap-3 flex-shrink-0">
-            <button class="btn btn-link header-action-btn p-2 rounded-circle" title="Wyszukaj">
-                {{ ux_icon('bi:search') }}
-            </button>
             <small class="text-app-secondary fw-medium d-none d-lg-block">{{ app.user.email }}</small>
             <a href="{{ path('app_logout') }}"
                class="btn btn-sm btn-danger d-flex align-items-center gap-2 fw-medium shadow-sm"
                title="Wyloguj się">
                 {{ ux_icon('bi:box-arrow-right') }}
-                {# Tekst obok ikony, a nie w środku #}
                 <span class="d-none d-md-inline">Wyloguj</span>
             </a>
         </div>

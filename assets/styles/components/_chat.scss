@@ -22,35 +22,33 @@
 }
 
 .message-avatar-frame {
-    width: 2.5rem; // 40px - standard w komunikatorach (większy niż base 2rem)
+    width: 2.5rem;
     height: 2.5rem;
-    flex-shrink: 0; // Nie zgniataj avatara
+    flex-shrink: 0;
 
-    // Styl tekstu wewnątrz avatara (jeśli brak obrazka)
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    color: white; // Tekst na kolorowym tle zawsze biały
+    color: white;
     text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .message-timestamp {
     color: $app-text-muted;
-    font-size: 0.75rem; // 12px
+    font-size: 0.75rem;
     margin-left: 0.5rem;
     font-weight: 400;
 }
 
 .message-content {
-    color: $app-text-primary; // Bazowy kolor tekstu
+    color: $app-text-primary;
 
-    // KLUCZOWE dla czatu: zapobieganie wyciekaniu długich ciągów znaków (np. linki)
     word-wrap: break-word;
     word-break: break-word;
     overflow-wrap: break-word;
 
-    line-height: 1.375; // Trochę luźniejsza linia dla czytelności
+    line-height: 1.375;
 }
 
 
@@ -83,7 +81,6 @@
 
     &:hover {
         color: $app-text-primary;
-        // Opcjonalnie tło przy hoverze
         background-color: rgba($app-text-primary, 0.05);
     }
 }
@@ -92,7 +89,6 @@
     color: $app-text-secondary;
     transition: color 0.2s;
 
-    // Obsługa hovera na rodzicu (buttonie)
     button:hover & {
         color: $app-text-primary;
     }
@@ -102,27 +98,24 @@
     background-color: $app-bg-dark;
     display: flex;
     flex-direction: column;
-    flex-grow: 1; // Rozpycha się na resztę ekranu
-    min-width: 0; // Zapobiega "rozsadzaniu" flexa przez długie treści (text-truncate)
+    flex-grow: 1;
+    min-width: 0;
 }
 
 .chat-header {
-    background-color: $app-bg-dark; // Zgodnie z Twoim plikiem, choć często używa się bg-elevated/darkest
+    background-color: $app-bg-dark;
     border-bottom: 1px solid $app-border;
-    // Klucz do uniknięcia schodków:
-    // Min-height powinien być taki sam jak w sidebar-header.
-    // Jeśli tamten ma min-height: 3rem + padding, tutaj musi być tak samo.
     min-height: 3rem;
 }
 
 .chat-empty-state {
-    max-width: 25rem; // Ograniczamy szerokość tekstu dla czytelności
-    margin: auto;     // Centrowanie w flexie
+    max-width: 25rem;
+    margin: auto;
     text-align: center;
 
     .empty-icon {
-        font-size: 4rem; // Duża, wyraźna ikona
-        color: $app-bg-elevated; // Subtelny kolor (ciemniejszy od text-muted)
+        font-size: 4rem;
+        color: $app-bg-elevated;
         margin-bottom: 1rem;
         transition: transform 0.3s ease;
     }
