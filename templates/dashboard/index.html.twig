@@ -8,8 +8,11 @@
         <twig:Server:Sidebar :currentServer="null" />
 
         <div class="flex-grow-1 bg-app-dark overflow-auto dark-scrollbar d-flex flex-column">
+            <twig:Chat:Header
+                :currentChannel="null"
+            />
 
-            <div class="text-center mt-5 mb-4 animate__animated animate__fadeInDown">
+            <div class="text-center mt-3 mb-4">
                 <h1 class="display-5 fw-bold text-white mb-2">Witaj, {{ app.user.username }}!</h1>
                 <p class="lead text-app-secondary">Jesteś w centrum dowodzenia.</p>
             </div>
