@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
@@ -51,14 +52,18 @@ class RegistrationController extends AbstractController
                 (new TemplatedEmail())
                     ->from(new Address('admin@example.com', 'ChatApp Bot'))
                     ->to((string) $user->getEmail())
-                    ->subject('Please Confirm your Email')
+                    ->subject('Potwierdź swój adres email')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
+                    ->context([
+                        'user' => $user,
+                    ])
             );
 
-            $security->login($user, 'form_login', 'main');
-            $this->addFlash('success', 'Konto utworzone! Witamy w ChatApp.');
+            $this->addFlash('success', 'Rejestracja udana! Sprawdź email, aby aktywować konto.');
 
-            return  $this->redirectToRoute('app_dashboard');
+            $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $user->getEmail());
+
+            return  $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [
@@ -72,16 +77,17 @@ class RegistrationController extends AbstractController
         $id = $request->query->get('id');
 
         if (null === $id) {
+            $this->addFlash('verify_email_error', 'Link jest nieprawidłowy lub konto zostało usunięte. Zarejestruj się ponownie.');
             return $this->redirectToRoute('app_register');
         }
 
         $user = $userRepository->find($id);
 
         if (null === $user) {
+            $this->addFlash('verify_email_error', 'Link jest nieprawidłowy lub konto zostało usunięte. Zarejestruj się ponownie.');
             return $this->redirectToRoute('app_register');
         }
 
-        // validate email confirmation link, sets User::isVerified=true and persists
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $exception) {
@@ -90,8 +96,6 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
 
-        $this->addFlash('success', 'Adres e-mail został poprawnie zweryfikowany.');
-
-        return $this->redirectToRoute('app_dashboard');
+        return $this->render('registration/verified.html.twig');
     }
 }

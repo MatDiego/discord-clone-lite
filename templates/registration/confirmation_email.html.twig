@@ -1,11 +1,43 @@
-<h1>Hi! Please confirm your email!</h1>
+{% extends 'email/base.html.twig' %}
 
-<p>
-    Please confirm your email address by clicking the following link: <br><br>
-    <a href="{{ signedUrl|raw }}">Confirm my Email</a>.
-    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
-</p>
+{% block body %}
+    <container>
+        <spacer size="24"></spacer>
 
-<p>
-    Cheers!
-</p>
+        <row>
+            <columns small="12" large="12">
+
+                <center>
+                    <h1>ChatApp</h1>
+                </center>
+
+                <spacer size="16"></spacer>
+
+                <p>Hej <strong>{{ user.username }}</strong>! 👋</p>
+
+                <p>
+                    Dzięki za rejestrację. Aby zacząć korzystać z wszystkich funkcji,<br>
+                    potwierdź, że ten adres email należy do Ciebie.
+                </p>
+
+                <spacer size="24"></spacer>
+
+                <center>
+                    <button href="{{ signedUrl }}" class="btn-primary">
+                        Zweryfikuj Email
+                    </button>
+                </center>
+
+                <spacer size="24"></spacer>
+
+                <p class="footer">
+                    Jeśli nie zakładałeś konta, zignoruj tę wiadomość.<br>
+                    Link wygaśnie za godzinę.
+                </p>
+
+            </columns>
+        </row>
+
+        <spacer size="24"></spacer>
+    </container>
+{% endblock %}

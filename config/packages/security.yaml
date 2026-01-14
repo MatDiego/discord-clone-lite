@@ -16,10 +16,12 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            user_checker: App\Security\UserChecker
             form_login:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
+                csrf_token_id: authenticate
             logout:
                 path: app_logout
                 # where to redirect after logout
@@ -37,7 +39,9 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/register, roles: PUBLIC_ACCESS }
+#        - { path: ^/logout, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS}
+        - { path: ^/verify/email, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: ROLE_USER }
 
 when@test:
