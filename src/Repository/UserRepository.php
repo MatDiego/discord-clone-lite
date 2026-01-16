@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -31,6 +32,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+
+    public function deleteUnverifiedUsersOlderThanId(Uuid $cutoffUuid): int
+    {
+        return $this->createQueryBuilder('u')
+            ->delete()
+            ->where('u.isVerified = :verified')
+            ->andWhere('u.id < :cutoffUuid')
+            ->setParameter('verified', false)
+            ->setParameter('cutoffUuid', $cutoffUuid, 'uuid')
+            ->getQuery()
+            ->execute();
     }
 
 }
