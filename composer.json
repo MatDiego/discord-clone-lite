@@ -45,8 +45,11 @@
         "symfony/web-link": "7.3.*",
         "symfony/yaml": "7.3.*",
         "symfonycasts/sass-bundle": "^0.9.0",
+        "symfonycasts/verify-email-bundle": "^1.18",
         "twbs/bootstrap": "^5.3",
+        "twig/cssinliner-extra": "^3.22",
         "twig/extra-bundle": "^2.12|^3.0",
+        "twig/inky-extra": "^3.22",
         "twig/twig": "^2.12|^3.0"
     },
     "config": {

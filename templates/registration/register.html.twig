@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Zarejestruj się - ChatApp{% endblock %}
+
+{% block body %}
+    <div class="login-page">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-10 col-md-7 col-lg-4">
+                    <div class="card-elevated p-4 shadow-lg">
+                        <div class="brand-logo mb-3">
+                            {{ ux_icon('bi:chat-square-dots-fill', {class: 'fs-1'}) }}
+                        </div>
+
+                        <h1 class="h4 mb-1 fw-bold text-center text-app-primary">Utwórz konto</h1>
+                        <p class="text-center text-app-secondary mb-3 small">
+                            Dołącz do społeczności ChatApp
+                        </p>
+
+                        {% for flash_error in app.flashes('verify_email_error') %}
+                            <div class="alert alert-danger d-flex align-items-center p-2 mb-3 small" role="alert">
+                                {{ ux_icon('bi:exclamation-triangle-fill', {class: 'flex-shrink-0 me-2'}) }}
+                                <div>{{ flash_error }}</div>
+                            </div>
+                        {% endfor %}
+
+                        {% if registrationForm.vars.errors|length > 0 %}
+                            <div class="alert alert-danger d-flex align-items-center p-2 mb-3 small" role="alert">
+                                {{ ux_icon('bi:exclamation-triangle-fill', {class: 'flex-shrink-0 me-2'}) }}
+                                <div>
+                                    {{ form_errors(registrationForm) }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                        <div class="mb-2">
+                            {{ form_label(registrationForm.email, null, {
+                                'label_attr': {'class': 'form-label text-uppercase fw-bold small text-app-secondary'}
+                            }) }}
+                            {{ form_widget(registrationForm.email, {
+                                'attr': {
+                                    'class': 'form-control bg-app-dark border-dark text-white py-2',
+                                }
+                            }) }}
+                            <div class="small text-danger mt-1">
+                                {{ form_errors(registrationForm.email) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            {{ form_label(registrationForm.username, null, {
+                                'label_attr': {'class': 'form-label text-uppercase fw-bold small text-app-secondary'}
+                            }) }}
+                            {{ form_widget(registrationForm.username, {
+                                'attr': {
+                                    'class': 'form-control bg-app-dark border-dark text-white py-2',
+                                }
+                            }) }}
+                            <div class="small text-danger mt-1">
+                                {{ form_errors(registrationForm.username) }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(registrationForm.plainPassword, null, {
+                                'label_attr': {'class': 'form-label text-uppercase fw-bold small text-app-secondary'}
+                            }) }}
+                            {{ form_widget(registrationForm.plainPassword, {
+                                'attr': {
+                                    'class': 'form-control bg-app-dark border-dark text-white py-2',
+                                }
+                            }) }}
+                            <div class="small text-danger mt-1">
+                                {{ form_errors(registrationForm.plainPassword) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form_widget(registrationForm.agreeTerms, {
+                                'attr': {'class': 'form-check-input bg-app-dark border-dark'}
+                            }) }}
+                            <label class="form-check-label small text-app-secondary" for="{{ registrationForm.agreeTerms.vars.id }}">
+                                Akceptuję <a href="#" class="text-app-muted hover-underline">regulamin serwisu</a>.
+                            </label>
+                            <div class="small text-danger mt-1">
+                                {{ form_errors(registrationForm.agreeTerms) }}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-3 fw-semibold py-2">
+                            {{ 'register.submit'|trans }}
+                        </button>
+
+                        {{ form_end(registrationForm) }}
+
+                        <div class="text-center small">
+                            <span class="text-app-secondary">Masz już konto?</span>
+                            <a href="{{ path('app_login') }}" class="text-decoration-none fw-semibold ms-1">
+                                Zaloguj się
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <small class="text-white-50 opacity-50">
+                            &copy; 2025 ChatApp
+                        </small>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

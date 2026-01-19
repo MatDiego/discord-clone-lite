@@ -1,0 +1,39 @@
+{% apply inky_to_html|inline_css(source('@styles/email/email.css')) %}
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width" />
+    </head>
+    <body>
+    <container>
+        <spacer size="30"></spacer>
+
+        <row>
+            <columns large="12" class="text-center">
+                <center>
+                    <h2 class="text-center" style="color: #5865F2;">ChatApp</h2>
+                </center>
+            </columns>
+        </row>
+
+        <spacer size="20"></spacer>
+
+        <row>
+            <columns large="12" class="content-card">
+                {% block body %}{% endblock %}
+            </columns>
+        </row>
+
+        <row>
+            <columns large="12">
+                <div class="footer">
+                    <p>&copy; 2025 ChatApp. Nie odpowiadaj na tę wiadomość.</p>
+                </div>
+            </columns>
+        </row>
+
+    </container>
+    </body>
+    </html>
+{% endapply %}

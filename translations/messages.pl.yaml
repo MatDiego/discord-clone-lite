@@ -1,0 +1,12 @@
+register:
+    username: 'Nazwa użytkownika'
+    username_placeholder: 'Np. CoolUser123'
+
+    email: 'Adres Email'
+    email_placeholder: 'twoj@email.com'
+
+    password: 'Hasło'
+    password_placeholder: '••••••••'
+
+    agree_terms: 'Akceptuję regulamin serwisu'
+    submit: 'Zarejestruj się'
