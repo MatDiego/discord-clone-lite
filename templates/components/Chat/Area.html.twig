@@ -1,7 +1,7 @@
-{% props currentServer = null, currentChannel = null %}
+{% props server = null, channel = null %}
 
 <div class="chat-input-area p-4">
-    {% if currentChannel and currentServer %}
+    {% if channel and server %}
 
         <form method="post"
               class="d-flex align-items-center gap-2 h-100">
@@ -19,7 +19,7 @@
                 <input type="text"
                        name="content"
                        class="form-control h-100 py-2"
-                       placeholder="Napisz wiadomość na #{{ currentChannel.name }}"
+                       placeholder="Napisz wiadomość na #{{ channel.name }}"
                        aria-label="Wpisz wiadomość"
                        autocomplete="off"
                        required
@@ -40,7 +40,7 @@
         <div class="d-flex align-items-center justify-content-center h-100 text-app-muted">
             {{ ux_icon('bi:slash-circle', { class: 'me-2 fs-5' }) }}
             <span class="fw-medium">
-                {% if currentServer %}
+                {% if server %}
                     Wybierz kanał, aby rozpocząć rozmowę
                 {% else %}
                     Wybierz serwer z listy po lewej

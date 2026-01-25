@@ -1,0 +1,15 @@
+register:
+    password:
+        min_length: 'Hasło musi mieć minimum {{ limit }} znaków.'
+        not_blank: 'Proszę podać hasło.'
+
+    agree_terms:
+        is_true: 'Musisz zaakceptować regulamin.'
+
+server:
+    name:
+        not_blank: 'Podaj nazwę serwera'
+
+channel:
+    name:
+        not_blank: 'Podaj nazwę kanału'

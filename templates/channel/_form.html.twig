@@ -4,18 +4,9 @@
     'VOICE': 'bi:volume-up-fill'
 } %}
 <div>
-    {{ form_label(form.name, null, {
-        'label_attr': {
-            'class': 'form-label text-uppercase fw-bold small text-app-secondary',
-        }
-    }) }}
+    {{ form_label(form.name) }}
 
-    {{ form_widget(form.name, {
-        'attr': {
-            'class': 'form-control text-white',
-            'placeholder': 'np. ogólny'
-        }
-    }) }}
+    {{ form_widget(form.name) }}
 
     <div class="small text-danger mt-1">
         {{ form_errors(form.name) }}
@@ -30,7 +21,7 @@
     <div class="d-flex flex-column gap-2">
         {% for child in form.type %}
             <div>
-                {{ form_widget(child, {'attr': {'class': 'btn-check'}}) }}
+                {{ form_widget(child) }}
 
                 <label for="{{ child.vars.id }}" class="channel-type-option d-flex align-items-center p-3 rounded-2">
                     <span class="me-3 text-app-secondary fs-4 d-flex align-items-center">
@@ -38,7 +29,7 @@
                     </span>
 
                     <span class="fw-bold small flex-grow-1">
-                        {{ child.vars.label }}
+                        {{ child.vars.label|trans }}
                     </span>
 
                 </label>

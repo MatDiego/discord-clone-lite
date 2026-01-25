@@ -39,8 +39,8 @@ final class ChannelController extends AbstractController
         $messages = $messageRepository->findLatestByChannel($channel);
 
         return $this->render('server/view.html.twig', [
-            'currentServer' => $server,
-            'currentChannel' => $channel,
+            'server' => $server,
+            'channel' => $channel,
             'messages' => $messages,
         ]);
     }
@@ -94,7 +94,7 @@ final class ChannelController extends AbstractController
 
         return $this->render('channel/create.html.twig', [
             'form' => $form,
-            'server' => $server
+            'server' => $server,
         ]);
     }
 

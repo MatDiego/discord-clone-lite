@@ -12,8 +12,7 @@
            class="server-icon-wrapper {{ active ? 'active' : '' }}"
            title="{{ server.name }}"
            data-context-menu-target="trigger"
-           aria-expanded="false"
-        >
+           aria-expanded="false">
 
             <div class="server-icon {{ colorClass }} text-white shadow-sm">
                 {{ initials }}
@@ -26,7 +25,10 @@
 
         <div class="dropdown show">
             <div class="dropdown-menu" data-context-menu-target="menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="{{ path('app_server_edit', {serverId: server.id}) }}">Zarządzaj Serwerem</a>
+                <a class="dropdown-item"
+                   href="{{ path('app_server_edit', {serverId: server.id}) }}">
+                    Zarządzaj Serwerem
+                </a>
             </div>
         </div>
     </div>

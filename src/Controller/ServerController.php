@@ -35,6 +35,8 @@ final class ServerController extends AbstractController
             $serverManager->createServer($server, $user);
             $defaultChannel = $server->getChannels()->first();
 
+            $this->addFlash('success', 'Serwer został utworzony!');
+
             return $this->redirectToRoute('app_chat_channel', [
                 'serverId' => $server->getId(),
                 'channelId' => $defaultChannel->getId()
@@ -83,7 +85,8 @@ final class ServerController extends AbstractController
 
         if ($this->isCsrfTokenValid('delete_server_' . $server->getId(), $request->request->get('_csrf_token'))) {
             $serverManager->removeServer($server);
-            return $this->render('server/deleted.html.twig');
+            $this->addFlash('success', 'Serwer został pomyślnie usunięty.');
+            return $this->redirectToRoute('app_dashboard');
         }
 
         $this->addFlash('error', 'Nieprawidłowy token bezpieczeństwa.');

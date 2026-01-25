@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {% if currentServer %}
-        {{ currentServer.name }} - ChatApp
+    {% if server %}
+        {{ server.name }} - ChatApp
     {% else %}
         Strona główna - ChatApp
     {% endif %}
@@ -22,18 +22,17 @@
 
         <div class="flex-grow-1 d-flex flex-column bg-app-dark min-w-0">
             <twig:Chat:Header
-                :currentChannel="currentChannel"
+                :channel="channel"
             />
 
             <twig:Chat:MessageList
                 :messages="messages"
-                :currentChannel="currentChannel"
+                :channel="channel"
             />
 
             <twig:Chat:Area
-                :currentServer="currentServer"
-                :currentChannel="currentChannel"
+                :server="server"
+                :channel="channel"
             />
-        </div>
-    </div>
+
 {% endblock %}

@@ -3,9 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Channel;
-use App\Entity\Server;
 use App\Enum\ChannelTypeEnum;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,22 +18,26 @@ class ChannelType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nazwa kanału',
-                'attr' => ['placeholder' => 'ogólny', 'autofocus' => true],
+                'label' => 'channel.label_name',
+                'label_attr' => ['class' => 'form-label text-uppercase fw-bold small text-app-secondary'],
+                'attr' => [
+                    'placeholder' => 'channel.name_placeholder',
+                    'autofocus' => true,
+                    'class' => 'form-control text-white'
+                ],
                 'constraints' => [
-                    new NotBlank(['message' => 'Podaj nazwę kanału']),
-                    new Length(['max' => 255, 'min' => 2]),
+                    new NotBlank(message: 'channel.name.not_blank'),
+                    new Length(min: 2, max: 255),
                 ],
             ])
             ->add('type', EnumType::class, [
                 'class' => ChannelTypeEnum::class,
-                'label' => 'Typ kanału',
-                'choice_label' => fn ($choice) => match ($choice) {
-                    ChannelTypeEnum::TEXT => 'Tekstowy',
-                    ChannelTypeEnum::VOICE => 'Głosowy',
-                },
+                'label' => 'channel.label_type',
                 'expanded' => true,
                 'multiple' => false,
+                'choice_attr' => function() {
+                    return ['class' => 'btn-check'];
+                },
             ])
         ;
     }

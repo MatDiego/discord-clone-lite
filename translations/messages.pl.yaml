@@ -1,12 +1,28 @@
 register:
-    username: 'Nazwa użytkownika'
+    label_username: 'Nazwa użytkownika'
     username_placeholder: 'Np. CoolUser123'
 
-    email: 'Adres Email'
+    label_email: 'Adres Email'
     email_placeholder: 'twoj@email.com'
 
-    password: 'Hasło'
+    label_password: 'Hasło'
     password_placeholder: '••••••••'
 
-    agree_terms: 'Akceptuję regulamin serwisu'
-    submit: 'Zarejestruj się'
+    agree_terms_text: 'Akceptuję'
+    agree_terms_link: 'regulamin serwisu'
+
+    label_submit: 'Zarejestruj się'
+
+channel:
+    label_name: 'Nazwa kanału'
+    name_placeholder: 'np. ogólny'
+
+    label_type: 'Typ kanału'
+    type:
+        text: 'Tekstowy'
+        voice: 'Głosowy'
+
+
+server:
+    label_name: 'Nazwa serwera'
+    name_placeholder: 'np. Ekipszta'
