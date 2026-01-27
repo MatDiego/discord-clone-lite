@@ -1,4 +1,7 @@
-{{ form_start(form, {'attr': {'class': 'd-flex flex-column gap-3', 'novalidate': 'novalidate'}}) }}
+{{ form_start(form, {'attr':
+    {'class': 'd-flex flex-column gap-3',
+        'novalidate': 'novalidate',
+        'data-turbo-frame': '_top'}}) }}
 {% set channel_icons = {
     'TEXT': 'bi:hash',
     'VOICE': 'bi:volume-up-fill'
@@ -48,7 +51,8 @@
 
     <div class="d-flex align-items-center justify-content-end gap-3">
         <a href="{{ path('app_chat_channel', {serverId: server.id, channelId: server.channels.first.id|default('0')}) }}"
-           class="text-decoration-none small text-app-muted hover-underline">
+           class="text-decoration-none small text-app-muted hover-underline"
+           data-turbo-frame="_top">
             Anuluj
         </a>
 

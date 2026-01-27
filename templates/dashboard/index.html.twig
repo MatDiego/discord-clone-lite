@@ -1,71 +1,66 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout_app.html.twig' %}
 
 {% block title %}Strona główna{% endblock %}
 
-{% block body %}
-    <div class="app-layout d-flex overflow-hidden">
-        <twig:Server:Rail :currentServer="null" />
-        <twig:Server:Sidebar :currentServer="null" />
+{% block content %}
 
-        <div class="flex-grow-1 bg-app-dark overflow-auto dark-scrollbar d-flex flex-column">
-            <twig:Chat:Header
-                :currentChannel="null"
-            />
+    <div class="flex-grow-1 bg-app-dark overflow-auto dark-scrollbar d-flex flex-column">
+        <twig:Chat:Header
+            :currentChannel="null"
+        />
 
-            <div class="text-center mt-3 mb-4">
-                <h1 class="display-5 fw-bold text-white mb-2">Witaj, {{ app.user.username }}!</h1>
-                <p class="lead text-app-secondary">Jesteś w centrum dowodzenia.</p>
-            </div>
+        <div class="text-center mt-3 mb-4">
+            <h1 class="display-5 fw-bold text-white mb-2">Witaj, {{ app.user.username }}!</h1>
+            <p class="lead text-app-secondary">Jesteś w centrum dowodzenia.</p>
+        </div>
 
-            <div class="container d-flex flex-column justify-content-center flex-grow-1 pb-5">
+        <div class="container d-flex flex-column justify-content-center flex-grow-1 pb-5">
 
-                <div class="row g-4">
+            <div class="row g-4">
 
-                    <div class="col-md-6">
-                        <div class="card card-elevated border-secondary h-100">
-                            <div class="card-body p-4 d-flex flex-column justify-content-center text-center">
-                                <div class="mb-3">
-                                    <div class="fs-1 mb-2 text-success">
-                                        {{ ux_icon('bi:plus-lg') }}
-                                    </div>
+                <div class="col-md-6">
+                    <div class="card card-elevated border-secondary h-100">
+                        <div class="card-body p-4 d-flex flex-column justify-content-center text-center">
+                            <div class="mb-3">
+                                <div class="fs-1 mb-2 text-success">
+                                    {{ ux_icon('bi:plus-lg') }}
                                 </div>
-
-                                <h4 class="card-title fw-bold">Stwórz nowy serwer</h4>
-                                <p class="card-text text-muted mb-4">
-                                    Miejsce, gdzie możesz rozmawiać ze swoją ekipą.
-                                </p>
-
-                                <a href="{{ path('app_server_create') }}"
-                                   class="btn btn-primary stretched-link px-4 py-2 mt-auto">
-                                    Utwórz serwer
-                                </a>
                             </div>
+
+                            <h4 class="card-title fw-bold">Stwórz nowy serwer</h4>
+                            <p class="card-text text-muted mb-4">
+                                Miejsce, gdzie możesz rozmawiać ze swoją ekipą.
+                            </p>
+
+                            <a href="{{ path('app_server_create') }}"
+                               class="btn btn-primary stretched-link px-4 py-2 mt-auto"
+                               data-turbo-frame="main_content">
+                                Utwórz serwer
+                            </a>
                         </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="card card-elevated border-secondary h-100">
-                            <div class="card-body p-4 d-flex flex-column justify-content-center text-center">
-                                <div class="mb-3">
-                                    <div class="fs-1 mb-2 text-primary">
-                                        {{ ux_icon('bi:person-gear') }}
-                                    </div>
-                                </div>
-                                <h4 class="card-title fw-bold">Twój Profil</h4>
-                                <p class="card-text text-muted mb-4">
-                                    Zmień swój avatar, nazwę użytkownika lub ustawienia konta.
-                                </p>
-                                <a href="#" class="btn btn-primary stretched-link px-4 py-2 mt-auto">
-                                    Edytuj Profil
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
+                <div class="col-md-6">
+                    <div class="card card-elevated border-secondary h-100">
+                        <div class="card-body p-4 d-flex flex-column justify-content-center text-center">
+                            <div class="mb-3">
+                                <div class="fs-1 mb-2 text-primary">
+                                    {{ ux_icon('bi:person-gear') }}
+                                </div>
+                            </div>
+                            <h4 class="card-title fw-bold">Twój Profil</h4>
+                            <p class="card-text text-muted mb-4">
+                                Zmień swój avatar, nazwę użytkownika lub ustawienia konta.
+                            </p>
+                            <a href="#" class="btn btn-primary stretched-link px-4 py-2 mt-auto">
+                                Edytuj Profil
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-
         </div>
     </div>
+
 {% endblock %}

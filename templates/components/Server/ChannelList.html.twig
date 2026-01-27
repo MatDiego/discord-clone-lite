@@ -8,7 +8,8 @@
             </span>
             <a href="{{ path('app_channel_create', {serverId: currentServer.id}) }}"
                class="text-app-secondary text-decoration-none d-flex align-items-center create-icon px-1 py-2 fw-bold"
-               title="Utwórz kanał">
+               title="Utwórz kanał"
+               data-turbo-frame="main_content">
                 {{ ux_icon('octicon:plus-16', {class: 'fs-5'} ) }}
             </a>
         </div>
