@@ -2,9 +2,6 @@
 
 {% set initials = server.name|slice(0, 1)|upper %}
 
-{% set colors = ['blue', 'green', 'red', 'purple', 'orange'] %}
-{% set colorIndex = server.id|length % colors|length %}
-{% set colorClass = 'avatar-gradient-' ~ colors[colorIndex] %}
 <div class="mb-2 position-relative" {{ stimulus_controller('context_menu') }}>
     <div class="dropdown dropend">
         <a href="{{ path('app_server_default_channel', {serverId: server.id}) }}"
@@ -14,7 +11,8 @@
            data-context-menu-target="trigger"
            aria-expanded="false">
 
-            <div class="server-icon {{ colorClass }} text-white shadow-sm">
+            <div class="server-icon text-white shadow-sm avatar-gradient-blue"
+                {{ stimulus_controller('avatar', { uuid: server.id }) }}>
                 {{ initials }}
             </div>
 
