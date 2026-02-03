@@ -34,6 +34,10 @@ class ServerType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Server::class,
+            'attr' => [
+                'class' => 'd-flex flex-column gap-3',
+                'data-turbo-frame' => '_top'
+            ]
         ]);
     }
 }

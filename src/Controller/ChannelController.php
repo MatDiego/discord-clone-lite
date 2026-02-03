@@ -53,8 +53,7 @@ final class ChannelController extends AbstractController
     public function defaultChannel(
         #[MapEntity(id: 'serverId')] Server $server,
         ChannelRepository $channelRepo
-    ): Response
-    {
+    ): Response {
         $firstChannel = $channelRepo->findOneBy([
             'server' => $server,
             'type' => ChannelTypeEnum::TEXT
@@ -75,15 +74,15 @@ final class ChannelController extends AbstractController
     public function create(
         Request $request,
         ChannelManager $channelManager,
-        #[MapEntity(id: 'serverId')] Server $server): Response
-    {
+        #[MapEntity(id: 'serverId')] Server $server
+    ): Response {
         $channel = new Channel();
 
         $form = $this->createForm(ChannelType::class, $channel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $channelManager->createChannel($server, $channel);
+            $channelManager->saveChannel($server, $channel);
             $this->addFlash('success', 'Kanał został utworzony!');
 
             return $this->redirectToRoute('app_chat_channel', [
@@ -108,8 +107,7 @@ final class ChannelController extends AbstractController
         #[MapEntity(id: 'channelId')] Channel $channel,
         #[MapEntity(id: 'serverId')] Server $server,
         ChannelManager $channelManager
-    ): Response
-    {
+    ): Response {
 
         $form = $this->createForm(ChannelType::class, $channel);
         $form->handleRequest($request);
@@ -141,8 +139,7 @@ final class ChannelController extends AbstractController
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(id: 'channelId')] Channel $channel,
         ChannelManager $channelManager
-    ): Response
-    {
+    ): Response {
 
         if ($this->isCsrfTokenValid('delete_channel_' . $channel->getId(), $request->request->get('_csrf_token'))) {
             $channelManager->removeChannel($channel);

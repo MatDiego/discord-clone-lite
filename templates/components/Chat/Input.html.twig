@@ -1,12 +1,14 @@
-{% props server = null, channel = null %}
 
 <div class="chat-input-area p-4">
     {% if channel and server %}
 
-        <form method="post"
-              class="d-flex align-items-center gap-2 h-100">
 
+        {{ form_start(form, {
+            'action': path('app_chat_send', {serverId: server.id, channelId: channel.id}),
+        }) }}
             <div class="chat-input-bar d-flex align-items-center flex-grow-1 overflow-hidden rounded-3">
+
+                {{ form_widget(form.content) }}
 
                 <button class="chat-action-btn btn btn-link text-decoration-none border-0"
                         type="button"
@@ -15,15 +17,6 @@
                          {{ ux_icon('bi:plus-circle-fill', { class: 'fs-5' }) }}
                     </span>
                 </button>
-
-                <input type="text"
-                       name="content"
-                       class="form-control h-100 py-2"
-                       placeholder="Napisz wiadomość na #{{ channel.name }}"
-                       aria-label="Wpisz wiadomość"
-                       autocomplete="off"
-                       required
-                       autofocus>
             </div>
 
             <button class="chat-action-btn btn btn-primary rounded-3 shadow-sm flex-shrink-0"
@@ -31,9 +24,7 @@
                     title="Wyślij">
                 {{ ux_icon('bi:send-fill', { class: 'fs-6' }) }}
             </button>
-
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('send_message') }}">
-        </form>
+        {{ form_end(form) }}
 
     {% else %}
 

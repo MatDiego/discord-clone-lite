@@ -26,3 +26,6 @@ channel:
 server:
     label_name: 'Nazwa serwera'
     name_placeholder: 'np. Ekipszta'
+
+message:
+    content_placeholder: 'Napisz wiadomość na #%name%'

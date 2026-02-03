@@ -46,6 +46,11 @@ class ChannelType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Channel::class,
+            'attr' => [
+                'class' => 'd-flex flex-column gap-3',
+                'novalidate' => 'novalidate',
+                'data-turbo-frame' => '_top'
+            ]
         ]);
     }
 }

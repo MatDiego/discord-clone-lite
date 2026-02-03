@@ -13,3 +13,7 @@ server:
 channel:
     name:
         not_blank: 'Podaj nazwę kanału'
+
+message:
+    content:
+        not_blank: 'Wiadomość nie może być pusta.'
