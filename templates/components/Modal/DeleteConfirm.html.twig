@@ -28,9 +28,11 @@
             <div class="modal-footer border-top border-secondary bg-app-dark">
                 <button type="button" class="btn text-white hover-underline" data-bs-dismiss="modal">Anuluj</button>
 
-                <form method="post" action="{{ actionUrl }}" data-turbo="false">
+                <form method="post" action="{{ actionUrl }}" data-turbo-frame="_top">
                     <input type="hidden" name="{{ tokenName }}" value="{{ csrf_token(csrfTokenId) }}">
-                    <button type="submit" class="btn btn-danger px-4">
+                    <button type="submit"
+                            class="btn btn-danger px-4"
+                            data-turbo-submits-with="Usuwanie...">
                         Tak, usuń
                     </button>
                 </form>

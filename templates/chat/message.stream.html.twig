@@ -1,0 +1,8 @@
+<turbo-stream action="append" target="messages-list">
+    <template>
+        <twig:Chat:MessageItem
+            :message="message"
+        />
+    </template>
+</turbo-stream>
+<turbo-stream action="remove" target="empty-state-container"></turbo-stream>

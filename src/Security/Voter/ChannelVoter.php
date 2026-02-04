@@ -20,7 +20,7 @@ final class ChannelVoter extends Voter
             && $subject instanceof Channel;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, mixed $vote = null): bool
     {
         $user = $token->getUser();
         if (!$user instanceof User) return false;

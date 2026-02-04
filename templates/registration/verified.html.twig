@@ -10,7 +10,6 @@
 
                     <div class="card-elevated p-4 shadow-lg text-center">
 
-                        {# Ikona sukcesu #}
                         <div class="mb-4 text-success">
                             {{ ux_icon('bi:check-circle-fill', {class: 'display-1'}) }}
                         </div>
@@ -22,7 +21,9 @@
                             Możesz się teraz bezpiecznie zalogować.
                         </p>
 
-                        <a href="{{ path('app_login') }}" class="btn btn-primary w-100 py-2 fw-bold">
+                        <a href="{{ path('app_login') }}"
+                           class="btn btn-primary w-100 py-2 fw-bold"
+                           data-turbo-action="replace">
                             Przejdź do logowania
                         </a>
 

@@ -2,7 +2,9 @@
 
 <nav class="app-server-rail d-flex flex-column align-items-center py-3 overflow-auto dark-scrollbar">
     <div class="mb-2">
-        <a href="{{ path('app_dashboard') }}" class="server-icon-wrapper" title="Strona główna">
+        <a href="{{ path('app_dashboard') }}"
+           class="server-icon-wrapper"
+           title="Strona główna">
             <div class="server-icon">
                 {{ ux_icon('bi:house-fill') }}
             </div>
@@ -11,17 +13,21 @@
 
     <div class="server-separator mb-2"></div>
 
-    {% for server in this.servers %}
-        <twig:Server:Icon
-            :server="server"
-            :active="currentServer and currentServer.id == server.id"
-        />
-    {% endfor %}
+    <div  id="server_list">
+        {% for server in this.servers %}
+            <twig:Server:Icon
+                :server="server"
+                :active="currentServer and currentServer.id == server.id"
+            />
+        {% endfor %}
+    </div>
+
 
     <div class="mt-auto"></div>
 
     <div class="mt-2">
-        <a href="{{ path('app_server_create') }}" class="server-icon-wrapper success-hover">
+        <a href="{{ path('app_server_create') }}"
+           class="server-icon-wrapper success-hover">
             <div class="server-icon">
                 {{ ux_icon('bi:plus-lg') }}
             </div>

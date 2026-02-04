@@ -53,7 +53,10 @@
 
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                            <button class="btn btn-primary w-100 mb-3 fw-semibold py-2" type="submit">
+                            <button
+                                class="btn btn-primary w-100 mb-3 fw-semibold py-2"
+                                type="submit"
+                                data-turbo-submits-with="Logowanie...">
                                 Zaloguj się
                             </button>
 

@@ -16,11 +16,16 @@ class ServerType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nazwa serwera',
-                'attr' => ['placeholder' => 'np. Super Ekipa', 'autofocus' => true],
+                'label' => 'server.label_name',
+                'label_attr' => ['class' => 'form-label text-uppercase fw-bold small text-app-secondary'],
+                'attr' => [
+                    'placeholder' => 'server.name_placeholder',
+                    'autofocus' => true,
+                    'class' => 'form-control text-white'
+                ],
                 'constraints' => [
-                    new NotBlank(['message' => 'Podaj nazwę serwera']),
-                    new Length(['max' => 100]),
+                    new NotBlank(message: 'server.name.not_blank'),
+                    new Length(max: 100),
                 ],
             ]);
     }
@@ -29,6 +34,10 @@ class ServerType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Server::class,
+            'attr' => [
+                'class' => 'd-flex flex-column gap-3',
+                'data-turbo-frame' => '_top'
+            ]
         ]);
     }
 }

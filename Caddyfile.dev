@@ -1,0 +1,19 @@
+{
+    debug
+}
+
+:443 {
+    tls internal {
+        on_demand
+    }
+
+    mercure {
+        publisher_jwt {$MERCURE_PUBLISHER_JWT_KEY}
+        subscriber_jwt {$MERCURE_SUBSCRIBER_JWT_KEY}
+        cors_origins {$CORS_ALLOWED_ORIGINS}
+        publish_origins *
+        ui
+    }
+
+    respond /healthz 200
+}

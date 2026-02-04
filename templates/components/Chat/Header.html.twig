@@ -16,7 +16,9 @@
             <small class="text-app-secondary fw-medium d-none d-lg-block">{{ app.user.email }}</small>
             <a href="{{ path('app_logout') }}"
                class="btn btn-sm btn-danger d-flex align-items-center gap-2 fw-medium shadow-sm"
-               title="Wyloguj się">
+               title="Wyloguj się"
+               data-turbo="false">
+
                 {{ ux_icon('bi:box-arrow-right') }}
                 <span class="d-none d-md-inline">Wyloguj</span>
             </a>

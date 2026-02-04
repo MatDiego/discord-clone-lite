@@ -18,44 +18,54 @@ class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $defaultInputClass = 'form-control bg-app-dark border-dark text-white py-2';
+        $defaultLabelClass = 'form-label text-uppercase fw-bold small text-app-secondary';
+
         $builder
             ->add('username', TextType::class, [
-                'label' => 'register.username',
+                'label' => 'register.label_username',
+                'label_attr' => ['class' => $defaultLabelClass],
                 'attr' => [
                     'placeholder' => 'register.username_placeholder',
-                    'class' => 'form-control',
+                    'class' => $defaultInputClass,
                 ],
             ])
             ->add('email', EmailType::class, [
-                'label' => 'register.email',
+                'label' => 'register.label_email',
+                'label_attr' => ['class' => $defaultLabelClass],
                 'attr' => [
                     'placeholder' => 'register.email_placeholder',
+                    'class' => $defaultInputClass,
                 ],
             ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
-                'label' => 'register.password',
+                'label' => 'register.label_password',
+                'label_attr' => ['class' => $defaultLabelClass],
                 'attr' => [
                     'placeholder' => 'register.password_placeholder',
                     'autocomplete' => 'new-password',
+                    'class' => $defaultInputClass,
                 ],
                 'constraints' => [
                     new NotBlank(
-                        message: 'Proszę podać hasło',
+                        message: 'register.password.not_blank',
                     ),
                     new Length(
                         min: 6,
                         max: 4096,
-                        minMessage: 'Hasło musi mieć minimum {{ limit }} znaków',
+                        minMessage: 'register.password.min_length',
                     ),
                 ],
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
-                'label' => 'register.agree_terms',
+                'attr' => [
+                    'class' => 'form-check-input bg-app-dark border-dark',
+                ],
                 'constraints' => [
                     new IsTrue(
-                        message: 'Musisz zaakceptować regulamin.',
+                        message: 'register.agree_terms.is_true',
                     ),
                 ],
             ])
@@ -66,6 +76,9 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'attr' => [
+                'novalidate' => 'novalidate'
+        ]
         ]);
     }
 }

@@ -33,55 +33,41 @@
                             </div>
                         {% endif %}
 
-                        {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                        {{ form_start(registrationForm) }}
 
                         <div class="mb-2">
-                            {{ form_label(registrationForm.email, null, {
-                                'label_attr': {'class': 'form-label text-uppercase fw-bold small text-app-secondary'}
-                            }) }}
-                            {{ form_widget(registrationForm.email, {
-                                'attr': {
-                                    'class': 'form-control bg-app-dark border-dark text-white py-2',
-                                }
-                            }) }}
+                            {{ form_label(registrationForm.email) }}
+                            {{ form_widget(registrationForm.email) }}
                             <div class="small text-danger mt-1">
                                 {{ form_errors(registrationForm.email) }}
                             </div>
                         </div>
 
                         <div class="mb-2">
-                            {{ form_label(registrationForm.username, null, {
-                                'label_attr': {'class': 'form-label text-uppercase fw-bold small text-app-secondary'}
-                            }) }}
-                            {{ form_widget(registrationForm.username, {
-                                'attr': {
-                                    'class': 'form-control bg-app-dark border-dark text-white py-2',
-                                }
-                            }) }}
+                            {{ form_label(registrationForm.username) }}
+                            {{ form_widget(registrationForm.username) }}
                             <div class="small text-danger mt-1">
                                 {{ form_errors(registrationForm.username) }}
                             </div>
                         </div>
                         <div class="mb-3">
-                            {{ form_label(registrationForm.plainPassword, null, {
-                                'label_attr': {'class': 'form-label text-uppercase fw-bold small text-app-secondary'}
-                            }) }}
-                            {{ form_widget(registrationForm.plainPassword, {
-                                'attr': {
-                                    'class': 'form-control bg-app-dark border-dark text-white py-2',
-                                }
-                            }) }}
+                            {{ form_label(registrationForm.plainPassword) }}
+                            {{ form_widget(registrationForm.plainPassword) }}
                             <div class="small text-danger mt-1">
                                 {{ form_errors(registrationForm.plainPassword) }}
                             </div>
                         </div>
 
                         <div class="mb-3 form-check">
-                            {{ form_widget(registrationForm.agreeTerms, {
-                                'attr': {'class': 'form-check-input bg-app-dark border-dark'}
-                            }) }}
-                            <label class="form-check-label small text-app-secondary" for="{{ registrationForm.agreeTerms.vars.id }}">
-                                Akceptuję <a href="#" class="text-app-muted hover-underline">regulamin serwisu</a>.
+
+                            {{ form_widget(registrationForm.agreeTerms) }}
+                            <label
+                                class="form-check-label small text-app-secondary"
+                                for="{{ registrationForm.agreeTerms.vars.id }}">
+                                {{ 'register.agree_terms_text'|trans }}
+                                <a href="#" class="text-app-muted hover-underline">
+                                    {{ 'register.agree_terms_link'|trans }}
+                                </a>.
                             </label>
                             <div class="small text-danger mt-1">
                                 {{ form_errors(registrationForm.agreeTerms) }}
@@ -89,7 +75,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 mb-3 fw-semibold py-2">
-                            {{ 'register.submit'|trans }}
+                            {{ 'register.label_submit'|trans }}
                         </button>
 
                         {{ form_end(registrationForm) }}

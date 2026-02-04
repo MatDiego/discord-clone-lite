@@ -31,7 +31,6 @@ export default class extends Controller {
     }
 
     disconnect() {
-        // Sprzątanie listenerów
         this.triggerTarget.removeEventListener('contextmenu', this.boundOnRightClick);
         this.triggerTarget.removeEventListener('mouseleave', this.boundOnMouseLeave);
         this.triggerTarget.removeEventListener('mouseenter', this.boundOnMouseEnter);

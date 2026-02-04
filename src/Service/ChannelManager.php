@@ -10,8 +10,8 @@ use Doctrine\ORM\Exception\ORMException;
 class ChannelManager
 {
 
-    public function __construct(private EntityManagerInterface $em) {}
-    public function createChannel(Server $server, Channel $channel): void
+    public function __construct(private readonly EntityManagerInterface $em) {}
+    public function saveChannel(Server $server, Channel $channel): void
     {
 
         $channel->setServer($server);
