@@ -16,6 +16,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mercure\Authorization;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -32,17 +33,22 @@ final class ChannelController extends AbstractController
     public function channelView(
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,
-        MessageRepository $messageRepository
-    ): Response
-    {
-
+        MessageRepository $messageRepository,
+        Authorization $authorization,
+        Request $request,
+    ): Response {
         $messages = $messageRepository->findLatestByChannel($channel);
 
-        return $this->render('server/view.html.twig', [
+        $topic = sprintf('http://channels/%s', $channel->getId());
+        $authorization->setCookie($request, [$topic]);
+
+        $response = $this->render('server/view.html.twig', [
             'server' => $server,
             'channel' => $channel,
             'messages' => $messages,
         ]);
+
+        return $response;
     }
 
     /**
