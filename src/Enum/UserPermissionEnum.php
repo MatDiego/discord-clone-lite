@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Enum;
+
+enum UserPermissionEnum: string
+{
+    case MANAGE_SERVER = 'MANAGE_SERVER';
+    case MANAGE_ROLES = 'MANAGE_ROLES';
+    case MANAGE_CHANNELS = 'MANAGE_CHANNELS';
+
+    case KICK_MEMBERS = 'KICK_MEMBERS';
+    case BAN_MEMBERS = 'BAN_MEMBERS';
+    case MANAGE_NICKNAMES = 'MANAGE_NICKNAMES';
+
+    case VIEW_CHANNELS = 'VIEW_CHANNELS';
+    case SEND_MESSAGES = 'SEND_MESSAGES';
+    case MANAGE_MESSAGES = 'MANAGE_MESSAGES';
+
+
+    case CREATE_INVITE = 'CREATE_INVITE';
+}

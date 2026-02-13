@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Factory;
+
+use App\Entity\Permission;
+use App\Enum\UserPermissionEnum;
+use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+
+/**
+ * @extends PersistentProxyObjectFactory<Permission>
+ */
+final class PermissionFactory extends PersistentProxyObjectFactory
+{
+    public function __construct()
+    {
+    }
+
+    #[\Override]
+    public static function class(): string
+    {
+        return Permission::class;
+    }
+
+    #[\Override]
+    protected function defaults(): array|callable
+    {
+        return [
+            'name' => self::faker()->randomElement(UserPermissionEnum::cases()),
+        ];
+    }
+
+    #[\Override]
+    protected function initialize(): static
+    {
+        return $this;
+    }
+}
