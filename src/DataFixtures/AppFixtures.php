@@ -2,44 +2,56 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\ServerMember;
+use App\Enum\UserPermissionEnum;
 use App\Factory\ChannelFactory;
 use App\Factory\MessageFactory;
+use App\Factory\PermissionFactory;
 use App\Factory\ServerFactory;
+use App\Factory\ServerMemberFactory;
 use App\Factory\UserFactory;
-use DateTimeImmutable;
+use App\Factory\UserRoleFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use function Zenstruck\Foundry\faker;
 
 class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
+        foreach (UserPermissionEnum::cases() as $case) {
+            PermissionFactory::createOne(['name' => $case]);
+        }
+
         $admin = UserFactory::createOne([
             'email' => 'admin@discord.test',
             'username' => 'Admin',
             'password' => 'admin123',
-            'roles' => ['ROLE_ADMIN']
         ]);
 
-        $servers = ServerFactory::createMany(3, ['owner' => $admin]);
-        foreach ($servers as $server) {
-            $member = new ServerMember();
-            $member->setUser($admin->_real());
-            $member->setServer($server->_real());
-            $manager->persist($member);
+        ServerFactory::createMany(5, ['owner' => $admin]);
+        $regularUsers = UserFactory::createMany(15);
+
+        foreach ($regularUsers as $user) {
+            $serversToJoin = ServerFactory::randomRange(1, 3);
+            foreach ($serversToJoin as $server) {
+                ServerMemberFactory::createOne([
+                    'user' => $user,
+                    'server' => $server,
+                ]);
+            }
         }
 
-        UserFactory::createMany(10);
+        foreach (ServerFactory::all() as $server) {
+            ChannelFactory::createMany(rand(1, 3), [
+                'server' => $server,
+            ]);
+        }
 
-        MessageFactory::createMany(30, function() {
-            return [
-                'channel' => ChannelFactory::random(),
-                'author' => UserFactory::random(),
-                'createdAt' => DateTimeImmutable::createFromMutable(faker()->dateTimeBetween('-1 month')),
-            ];
-        });
+        foreach (ChannelFactory::all() as $channel) {
+            MessageFactory::createMany(rand(5, 25), [
+                'channel' => $channel,
+            ]);
+        }
+
         $manager->flush();
     }
 }

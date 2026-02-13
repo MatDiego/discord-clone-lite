@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Channel;
 use App\Entity\User;
+use App\Repository\ServerMemberRepository;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -12,11 +13,16 @@ final class ChannelVoter extends Voter
     public const EDIT = 'CHANNEL_EDIT';
     public const VIEW = 'CHANNEL_VIEW';
     public const DELETE = 'CHANNEL_DELETE';
+    public const SEND_MESSAGE = 'CHANNEL_SEND_MESSAGE';
 
+    public function __construct(
+        private readonly ServerMemberRepository $repository)
+    {
+    }
     protected function supports(string $attribute, mixed $subject): bool
     {
 
-        return in_array($attribute, [self::EDIT, self::VIEW, self::DELETE])
+        return in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::SEND_MESSAGE], true)
             && $subject instanceof Channel;
     }
 
@@ -44,6 +50,7 @@ final class ChannelVoter extends Voter
             return true;
         }
 
-        return $channel->getServer()->getMembers()->exists(fn($key, $member) => $member->getUser() === $user);
+        $server = $channel->getServer();
+        return $this->repository->isUserInServer($user, $server);
     }
 }

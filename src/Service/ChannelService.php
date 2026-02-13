@@ -2,22 +2,37 @@
 
 namespace App\Service;
 
+use App\Dto\CreateChannelRequest;
 use App\Entity\Channel;
 use App\Entity\Server;
+use App\Repository\ChannelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 
-class ChannelManager
+class ChannelService
 {
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly ChannelRepository $channelRepository,
+    ) {
+    }
 
-    public function __construct(private readonly EntityManagerInterface $em) {}
-    public function saveChannel(Server $server, Channel $channel): void
+    public function getDefaultChannelForServer(Server $server): ?Channel
+    {
+        return $this->channelRepository->findFirstTextChannel($server);
+    }
+
+    public function createChannel(CreateChannelRequest $dto, Server $server): Channel
     {
 
-        $channel->setServer($server);
+        $channel = new Channel($dto->name, $server);
+        $channel->setType($dto->type);
+        $server->addChannel($channel);
+
         $this->em->persist($channel);
 
         $this->em->flush();
+        return $channel;
     }
 
     public function updateChannel(): void

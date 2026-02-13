@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Channel;
+use App\Entity\Server;
+use App\Enum\ChannelTypeEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,4 +19,16 @@ class ChannelRepository extends ServiceEntityRepository
         parent::__construct($registry, Channel::class);
     }
 
+    public function findFirstTextChannel(Server $server): ?Channel
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.server = :server')
+            ->andWhere('c.type = :type')
+            ->setParameter('server', $server)
+            ->setParameter('type', ChannelTypeEnum::TEXT)
+            ->orderBy('c.createdAt', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

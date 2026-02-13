@@ -4,13 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Channel;
 use App\Entity\Server;
-use App\Enum\ChannelTypeEnum;
 use App\Form\ChannelType;
-use App\Repository\ChannelRepository;
-use App\Repository\MessageRepository;
+use App\Form\CreateChannelType;
 use App\Security\Voter\ChannelVoter;
 use App\Security\Voter\ServerVoter;
-use App\Service\ChannelManager;
+use App\Service\ChannelService;
+use App\Service\MessageService;
 use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,22 +32,20 @@ final class ChannelController extends AbstractController
     public function channelView(
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,
-        MessageRepository $messageRepository,
+        MessageService $messageService,
         Authorization $authorization,
         Request $request,
     ): Response {
-        $messages = $messageRepository->findLatestByChannel($channel);
+        $messages = $messageService->getMessages($channel);
 
         $topic = sprintf('http://channels/%s', $channel->getId());
         $authorization->setCookie($request, [$topic]);
 
-        $response = $this->render('server/view.html.twig', [
+        return $this->render('server/view.html.twig', [
             'server' => $server,
             'channel' => $channel,
             'messages' => $messages,
         ]);
-
-        return $response;
     }
 
     /**
@@ -58,12 +55,9 @@ final class ChannelController extends AbstractController
     #[IsGranted(ServerVoter::VIEW, subject: 'server')]
     public function defaultChannel(
         #[MapEntity(id: 'serverId')] Server $server,
-        ChannelRepository $channelRepo
+        ChannelService $channelService,
     ): Response {
-        $firstChannel = $channelRepo->findOneBy([
-            'server' => $server,
-            'type' => ChannelTypeEnum::TEXT
-        ], ['createdAt' => 'ASC']);
+        $firstChannel = $channelService->getDefaultChannelForServer($server);
 
         if (!$firstChannel) {
             throw $this->createNotFoundException('Ten serwer nie ma dostępnych kanałów.');
@@ -79,22 +73,20 @@ final class ChannelController extends AbstractController
     #[IsGranted(ServerVoter::CREATE_CHANNEL, subject: 'server')]
     public function create(
         Request $request,
-        ChannelManager $channelManager,
+        ChannelService $channelService,
         #[MapEntity(id: 'serverId')] Server $server
     ): Response {
-        $channel = new Channel();
-
-        $form = $this->createForm(ChannelType::class, $channel);
+        $form = $this->createForm(CreateChannelType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $channelManager->saveChannel($server, $channel);
+            $channel = $channelService->createChannel($form->getData(), $server);
             $this->addFlash('success', 'Kanał został utworzony!');
 
             return $this->redirectToRoute('app_chat_channel', [
                 'serverId' => $server->getId(),
                 'channelId' => $channel->getId()
-            ]);
+            ], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('channel/create.html.twig', [
@@ -112,14 +104,14 @@ final class ChannelController extends AbstractController
         Request $request,
         #[MapEntity(id: 'channelId')] Channel $channel,
         #[MapEntity(id: 'serverId')] Server $server,
-        ChannelManager $channelManager
+        ChannelService $channelService
     ): Response {
 
         $form = $this->createForm(ChannelType::class, $channel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $channelManager->updateChannel();
+            $channelService->updateChannel();
 
             $this->addFlash('success', 'Ustawienia kanału zapisane.');
 
@@ -129,7 +121,7 @@ final class ChannelController extends AbstractController
             ]);
         }
 
-        $channelManager->refresh($channel);
+        $channelService->refresh($channel);
 
         return $this->render('channel/edit.html.twig', [
             'channel' => $channel,
@@ -144,11 +136,11 @@ final class ChannelController extends AbstractController
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(id: 'channelId')] Channel $channel,
-        ChannelManager $channelManager
+        ChannelService $channelService
     ): Response {
 
         if ($this->isCsrfTokenValid('delete_channel_' . $channel->getId(), $request->request->get('_csrf_token'))) {
-            $channelManager->removeChannel($channel);
+            $channelService->removeChannel($channel);
             $this->addFlash('success', 'Kanał został usunięty.');
             return $this->redirectToRoute('app_server_default_channel', [
                 'serverId' => $server->getId()

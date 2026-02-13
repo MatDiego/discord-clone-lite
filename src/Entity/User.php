@@ -7,29 +7,34 @@ use Deprecated;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'Istnieje już konto powiązane z tym adresem email.')]
+#[UniqueEntity(fields: ['email'], message: 'user.email.unique')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    private ?Uuid $id;
+    #[ORM\Column(type: UuidType::NAME, unique: true, nullable: false)]
+    private Uuid $id;
 
-    #[ORM\Column(length: 180)]
-    private ?string $email = null;
+    #[ORM\Column(length: 180, nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
+    #[Assert\Length(max: 180)]
+    private string $email;
 
-    #[ORM\Column(length: 50)]
-    private ?string $username = null;
+    #[ORM\Column(length: 50, nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 50)]
+    private string $username;
 
     /**
      * @var list<string> The user roles
@@ -40,8 +45,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
-    private ?string $password = null;
+    #[ORM\Column(nullable: false)]
+    #[Assert\NotBlank]
+    private string $password;
 
     /**
      * @var Collection<int, Server>
@@ -49,33 +55,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Server::class, mappedBy: 'owner')]
     private Collection $ownedServers;
 
-    #[ORM\OneToMany(targetEntity: ServerMember::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: ServerMember::class, mappedBy: 'user', cascade: ['persist'], orphanRemoval: true)]
     private Collection $memberships;
-
-    /**
-     * @var Collection<int, Message>
-     */
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author')]
-    private Collection $messages;
 
     #[ORM\Column]
     private bool $isVerified = false;
 
-    public function __construct()
+    public function __construct(string $email, string $username, string $password)
     {
         $this->id = Uuid::v7();
+        $this->email = $email;
+        $this->username = $username;
+        $this->password = $password;
         $this->roles = [];
         $this->ownedServers = new ArrayCollection();
         $this->memberships = new ArrayCollection();
-        $this->messages = new ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -87,7 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUsername(): ?string
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -106,7 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 
     /**
@@ -134,7 +136,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -149,7 +151,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
 
         return $data;
     }
@@ -180,48 +182,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeOwnedServer(Server $ownedServer): static
     {
-        if ($this->ownedServers->removeElement($ownedServer)) {
-            // set the owning side to null (unless already changed)
-            if ($ownedServer->getOwner() === $this) {
-                $ownedServer->setOwner(null);
-            }
-        }
-
+        $this->ownedServers->removeElement($ownedServer);
         return $this;
     }
 
     public function getMemberships(): Collection
     {
         return $this->memberships;
-    }
-
-    /**
-     * @return Collection<int, Message>
-     */
-    public function getMessages(): Collection
-    {
-        return $this->messages;
-    }
-
-    public function addMessage(Message $message): static
-    {
-        if (!$this->messages->contains($message)) {
-            $this->messages->add($message);
-            $message->setAuthor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMessage(Message $message): static
-    {
-        if ($this->messages->removeElement($message)) {
-            if ($message->getAuthor() === $this) {
-                $message->setAuthor(null);
-            }
-        }
-
-        return $this;
     }
 
     public function isVerified(): bool

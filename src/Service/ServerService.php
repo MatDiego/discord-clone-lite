@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Dto\CreateServerRequest;
 use App\Entity\Channel;
 use App\Entity\Server;
 use App\Entity\ServerMember;
@@ -9,29 +10,25 @@ use App\Entity\User;
 use App\Enum\ChannelTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 
-class ServerManager
+class ServerService
 {
-    public function __construct(private EntityManagerInterface $em) {}
-
-    public function createServer(Server $server, User $owner): void
+    public function __construct(private EntityManagerInterface $em)
     {
-        $server->setOwner($owner);
+    }
 
-        $generalChannel = new Channel();
-        $generalChannel->setName('ogólny');
-        $generalChannel->setType(ChannelTypeEnum::TEXT);
-        $generalChannel->setServer($server);
+    public function createServer(CreateServerRequest $dto, User $owner): Server
+    {
+        $server = new Server($dto->name, $owner);
+        $generalChannel = new Channel('ogólny', $server);
         $server->addChannel($generalChannel);
-
-        $member = new ServerMember();
-        $member->setUser($owner);
-        $member->setServer($server);
-        $server->addMember($member);
+        $member = new ServerMember($server, $owner);
 
         $this->em->persist($server);
         $this->em->persist($generalChannel);
         $this->em->persist($member);
         $this->em->flush();
+
+        return $server;
     }
 
     public function removeServer(Server $server): void

@@ -22,7 +22,6 @@ channel:
         text: 'Tekstowy'
         voice: 'Głosowy'
 
-
 server:
     label_name: 'Nazwa serwera'
     name_placeholder: 'np. Ekipszta'

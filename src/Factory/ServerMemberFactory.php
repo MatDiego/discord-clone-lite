@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\ServerMember;
+use DateTimeImmutable;
 use Override;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
@@ -25,7 +26,9 @@ final class ServerMemberFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
+            'user' => UserFactory::new(),
             'server' => ServerFactory::new(),
+            'joinedAt' => DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now')),
         ];
     }
 

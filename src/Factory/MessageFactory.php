@@ -6,6 +6,7 @@ use App\Entity\Message;
 use DateTimeImmutable;
 use Override;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use function Zenstruck\Foundry\lazy;
 
 /**
  * @extends PersistentProxyObjectFactory<Message>
@@ -26,10 +27,10 @@ final class MessageFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'author' => UserFactory::new(),
-            'channel' => ChannelFactory::new(),
             'content' => self::faker()->realText(rand(20, 200)),
-            'createdAt' => DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year', 'now')),
+            'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 month', 'now')),
+            'channel' => lazy(fn() => ChannelFactory::random()),
+            'author' => lazy(fn() => UserFactory::random()),
         ];
     }
 

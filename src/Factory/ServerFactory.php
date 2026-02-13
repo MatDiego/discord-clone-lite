@@ -36,11 +36,22 @@ final class ServerFactory extends PersistentProxyObjectFactory
     protected function initialize(): static
     {
         return $this
-            ->afterInstantiate(function(Server $server): void {
+            ->afterInstantiate(function (Server $server): void {
                 ChannelFactory::createOne([
                     'name' => 'ogólny',
                     'type' => ChannelTypeEnum::TEXT,
                     'server' => $server,
+                ]);
+
+                ServerMemberFactory::findOrCreate([
+                    'user' => $server->getOwner(),
+                    'server' => $server,
+                ]);
+
+                UserRoleFactory::createOne([
+                    'name' => 'Użytkownik',
+                    'server' => $server,
+                    'position' => 10,
                 ]);
             });
     }

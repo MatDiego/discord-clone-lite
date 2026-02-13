@@ -3,13 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Channel;
-use App\Entity\Message;
 use App\Entity\Server;
 use App\Entity\User;
-use App\Form\MessageType;
-use App\Repository\MessageRepository;
+use App\Form\CreateMessageType;
 use App\Security\Voter\ChannelVoter;
-use App\Service\MessageManager;
+use App\Service\MessageService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,37 +34,35 @@ final class MessageController extends AbstractController
         Request $request,
         #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,
         #[MapEntity(id: 'serverId')] Server $server,
-        MessageManager $messageManager,
-        MessageRepository $messageRepository
-    ): Response
-    {
-        $message = new Message();
-        $form = $this->createForm(MessageType::class, $message, [
-            'channel' => $channel ]);
+        MessageService $messageService
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $form = $this->createForm(CreateMessageType::class, null, [
+            'channel' => $channel,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            /** @var User $user */
-            $user = $this->getUser();
-            $messageManager->postMessage($message, $channel, $user);
-
+            $messageService->postMessage($form->getData(), $channel, $user);
 
             if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
-                return new Response('');
+                return new Response('', Response::HTTP_NO_CONTENT);
             }
         }
-        $messages = $messageRepository->findLatestByChannel($channel);
-        $response = $this->render('server/view.html.twig',
-        [
-            'channel' => $channel,
-            'server' => $server,
-            'messages' => $messages,
-        ]);
+
+        $messages = $messageService->getMessages($channel);
+        $response = $this->render(
+            'server/view.html.twig',
+            [
+                'channel' => $channel,
+                'server' => $server,
+                'messages' => $messages,
+            ]
+        );
 
         $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         return $response;
     }
-
 }

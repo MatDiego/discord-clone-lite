@@ -4,7 +4,7 @@ namespace App\Twig\Components\Server;
 
 use App\Entity\Channel;
 use App\Entity\Server;
-use App\Form\MessageType;
+use App\Form\CreateMessageType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -18,7 +18,8 @@ class ChatInput
 
     public function __construct(
         private readonly FormFactoryInterface $formFactory
-    ) {}
+    ) {
+    }
 
     public function mount(Server $server, Channel $channel): void
     {
@@ -26,7 +27,7 @@ class ChatInput
         $this->channel = $channel;
 
         $this->form = $this->formFactory
-            ->create(MessageType::class, null, [
+            ->create(CreateMessageType::class, null, [
                 'channel' => $channel
             ])
             ->createView();
