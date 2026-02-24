@@ -51,3 +51,10 @@ role:
     position:
         positive_or_zero: 'Pozycja musi być liczbą nieujemną.'
 
+override:
+    target_type:
+        not_blank: 'Typ celu nadpisania jest wymagany.'
+        invalid: 'Nieprawidłowy typ celu. Dozwolone wartości: rola, członek.'
+    target_id:
+        not_blank: 'Identyfikator celu nadpisania jest wymagany.'
+
