@@ -4,7 +4,8 @@ namespace App\Security\Voter;
 
 use App\Entity\Server;
 use App\Entity\User;
-use App\Repository\ServerMemberRepository;
+use App\Enum\UserPermissionEnum;
+use App\Service\PermissionService;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -16,10 +17,9 @@ final class ServerVoter extends Voter
     public const CREATE_CHANNEL = 'SERVER_CREATE_CHANNEL';
 
     public function __construct(
-        private readonly ServerMemberRepository $repository)
-    {
+        private readonly PermissionService $permissionService,
+    ) {
     }
-
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -30,33 +30,18 @@ final class ServerVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, mixed $vote = null): bool
     {
         $user = $token->getUser();
-        if (!$user instanceof User) return false;
+        if (!$user instanceof User)
+            return false;
+
+        /** @var Server $server */
         $server = $subject;
 
-        return match($attribute) {
-            self::EDIT, self::DELETE => $this->canEdit($server, $user),
-            self::VIEW => $this->canView($server, $user),
-            self::CREATE_CHANNEL => $this->canCreateChannel($server, $user),
+        return match ($attribute) {
+            self::VIEW => $this->permissionService->hasServerPermission($user, $server, UserPermissionEnum::VIEW_CHANNELS),
+            self::EDIT => $this->permissionService->hasServerPermission($user, $server, UserPermissionEnum::MANAGE_SERVER),
+            self::DELETE => $this->permissionService->isOwner($user, $server),
+            self::CREATE_CHANNEL => $this->permissionService->hasServerPermission($user, $server, UserPermissionEnum::MANAGE_CHANNELS),
             default => false,
         };
-    }
-
-    private function canEdit(Server $server, User $user): bool
-    {
-        return $server->getOwner() === $user;
-    }
-
-    private function canView(Server $server, User $user): bool
-    {
-        if ($this->canEdit($server, $user)) {
-            return true;
-        }
-
-        return $this->repository->isUserInServer($user, $server);
-    }
-
-    private function canCreateChannel(Server $server, User $user): bool
-    {
-        return $server->getOwner() === $user;
     }
 }
