@@ -27,6 +27,7 @@ class CreateChannelType extends AbstractType
             ->add('type', EnumType::class, [
                 'class' => ChannelTypeEnum::class,
                 'label' => 'channel.label_type',
+                'data' => ChannelTypeEnum::TEXT,
                 'expanded' => true,
                 'multiple' => false,
                 'choice_attr' => function () {

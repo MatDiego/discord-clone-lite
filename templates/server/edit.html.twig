@@ -15,7 +15,7 @@
                             Zarządzaj podstawowymi ustawieniami i wyglądem.
                         </p>
                     </div>
-                    <div class="card-elevated p-4 shadow-sm mb-5">
+                    <div class="card-elevated p-4 mb-5">
                         {% include 'server/_form.html.twig' with {
                             'cancelUrl': path('app_server_default_channel', { 'serverId': server.id })
                         } %}
