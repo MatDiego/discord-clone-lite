@@ -110,4 +110,9 @@ class ChannelOverride
         $this->allow = $allow;
         return $this;
     }
+
+    public function getPermissionValue(): string
+    {
+        return $this->permission->getValue();
+    }
 }

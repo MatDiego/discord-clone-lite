@@ -18,4 +18,9 @@ enum UserPermissionEnum: string
 
 
     case CREATE_INVITE = 'CREATE_INVITE';
+
+    case MANAGE_CHANNEL = 'MANAGE_CHANNEL';
+    case MANAGE_PERMISSIONS = 'MANAGE_PERMISSIONS';
+    case VIEW_CHANNEL = 'VIEW_CHANNEL';
+    case ADD_MEMBER = 'ADD_MEMBER';
 }

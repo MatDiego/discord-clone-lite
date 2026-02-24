@@ -4,8 +4,6 @@ namespace App\Entity;
 
 use App\Enum\UserPermissionEnum;
 use App\Repository\PermissionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
@@ -40,5 +38,10 @@ class Permission
     public function setName(UserPermissionEnum $name): void
     {
         $this->name = $name;
+    }
+
+    public function getValue(): string
+    {
+        return $this->name->value;
     }
 }

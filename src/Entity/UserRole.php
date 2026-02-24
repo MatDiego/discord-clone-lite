@@ -108,4 +108,9 @@ class UserRole
         $this->rolePermissions->removeElement($rolePermission);
         return $this;
     }
+
+    public function getDisplayName(): string
+    {
+        return $this->getName();
+    }
 }

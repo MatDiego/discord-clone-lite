@@ -17,11 +17,9 @@ class ServerMemberRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ServerMember::class);
     }
-
-    public function isUserInServer(User $user, Server $server): bool
+    public function findByUserAndServer(User $user, Server $server): ?ServerMember
     {
-        return (bool) $this->createQueryBuilder('sm')
-            ->select('1')
+        return $this->createQueryBuilder('sm')
             ->where('sm.user = :user')
             ->andWhere('sm.server = :server')
             ->setParameter('server', $server)
@@ -29,6 +27,32 @@ class ServerMemberRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @return ServerMember[]
+     */
+    public function findByServer(Server $server): array
+    {
+        return $this->createQueryBuilder('sm')
+            ->where('sm.server = :server')
+            ->setParameter('server', $server)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return ServerMember[]
+     */
+    public function findByServerExcludingOwner(Server $server): array{
+        $qb = $this->createQueryBuilder('sm');
+        return $qb
+            ->where('sm.server = :server')
+            ->andWhere('sm.user != :owner')
+            ->setParameter('server', $server)
+            ->setParameter('owner', $server->getOwner())
+            ->getQuery()
+            ->getResult();
     }
 
 }

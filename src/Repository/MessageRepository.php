@@ -17,6 +17,9 @@ class MessageRepository extends ServiceEntityRepository
         parent::__construct($registry, Message::class);
     }
 
+    /**
+     * @return Message[]
+     */
     public function findLatestByChannel(Channel $channel, int $limit = 50): array
     {
         $messages = $this->createQueryBuilder('m')

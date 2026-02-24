@@ -97,4 +97,10 @@ class ServerMember
 
         return $this;
     }
+
+    public function getDisplayName(): string
+    {
+        $user = $this->getUser();
+        return '@' . $user->getUsername();
+    }
 }
