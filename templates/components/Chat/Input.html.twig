@@ -2,29 +2,37 @@
 <div class="chat-input-area p-4">
     {% if channel and server %}
 
+        {% if canSendMessages %}
+            {{ form_start(form, {
+                'action': path('app_chat_send', {serverId: server.id, channelId: channel.id}),
+            }) }}
+                <div class="chat-input-bar d-flex align-items-center flex-grow-1 overflow-hidden rounded-3">
 
-        {{ form_start(form, {
-            'action': path('app_chat_send', {serverId: server.id, channelId: channel.id}),
-        }) }}
-            <div class="chat-input-bar d-flex align-items-center flex-grow-1 overflow-hidden rounded-3">
+                    {{ form_widget(form.content) }}
 
-                {{ form_widget(form.content) }}
+                    <button class="chat-action-btn btn btn-link text-decoration-none border-0"
+                            type="button"
+                            title="Dodaj załącznik">
+                        <span class="chat-attach-icon d-flex">
+                             {{ ux_icon('bi:plus-circle-fill', { class: 'fs-5' }) }}
+                        </span>
+                    </button>
+                </div>
 
-                <button class="chat-action-btn btn btn-link text-decoration-none border-0"
-                        type="button"
-                        title="Dodaj załącznik">
-                    <span class="chat-attach-icon d-flex">
-                         {{ ux_icon('bi:plus-circle-fill', { class: 'fs-5' }) }}
-                    </span>
+                <button class="chat-action-btn btn btn-primary rounded-3 shadow-sm flex-shrink-0"
+                        type="submit"
+                        title="Wyślij">
+                    {{ ux_icon('bi:send-fill', { class: 'fs-6' }) }}
                 </button>
+            {{ form_end(form) }}
+        {% else %}
+            <div class="chat-input-bar d-flex align-items-center flex-grow-1 overflow-hidden rounded-3 chat-input-disabled">
+                <div class="chat-input-blocked d-flex align-items-center gap-2 w-100 px-3 py-2">
+                    {{ ux_icon('bi:slash-circle', { class: 'fs-5 text-danger opacity-75' }) }}
+                    <span class="text-app-muted fw-medium small">Nie masz uprawnień do wysyłania wiadomości na tym kanale</span>
+                </div>
             </div>
-
-            <button class="chat-action-btn btn btn-primary rounded-3 shadow-sm flex-shrink-0"
-                    type="submit"
-                    title="Wyślij">
-                {{ ux_icon('bi:send-fill', { class: 'fs-6' }) }}
-            </button>
-        {{ form_end(form) }}
+        {% endif %}
 
     {% else %}
 

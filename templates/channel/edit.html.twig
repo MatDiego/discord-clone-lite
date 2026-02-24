@@ -4,17 +4,25 @@
 
 {% block content %}
 
-    <div class="flex-grow-1 overflow-auto dark-scrollbar">
+    <div class="flex-grow-1 overflow-auto dark-scrollbar min-h-0">
         <div class="container py-5">
 
-            <div class="mb-4">
-                <h2 class="fw-bold text-white mb-1">Ustawienia kanału</h2>
-                <p class="text-app-secondary small">
-                    Edytujesz kanał <span class="fw-bold text-white">#{{ channel.name }}</span>
-                </p>
+            <div class="mb-4 d-flex align-items-center justify-content-between">
+                <div>
+                    <h2 class="fw-bold text-white mb-1">Ustawienia kanału</h2>
+                    <p class="text-app-secondary small mb-0">
+                        Edytujesz kanał <span class="fw-bold text-white">#{{ channel.name }}</span>
+                    </p>
+                </div>
+                {% if is_granted('CHANNEL_MANAGE_PERMISSIONS', channel) %}
+                <a href="{{ path('app_channel_permissions', {serverId: server.id, channelId: channel.id}) }}"
+                   class="btn btn-sm btn-outline-primary d-flex align-items-center gap-2">
+                    {{ ux_icon('bi:shield-lock') }} Uprawnienia
+                </a>
+                {% endif %}
             </div>
 
-            <div class="card-elevated p-4 shadow-sm mb-5">
+            <div class="card-elevated p-4 mb-5">
                 {% include 'channel/_form.html.twig' with {
                     'button_label': 'Zapisz zmiany'
                 } %}
