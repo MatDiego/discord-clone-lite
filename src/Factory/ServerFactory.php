@@ -47,12 +47,6 @@ final class ServerFactory extends PersistentProxyObjectFactory
                     'user' => $server->getOwner(),
                     'server' => $server,
                 ]);
-
-                UserRoleFactory::createOne([
-                    'name' => 'Użytkownik',
-                    'server' => $server,
-                    'position' => 10,
-                ]);
             });
     }
 }

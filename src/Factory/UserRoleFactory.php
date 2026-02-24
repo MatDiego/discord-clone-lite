@@ -10,11 +10,6 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
  */
 final class UserRoleFactory extends PersistentProxyObjectFactory
 {
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
-     *
-     * @todo inject services if required
-     */
     public function __construct()
     {
     }
@@ -25,29 +20,19 @@ final class UserRoleFactory extends PersistentProxyObjectFactory
         return UserRole::class;
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
-     *
-     * @todo add your default values here
-     */
     #[\Override]
     protected function defaults(): array|callable
     {
         return [
-            'name' => self::faker()->jobTitle(),
-            'position' => self::faker()->numberBetween(1, 100),
+            'name' => self::faker()->word(),
+            'position' => self::faker()->randomDigitNotZero(),
             'server' => ServerFactory::new(),
         ];
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
-     */
     #[\Override]
     protected function initialize(): static
     {
-        return $this
-            // ->afterInstantiate(function(UserRole $userRole): void {})
-        ;
+        return $this;
     }
 }
