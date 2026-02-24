@@ -10,7 +10,8 @@
 
 {% block content %}
             <twig:Chat:Header
-                :channel="channel"
+                :currentChannel="channel"
+                :currentServer="server"
             />
 
             <twig:Chat:MessageList

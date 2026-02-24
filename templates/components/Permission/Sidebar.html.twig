@@ -1,0 +1,44 @@
+<div class="d-flex flex-column p-3 card-elevated perm-card">
+    <h6 class="d-flex align-items-center gap-2 mb-3 fw-bold text-app-primary">
+        {{ ux_icon('bi:list-ul') }} Nadpisania
+    </h6>
+
+    <div class="mb-3">
+        <twig:Permission:TargetDropdown :server="server" :channel="channel" />
+    </div>
+
+    <div class="overflow-auto dark-scrollbar pe-1">
+        {% for group in this.overrideGroups.all %}
+            {% set isSelected = (selected == group.getKey()) %}
+
+            {% set toggleUrl = isSelected
+                ? path('app_channel_permissions', {serverId: server.id, channelId: channel.id})
+                : path('app_channel_permissions', {serverId: server.id, channelId: channel.id, selected: group.getKey()})
+            %}
+            <a href="{{ toggleUrl }}"
+               class="d-flex align-items-center justify-content-between p-2 mb-1 rounded transition-base text-decoration-none
+               {{ isSelected ? 'bg-primary bg-opacity-10 border border-primary border-opacity-25' : 'hover-bg-dark' }}">
+
+                <div class="d-flex align-items-center gap-2 min-w-0">
+                    {% set iconColor = isSelected
+                        ? (group.type == 'role' ? 'text-primary' : 'text-info')
+                        : 'text-app-muted'
+                    %}
+                    {{ ux_icon(group.type == 'role' ? 'bi:shield-fill' : 'bi:person-fill',
+                        {class: iconColor}) }}
+                    <span class="small fw-medium text-truncate {{ isSelected ? 'text-white' : 'text-app-secondary' }}">
+                        {{ group.label }}
+                    </span>
+                </div>
+
+                <span class="badge rounded-pill bg-dark border border-secondary text-app-muted perm-text-xs">
+                    {{ group.getOverrideCount() }}
+                </span>
+            </a>
+        {% else %}
+            <div class="text-app-muted text-center py-5 small">
+                Brak aktywnych nadpisań
+            </div>
+        {% endfor %}
+    </div>
+</div>
