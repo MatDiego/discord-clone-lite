@@ -29,7 +29,7 @@ final class MessageController extends AbstractController
      * @throws LoaderError
      */
     #[Route('/send', name: 'app_chat_send', methods: ['POST'])]
-    #[IsGranted(ChannelVoter::VIEW, subject: 'channel')]
+    #[IsGranted(ChannelVoter::SEND_MESSAGES, subject: 'channel')]
     public function send(
         Request $request,
         #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,

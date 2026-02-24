@@ -1,0 +1,81 @@
+<div class="d-flex flex-column member-list-panel" id="memberListPanel">
+    <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom member-list-header">
+        <span class="small fw-bold text-uppercase text-app-secondary">
+            Członkowie — {{ members|length }}
+        </span>
+    </div>
+
+    <div class="flex-grow-1 overflow-auto p-2 dark-scrollbar">
+        {% for member in members %}
+            {% set isOwner = member.user.id == server.owner.id %}
+
+            <div {{ stimulus_controller('context_menu') }}>
+                <div class="dropdown">
+                    <div class="d-flex align-items-center px-2 py-2 mb-1 rounded member-item"
+                         data-context-menu-target="trigger"
+                         aria-expanded="false">
+                        <div class="position-relative flex-shrink-0 me-2">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle fw-semibold text-white avatar
+                                avatar-gradient-{{ avatar_color(member.user.username) }}">
+                                {{ member.user.username|slice(0, 1)|upper }}
+                            </div>
+                            <span class="status-indicator status-online"></span>
+                        </div>
+
+                        <div class="flex-grow-1 overflow-hidden">
+                            <div class="d-flex align-items-center gap-1">
+                                <span class="small fw-medium text-truncate">{{ member.user.username }}</span>
+                                {% if isOwner %}
+                                    {{ ux_icon('bi:star-fill', {class: 'text-warning owner-badge'}) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-menu dropdown-menu-dark" data-context-menu-target="menu">
+                        <button class="d-flex align-items-center gap-2 dropdown-item"
+                                type="button"
+                                disabled
+                                title="Wkrótce dostępne">
+                            {{ ux_icon('bi:person-fill', {class: 'fs-6'}) }}
+                            Profil
+                        </button>
+
+                        <button class="d-flex align-items-center gap-2 dropdown-item"
+                                type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#rolesModal"
+                                data-member-username="{{ member.user.username }}"
+                                data-member-id="{{ member.id }}"
+                                data-server-id="{{ member.server.id }}">
+                            {{ ux_icon('bi:shield-fill', {class: 'fs-6'}) }}
+                            Role
+                        </button>
+
+                        {% if not isOwner %}
+                            <div class="dropdown-divider"></div>
+
+                            <button class="d-flex align-items-center gap-2 text-warning dropdown-item"
+                                    type="button"
+                                    disabled
+                                    title="Wkrótce dostępne">
+                                {{ ux_icon('bi:box-arrow-right', {class: 'fs-6'}) }}
+                                Wyrzuć
+                            </button>
+
+                            <button class="d-flex align-items-center gap-2 text-danger dropdown-item"
+                                    type="button"
+                                    disabled
+                                    title="Wkrótce dostępne">
+                                {{ ux_icon('bi:hammer', {class: 'fs-6'}) }}
+                                Zbanuj
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% include 'components/Server/_roles_modal.html.twig' %}

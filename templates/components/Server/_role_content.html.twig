@@ -1,0 +1,37 @@
+<turbo-frame id="member-roles-frame">
+    <div class="modal-content bg-app-elevated text-app-primary border border-secondary">
+        <div class="modal-header border-bottom border-secondary">
+            <h5 class="d-flex align-items-center gap-2 fw-bold modal-title">
+                {{ ux_icon('bi:shield-fill', {class: 'fs-5 text-primary'}) }}
+                Role — {{ member.user.username }}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-3">
+            {% if member.memberRoles is not empty %}
+                <div class="d-flex flex-wrap gap-1">
+                    {% for memberRole in member.memberRoles %}
+                        <div class="d-flex align-items-center gap-1 px-2 py-1 rounded bg-app-dark border border-secondary">
+                            {{ ux_icon('bi:shield-fill', {class: 'text-primary'}) }}
+                            <span class="small fw-medium text-app-secondary">{{ memberRole.role.name }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="d-flex flex-column align-items-center py-3 text-app-muted">
+                    {{ ux_icon('bi:shield-x', {class: 'fs-3 mb-2 opacity-50'}) }}
+                    <span class="small">Brak przypisanych ról</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="modal-footer border-top border-secondary bg-app-dark">
+            <button type="button" class="btn text-white" data-bs-dismiss="modal">Zamknij</button>
+            <button type="button" class="btn btn-primary d-flex align-items-center gap-2" disabled title="Wkrótce dostępne">
+                {{ ux_icon('bi:pencil-fill', {class: 'fs-6'}) }}
+                Edytuj role
+            </button>
+        </div>
+    </div>
+</turbo-frame>

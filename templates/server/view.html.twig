@@ -9,6 +9,8 @@
 {% endblock %}
 
 {% block content %}
+    <div class="d-flex flex-grow-1 overflow-hidden">
+        <div class="chat-column">
             <twig:Chat:Header
                 :currentChannel="channel"
                 :currentServer="server"
@@ -23,5 +25,10 @@
                 :server="server"
                 :channel="channel"
             />
+        </div>
 
+        {% if server %}
+            <twig:Server:MemberList :server="server" />
+        {% endif %}
+    </div>
 {% endblock %}
