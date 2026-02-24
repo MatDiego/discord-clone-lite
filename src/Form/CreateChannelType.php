@@ -29,7 +29,6 @@ class CreateChannelType extends AbstractType
                 'label' => 'channel.label_type',
                 'expanded' => true,
                 'multiple' => false,
-                'data' => ChannelTypeEnum::TEXT,
                 'choice_attr' => function () {
                     return ['class' => 'btn-check'];
                 },

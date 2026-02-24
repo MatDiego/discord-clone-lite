@@ -28,7 +28,7 @@ final class ChannelController extends AbstractController
     #[Route('/{channelId}',
         name: 'app_chat_channel',
         requirements: ['serverId' => Requirement::UUID_V7, 'channelId' => Requirement::UUID_V7])]
-    #[IsGranted(ChannelVoter::VIEW, subject: 'channel')]
+    #[IsGranted(ChannelVoter::VIEW_CHANNEL, subject: 'channel')]
     public function channelView(
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,
@@ -99,7 +99,7 @@ final class ChannelController extends AbstractController
      * @throws ORMException
      */
     #[Route('/{channelId}/edit', name: 'app_channel_edit', requirements: ['serverId' => Requirement::UUID_V7])]
-    #[IsGranted(ChannelVoter::EDIT, subject: 'channel')]
+    #[IsGranted(ChannelVoter::EDIT_CHANNEL, subject: 'channel')]
     public function edit(
         Request $request,
         #[MapEntity(id: 'channelId')] Channel $channel,
@@ -131,7 +131,7 @@ final class ChannelController extends AbstractController
     }
 
     #[Route('/{channelId}/delete', name: 'app_channel_delete', requirements: ['serverId' => Requirement::UUID_V7], methods: ['POST'])]
-    #[IsGranted(ChannelVoter::DELETE, subject: 'channel')]
+    #[IsGranted(ChannelVoter::DELETE_CHANNEL, subject: 'channel')]
     public function delete(
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server,
