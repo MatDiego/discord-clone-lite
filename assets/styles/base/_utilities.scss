@@ -2,9 +2,10 @@
     text-decoration: underline !important;
 }
 
-.dark-scrollbar {
-    @include dark-scrollbar;
+.min-h-0 {
+    min-height: 0;
+}
 
-    overflow-y: auto;
-    overflow-x: hidden;
+.dark-scrollbar {
+    @include dark-scrollbar($app-bg-elevated);
 }
