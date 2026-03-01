@@ -19,8 +19,28 @@ class PermissionRepository extends ServiceEntityRepository
         parent::__construct($registry, Permission::class);
     }
 
-    public function findByName(UserPermissionEnum $name): ?Permission
+    /**
+     * @param string[] $names
+     * @return Permission[]
+     */
+    public function findByNames(array $names): array
     {
-        return $this->findOneBy(['name' => $name]);
+        $enums = [];
+        foreach ($names as $name) {
+            $enum = UserPermissionEnum::tryFrom($name);
+            if ($enum) {
+                $enums[] = $enum;
+            }
+        }
+
+        if (empty($enums)) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('p')
+            ->where('p.name IN (:names)')
+            ->setParameter('names', $enums)
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -9,13 +9,17 @@ use App\Entity\Channel;
 use App\Entity\Server;
 use App\Entity\ServerMember;
 use App\Entity\User;
-use App\Enum\ChannelTypeEnum;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ChannelRepository;
+use App\Repository\ServerMemberRepository;
+use App\Repository\ServerRepository;
 
 final readonly class ServerService
 {
-    public function __construct(private EntityManagerInterface $em)
-    {
+    public function __construct(
+        private ServerRepository $serverRepository,
+        private ChannelRepository $channelRepository,
+        private ServerMemberRepository $serverMemberRepository,
+    ) {
     }
 
     public function createServer(CreateServerRequest $dto, User $owner): Server
@@ -25,22 +29,22 @@ final readonly class ServerService
         $server->addChannel($generalChannel);
         $member = new ServerMember($server, $owner);
 
-        $this->em->persist($server);
-        $this->em->persist($generalChannel);
-        $this->em->persist($member);
-        $this->em->flush();
+        $this->serverRepository->add($server);
+        $this->channelRepository->add($generalChannel);
+        $this->serverMemberRepository->add($member);
+        $this->serverRepository->flush();
 
         return $server;
     }
 
     public function removeServer(Server $server): void
     {
-        $this->em->remove($server);
-        $this->em->flush();
+        $this->serverRepository->remove($server);
+        $this->serverRepository->flush();
     }
 
     public function updateServer(): void
     {
-        $this->em->flush();
+        $this->serverRepository->flush();
     }
 }

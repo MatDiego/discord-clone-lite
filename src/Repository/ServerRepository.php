@@ -30,4 +30,19 @@ class ServerRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function add(Server $server): void
+    {
+        $this->getEntityManager()->persist($server);
+    }
+
+    public function remove(Server $server): void
+    {
+        $this->getEntityManager()->remove($server);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
 }

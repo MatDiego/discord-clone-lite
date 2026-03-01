@@ -32,4 +32,26 @@ class ChannelRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function add(Channel $channel): void
+    {
+        $this->getEntityManager()->persist($channel);
+    }
+
+    public function remove(Channel $channel): void
+    {
+        $this->getEntityManager()->remove($channel);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
+    public function refresh(Channel $channel): void
+    {
+        if ($this->getEntityManager()->contains($channel)) {
+            $this->getEntityManager()->refresh($channel);
+        }
+    }
 }

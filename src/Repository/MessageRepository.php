@@ -36,4 +36,14 @@ class MessageRepository extends ServiceEntityRepository
 
         return array_reverse($messages);
     }
+
+    public function add(Message $message): void
+    {
+        $this->getEntityManager()->persist($message);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
 }

@@ -9,7 +9,6 @@ use App\Entity\Channel;
 use App\Entity\Message;
 use App\Entity\User;
 use App\Repository\MessageRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Twig\Environment;
@@ -17,12 +16,9 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class MessageService
+final readonly class MessageService
 {
     public function __construct(
-        private readonly HubInterface $hub,
-        private readonly Environment $twig,
-        private readonly MessageRepository $messageRepository,
         private HubInterface $hub,
         private Environment $twig,
         private MessageRepository $messageRepository,
@@ -43,8 +39,8 @@ class MessageService
     {
         $message = new Message($dto->content, $user, $channel);
 
-        $this->em->persist($message);
-        $this->em->flush();
+        $this->messageRepository->add($message);
+        $this->messageRepository->flush();
 
 
         $content = $this->twig->render('chat/message.stream.html.twig', [

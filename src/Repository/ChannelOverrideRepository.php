@@ -95,4 +95,14 @@ class ChannelOverrideRepository extends ServiceEntityRepository
 
         $qb->getQuery()->execute();
     }
+
+    public function add(ChannelOverride $override): void
+    {
+        $this->getEntityManager()->persist($override);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
 }

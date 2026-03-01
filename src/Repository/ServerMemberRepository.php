@@ -58,4 +58,18 @@ class ServerMemberRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function add(ServerMember $member): void
+    {
+        $this->getEntityManager()->persist($member);
+    }
+
+    public function remove(ServerMember $member): void
+    {
+        $this->getEntityManager()->remove($member);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
 }

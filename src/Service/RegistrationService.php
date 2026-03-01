@@ -6,8 +6,8 @@ namespace App\Service;
 
 use App\Dto\RegistrationRequest;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -17,8 +17,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 final readonly class RegistrationService
 {
     public function __construct(
-        private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly EmailVerifier $emailVerifier,
+        private UserRepository $userRepository,
         private UserPasswordHasherInterface $passwordHasher,
         private EmailVerifier $emailVerifier,
     ) {
@@ -32,8 +31,8 @@ final readonly class RegistrationService
         $user = new User($dto->email, $dto->username, '');
         $user->setPassword($this->passwordHasher->hashPassword($user, $dto->plainPassword));
 
-        $this->em->persist($user);
-        $this->em->flush();
+        $this->userRepository->add($user);
+        $this->userRepository->flush();
 
         $this->sendVerificationEmail($user);
 

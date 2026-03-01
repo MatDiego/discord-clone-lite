@@ -8,14 +8,12 @@ use App\Dto\CreateChannelRequest;
 use App\Entity\Channel;
 use App\Entity\Server;
 use App\Repository\ChannelRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 
 final readonly class ChannelService
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly ChannelRepository $channelRepository,
+        private ChannelRepository $channelRepository,
     ) {
     }
 
@@ -31,21 +29,21 @@ final readonly class ChannelService
         $channel->setType($dto->type);
         $server->addChannel($channel);
 
-        $this->em->persist($channel);
+        $this->channelRepository->add($channel);
 
-        $this->em->flush();
+        $this->channelRepository->flush();
         return $channel;
     }
 
     public function updateChannel(): void
     {
-        $this->em->flush();
+        $this->channelRepository->flush();
     }
 
     public function removeChannel(Channel $channel): void
     {
-        $this->em->remove($channel);
-        $this->em->flush();
+        $this->channelRepository->remove($channel);
+        $this->channelRepository->flush();
     }
 
     /**
@@ -53,8 +51,6 @@ final readonly class ChannelService
      */
     public function refresh(Channel $channel): void
     {
-        if ($this->em->contains($channel)) {
-            $this->em->refresh($channel);
-        }
+        $this->channelRepository->refresh($channel);
     }
 }

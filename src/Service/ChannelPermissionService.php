@@ -15,7 +15,6 @@ use App\Repository\PermissionRepository;
 use App\Repository\RolePermissionRepository;
 use App\Repository\ServerMemberRepository;
 use App\Repository\UserRoleRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\Uid\Uuid;
 
@@ -27,8 +26,7 @@ final class ChannelPermissionService
         private readonly UserRoleRepository $userRoleRepository,
         private readonly RolePermissionRepository $rolePermissionRepo,
         private readonly MemberRoleRepository $memberRoleRepository,
-        private readonly PermissionRepository $permissionRepository,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly PermissionRepository $permissionRepository
     ) {
     }
 
@@ -233,16 +231,14 @@ final class ChannelPermissionService
 
             $override = new ChannelOverride($channel, $role, $member, $permission);
             $override->setAllow($value === 'allow');
-            $this->entityManager->persist($override);
+            $this->channelOverrideRepository->add($override);
         }
 
-        $this->entityManager->flush();
+        $this->channelOverrideRepository->flush();
     }
 
     public function clearTargetOverrides(Channel $channel, string $targetType, string $targetId): void
     {
         $this->channelOverrideRepository->deleteForTarget($channel, $targetType, $targetId);
-        $this->channelOverridesCache = null;
-    }
     }
 }
