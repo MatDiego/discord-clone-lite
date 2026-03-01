@@ -81,7 +81,7 @@ final class ChannelPermissionService
     /** Groups all channel overrides by target (role or member) into DTOs. */
     public function getOverrideGroups(Channel $channel): ChannelOverridesCollection
     {
-        $allOverrides = $this->getCachedOverrides($channel);
+        $allOverrides = $this->channelOverrideRepository->findByChannel($channel);
         $groups = [];
 
         foreach ($allOverrides as $override) {
@@ -209,6 +209,14 @@ final class ChannelPermissionService
         $inherited = $this->resolveInheritedPermissions($targetType, $targetId, UserPermissionEnum::cases(), $channel);
         $this->clearTargetOverrides($channel, $targetType, $targetId);
 
+        $permissionNames = array_keys($permissionsPayload);
+        $permissionsList = $this->permissionRepository->findByNames($permissionNames);
+
+        $permissionsMap = [];
+        foreach ($permissionsList as $permission) {
+            $permissionsMap[$permission->getName()->value] = $permission;
+        }
+
         foreach ($permissionsPayload as $permName => $value) {
             if ($value !== 'allow' && $value !== 'deny') {
                 continue;
@@ -229,7 +237,6 @@ final class ChannelPermissionService
         }
 
         $this->entityManager->flush();
-        $this->channelOverridesCache = null;
     }
 
     public function clearTargetOverrides(Channel $channel, string $targetType, string $targetId): void
@@ -237,12 +244,5 @@ final class ChannelPermissionService
         $this->channelOverrideRepository->deleteForTarget($channel, $targetType, $targetId);
         $this->channelOverridesCache = null;
     }
-
-    private function getCachedOverrides(Channel $channel): array
-    {
-        if ($this->channelOverridesCache === null) {
-            $this->channelOverridesCache = $this->channelOverrideRepository->findByChannel($channel);
-        }
-        return $this->channelOverridesCache;
     }
 }
