@@ -7,14 +7,44 @@
 >
     <projectFiles>
         <directory name="src"/>
+        <directory name="tests"/>
         <ignoreFiles>
             <directory name="vendor"/>
             <directory name="var"/>
         </ignoreFiles>
     </projectFiles>
-<plugins><pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/><pluginClass class="Psalm\PhpUnitPlugin\Plugin"/><pluginClass class="Weirdan\DoctrinePsalmPlugin\Plugin"/></plugins></psalm>
 
     <issueHandlers>
+        <UndefinedMagicPropertyFetch>
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </UndefinedMagicPropertyFetch>
+        <UndefinedPropertyAssignment>
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </UndefinedPropertyAssignment>
+        <UndefinedMagicMethod>
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </UndefinedMagicMethod>
+        <UndefinedInterfaceMethod>
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </UndefinedInterfaceMethod>
+        <UndefinedMethod>
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </UndefinedMethod>
+        <PossiblyInvalidArrayAccess>
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </PossiblyInvalidArrayAccess>
         <PossiblyUnusedMethod>
             <errorLevel type="suppress">
                 <directory name="src"/>
