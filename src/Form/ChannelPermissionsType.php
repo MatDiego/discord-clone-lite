@@ -1,15 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Enum\UserPermissionEnum;
+use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ChannelPermissionsType extends AbstractType
+/**
+ * @extends AbstractType<array<string, string>>
+ */
+final class ChannelPermissionsType extends AbstractType
 {
+    #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach (UserPermissionEnum::cases() as $permission) {
@@ -34,6 +41,7 @@ class ChannelPermissionsType extends AbstractType
         }
     }
 
+    #[Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

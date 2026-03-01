@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dto;
 
 use App\Enum\UserPermissionEnum;
 
-class PermissionRowViewDTO
+final readonly class PermissionRowViewDTO
 {
     public function __construct(
-        public readonly UserPermissionEnum $permission,
-        public readonly ?string $inheritedStatus,
-        public readonly ?string $currentStatus,
+        public UserPermissionEnum $permission,
+        public ?string $inheritedStatus,
+        public ?string $currentStatus,
     ) {}
 
     public function getLabel(): string

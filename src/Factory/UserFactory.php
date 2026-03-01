@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Factory;
 
 use App\Entity\User;
@@ -13,7 +15,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 final class UserFactory extends PersistentProxyObjectFactory
 {
     public function __construct(
-        private UserPasswordHasherInterface $passwordHasher
+        private readonly UserPasswordHasherInterface $passwordHasher
     ) {
         parent::__construct();
     }
@@ -36,15 +38,18 @@ final class UserFactory extends PersistentProxyObjectFactory
         ];
     }
 
+    /**
+     * @psalm-suppress MoreSpecificReturnType, LessSpecificReturnStatement
+     */
     #[Override]
     protected function initialize(): static
     {
         return $this
-             ->afterInstantiate(function(User $user): void {
-                 $plainPassword = $user->getPassword();
-                 $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
-                 $user->setPassword($hashedPassword);
-             })
+            ->afterInstantiate(function (User $user): void {
+                $plainPassword = $user->getPassword();
+                $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
+                $user->setPassword($hashedPassword);
+            })
         ;
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataFixtures;
 
 use App\Enum\UserPermissionEnum;
@@ -14,9 +16,11 @@ use App\Factory\UserFactory;
 use App\Factory\UserRoleFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Override;
 
-class AppFixtures extends Fixture
+final class AppFixtures extends Fixture
 {
+    #[Override]
     public function load(ObjectManager $manager): void
     {
         $permissions = [];

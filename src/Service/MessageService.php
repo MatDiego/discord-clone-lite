@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Dto\CreateMessageRequest;
@@ -18,10 +20,12 @@ use Twig\Error\SyntaxError;
 class MessageService
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
         private readonly HubInterface $hub,
         private readonly Environment $twig,
         private readonly MessageRepository $messageRepository,
+        private HubInterface $hub,
+        private Environment $twig,
+        private MessageRepository $messageRepository,
     ) {
     }
 

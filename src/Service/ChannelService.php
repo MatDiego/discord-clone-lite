@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Dto\CreateChannelRequest;
@@ -9,7 +11,7 @@ use App\Repository\ChannelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 
-class ChannelService
+final readonly class ChannelService
 {
     public function __construct(
         private readonly EntityManagerInterface $em,

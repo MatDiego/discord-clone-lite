@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Server;
@@ -12,7 +14,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
 #[Route('/servers/{serverId}/members')]
-class ServerMemberController extends AbstractController
+final class ServerMemberController extends AbstractController
 {
 
     #[Route('/{memberId}/roles', name: 'app_member_roles_fragment')]

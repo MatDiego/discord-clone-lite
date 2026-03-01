@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Factory;
 
 use App\Entity\Server;
@@ -14,6 +16,7 @@ final class ServerFactory extends PersistentProxyObjectFactory
 {
     public function __construct()
     {
+        parent::__construct();
     }
 
     #[Override]
@@ -32,6 +35,9 @@ final class ServerFactory extends PersistentProxyObjectFactory
     }
 
 
+    /**
+     * @psalm-suppress LessSpecificReturnStatement, MoreSpecificReturnType
+     */
     #[Override]
     protected function initialize(): static
     {

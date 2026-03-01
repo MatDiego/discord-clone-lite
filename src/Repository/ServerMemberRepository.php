@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Server;
@@ -44,7 +46,8 @@ class ServerMemberRepository extends ServiceEntityRepository
     /**
      * @return ServerMember[]
      */
-    public function findByServerExcludingOwner(Server $server): array{
+    public function findByServerExcludingOwner(Server $server): array
+    {
         $qb = $this->createQueryBuilder('sm');
         return $qb
             ->where('sm.server = :server')

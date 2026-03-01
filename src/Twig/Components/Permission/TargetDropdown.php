@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Twig\Components\Permission;
 
 use App\Entity\Channel;
@@ -8,8 +10,11 @@ use App\Repository\ServerMemberRepository;
 use Symfony\Component\Uid\Uuid;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor — properties are populated by the Twig Component mount lifecycle.
+ */
 #[AsTwigComponent('Permission:TargetDropdown')]
-class TargetDropdown
+final class TargetDropdown
 {
     public Server $server;
     public Channel $channel;

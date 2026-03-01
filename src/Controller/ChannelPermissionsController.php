@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Dto\AddOverrideRequest;
@@ -9,6 +11,7 @@ use App\Form\AddOverrideType;
 use App\Form\ChannelPermissionsType;
 use App\Security\Voter\ChannelVoter;
 use App\Service\ChannelPermissionService;
+use InvalidArgumentException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +22,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
 #[Route('/servers/{serverId}/channels/{channelId}/permissions')]
-class ChannelPermissionsController extends AbstractController
+final class ChannelPermissionsController extends AbstractController
 {
     public function __construct(
         private readonly ChannelPermissionService $permissionService,
@@ -85,8 +88,9 @@ class ChannelPermissionsController extends AbstractController
         #[MapEntity(id: 'channelId')] Channel $channel,
         #[MapEntity(id: 'serverId')] Server $server,
     ): Response {
-        $targetType = $request->request->get('target_type');
-        $targetId = $this->permissionService->normalizeUuid($request->request->get('target_id'));
+
+        $targetType = $request->request->getString('target_type');
+        $targetId = $this->permissionService->normalizeUuid($request->request->getString('target_id'));
 
         $form = $this->createForm(ChannelPermissionsType::class);
         $form->handleRequest($request);
@@ -101,9 +105,11 @@ class ChannelPermissionsController extends AbstractController
         }
 
         try {
-            $this->permissionService->saveTargetOverrides($channel, $targetType, $targetId, $form->getData());
+
+            $permissionsPayload = $form->getData() ?? [];
+            $this->permissionService->saveTargetOverrides($channel, $targetType, $targetId, $permissionsPayload);
             $this->addFlash('success', 'Uprawnienia zapisane.');
-        } catch (\InvalidArgumentException) {
+        } catch (InvalidArgumentException) {
             $this->addFlash('error', 'Nie powiodło się zapisywanie uprawnień.');
             return $this->redirectToRoute('app_channel_permissions', [
                 'serverId' => $server->getId(),
@@ -134,7 +140,7 @@ class ChannelPermissionsController extends AbstractController
         #[MapEntity(id: 'channelId')] Channel $channel,
         #[MapEntity(id: 'serverId')] Server $server,
     ): Response {
-        if (!$this->isCsrfTokenValid('channel_permissions_remove_' . $channel->getId(), $request->request->get('_csrf_token'))) {
+        if (!$this->isCsrfTokenValid('channel_permissions_remove_' . $channel->getId()->toRfc4122(), $request->request->getString('_csrf_token'))) {
             $this->addFlash('error', 'Nieprawidłowy token bezpieczeństwa.');
             return $this->redirectToRoute('app_channel_permissions', [
                 'serverId' => $server->getId(),
@@ -142,8 +148,8 @@ class ChannelPermissionsController extends AbstractController
             ]);
         }
 
-        $targetType = $request->request->get('target_type');
-        $targetId = $this->permissionService->normalizeUuid($request->request->get('target_id'));
+        $targetType = $request->request->getString('target_type');
+        $targetId = $this->permissionService->normalizeUuid($request->request->getString('target_id'));
 
         $this->permissionService->clearTargetOverrides($channel, $targetType, $targetId);
         $this->addFlash('success', 'Nadpisania usunięte.');

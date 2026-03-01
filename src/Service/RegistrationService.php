@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Dto\RegistrationRequest;
@@ -8,18 +10,23 @@ use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class RegistrationService
+final readonly class RegistrationService
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly EmailVerifier $emailVerifier,
+        private UserPasswordHasherInterface $passwordHasher,
+        private EmailVerifier $emailVerifier,
     ) {
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     public function register(RegistrationRequest $dto): User
     {
         $user = new User($dto->email, $dto->username, '');
@@ -38,6 +45,9 @@ class RegistrationService
         $this->emailVerifier->handleEmailConfirmation($request, $user);
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     private function sendVerificationEmail(User $user): void
     {
         $this->emailVerifier->sendEmailConfirmation(

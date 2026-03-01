@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Entity\Channel;
@@ -13,13 +15,13 @@ use App\Repository\MemberRoleRepository;
 use App\Repository\RolePermissionRepository;
 use App\Repository\ServerMemberRepository;
 
-class PermissionService
+final readonly class PermissionService
 {
     public function __construct(
-        private readonly ServerMemberRepository $serverMemberRepository,
-        private readonly MemberRoleRepository $memberRoleRepository,
-        private readonly RolePermissionRepository $rolePermissionRepository,
-        private readonly ChannelOverrideRepository $channelOverrideRepository,
+        private ServerMemberRepository $serverMemberRepository,
+        private MemberRoleRepository $memberRoleRepository,
+        private RolePermissionRepository $rolePermissionRepository,
+        private ChannelOverrideRepository $channelOverrideRepository,
     ) {
     }
 
@@ -62,9 +64,7 @@ class PermissionService
             $member,
         );
 
-        $granted = $this->applyOverrides($overrides, $member, $granted);
-
-        return $granted;
+        return $this->applyOverrides($overrides, $member, $granted);
     }
 
     public function isOwner(User $user, Server $server): bool

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\UserRepository;
@@ -7,6 +9,7 @@ use Deprecated;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Override;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -105,15 +108,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * A visual identifier that represents this user.
      *
      * @see UserInterface
+     *
+     * @return non-empty-string
      */
+    #[Override]
     public function getUserIdentifier(): string
     {
+        assert($this->email !== '', 'User email must not be empty');
+
         return $this->email;
     }
 
     /**
      * @see UserInterface
      */
+    #[Override]
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -136,6 +145,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
+    #[Override]
     public function getPassword(): string
     {
         return $this->password;
@@ -157,6 +167,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[Deprecated]
+    #[Override]
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8

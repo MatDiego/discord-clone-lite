@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
+use App\Dto\CreateServerRequest;
 use App\Entity\Server;
 use App\Entity\User;
 use App\Form\CreateServerType;
 use App\Form\ServerType;
-use App\Repository\ChannelRepository;
 use App\Security\Voter\ServerVoter;
 use App\Service\ServerService;
+use RuntimeException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,8 +29,7 @@ final class ServerController extends AbstractController
     public function create(
         Request $request,
         ServerService $serverService
-    ): Response
-    {
+    ): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -35,8 +37,16 @@ final class ServerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $server = $serverService->createServer($form->getData(), $user);
+
+            /** @var CreateServerRequest $createServerData */
+            $createServerData = $form->getData();
+
+            $server = $serverService->createServer($createServerData, $user);
             $defaultChannel = $server->getChannels()->first();
+
+            if (!$defaultChannel) {
+                throw new RuntimeException('Server has no default channel.');
+            }
 
             $this->addFlash('success', 'Serwer został utworzony!');
 
@@ -84,7 +94,14 @@ final class ServerController extends AbstractController
         ServerService $serverService
     ): Response {
 
-        if ($this->isCsrfTokenValid('delete_server_' . $server->getId(), $request->request->get('_csrf_token'))) {
+        if (
+            $this->isCsrfTokenValid(
+                'delete_server_' . $server->getId()->toRfc4122(),
+                $request->request->getString(
+                    '_csrf_token'
+                )
+            )
+        ) {
             $serverService->removeServer($server);
             $this->addFlash('success', 'Serwer został pomyślnie usunięty.');
             return $this->redirectToRoute('app_dashboard');

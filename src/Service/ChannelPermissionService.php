@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Dto\ChannelOverridesCollection;
@@ -17,10 +19,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Component\Uid\Uuid;
 
-class ChannelPermissionService
+final class ChannelPermissionService
 {
-    private ?array $channelOverridesCache = null;
-
     public function __construct(
         private readonly ChannelOverrideRepository $channelOverrideRepository,
         private readonly ServerMemberRepository $serverMemberRepository,
@@ -50,14 +50,21 @@ class ChannelPermissionService
         };
     }
 
-    /** Normalizes URL selection string (e.g. "ROLE:UUID" → "role:uuid"). */
+    /** Normalizes URL selection string (e.g. "ROLE:UUID" -> "role:uuid"). */
     public function normalizeSelected(?string $selected): ?string
     {
-        if (!$selected || !str_contains($selected, ':')) {
+        if (null === $selected || '' === $selected || !str_contains($selected, ':')) {
             return null;
         }
 
-        [$type, $uuidStr] = explode(':', $selected, 2);
+        /** @var string $selected — guaranteed non-null after the guard above */
+        $parts = explode(':', $selected, 2);
+
+        if (count($parts) < 2) {
+            return null;
+        }
+
+        [$type, $uuidStr] = $parts;
         $type = strtolower($type);
 
         if (!in_array($type, ['role', 'member'], true)) {
@@ -81,12 +88,21 @@ class ChannelPermissionService
             $role = $override->getRole();
             $member = $override->getServerMember();
 
-            $type = $role ? 'role' : 'member';
-            $targetId = ($role ? $role->getId() : $member->getId())->toRfc4122();
+            if ($role !== null) {
+                $type = 'role';
+                $targetId = $role->getId()->toRfc4122();
+                $label = $role->getDisplayName();
+            } elseif ($member !== null) {
+                $type = 'member';
+                $targetId = $member->getId()->toRfc4122();
+                $label = $member->getDisplayName();
+            } else {
+                continue;
+            }
+
             $key = $type . ':' . $targetId;
 
             if (!isset($groups[$key])) {
-                $label = ($role ?? $member)->getDisplayName();
                 $groups[$key] = new OverrideGroupDTO($type, $label, $targetId);
             }
 
@@ -111,11 +127,11 @@ class ChannelPermissionService
                 return [];
 
             if ($member->getServer()->getOwner() === $member->getUser()) {
-                return array_fill_keys(array_map(fn($p) => $p->value, $allPermissions), 'allow');
+                return array_fill_keys(array_map(fn(UserPermissionEnum $p): string => $p->value, $allPermissions), 'allow');
             }
             $roleIds = $this->memberRoleRepository->findRoleIdsByMember($member);
         } else {
-            $roleIds = [$uuid];
+            $roleIds = [Uuid::fromString($uuid)];
         }
 
         if (empty($roleIds)) {
@@ -132,13 +148,14 @@ class ChannelPermissionService
         }
 
         if ($type === 'member' && $channel) {
-            foreach ($this->getCachedOverrides($channel) as $override) {
+            foreach ($this->channelOverrideRepository->findByChannel($channel) as $override) {
                 $overrideRole = $override->getRole();
                 if (!$overrideRole) {
                     continue;
                 }
 
-                if (!in_array($overrideRole->getId()->toRfc4122(), $roleIds, true)) {
+                $roleIdStrings = array_map(fn($id) => (string) $id, $roleIds);
+                if (!in_array($overrideRole->getId()->toRfc4122(), $roleIdStrings, true)) {
                     continue;
                 }
 
@@ -201,11 +218,7 @@ class ChannelPermissionService
                 continue;
             }
 
-            $permEnum = UserPermissionEnum::tryFrom($permName);
-            if (!$permEnum) {
-                continue;
-            }
-            $permission = $this->permissionRepository->findByName($permEnum);
+            $permission = $permissionsMap[$permName] ?? null;
             if (!$permission) {
                 continue;
             }

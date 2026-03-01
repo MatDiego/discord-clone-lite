@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Twig\Components\Server;
 
 use App\Entity\Channel;
@@ -13,8 +15,11 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor — properties are populated by the Twig Component mount lifecycle.
+ */
 #[AsTwigComponent('Chat:Input')]
-class ChatInput
+final class ChatInput
 {
     public Server $server;
     public Channel $channel;

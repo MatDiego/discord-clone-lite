@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dto;
 
-class ChannelOverridesCollection
+final readonly class ChannelOverridesCollection
 {
     /** @param array<string, OverrideGroupDTO> $groups */
     public function __construct(
-        private readonly array $groups = []
+        private array $groups = []
     ) {}
 
     public function getAll(): array

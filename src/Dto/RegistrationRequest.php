@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dto;
 
 use Symfony\Component\Validator\Constraints as Assert;
-class RegistrationRequest
+final class RegistrationRequest
 {
     #[Assert\NotBlank(message: 'register.email.not_blank')]
     #[Assert\Email(message: 'register.email.invalid')]

@@ -1,14 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Voter;
 
 use App\Entity\Channel;
 use App\Entity\User;
 use App\Enum\UserPermissionEnum;
 use App\Service\PermissionService;
+use Override;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, Channel>
+ */
 final class ChannelVoter extends Voter
 {
     public const EDIT_CHANNEL = 'CHANNEL_EDIT';
@@ -23,6 +29,7 @@ final class ChannelVoter extends Voter
     ) {
     }
 
+    #[Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, [
@@ -36,6 +43,7 @@ final class ChannelVoter extends Voter
             && $subject instanceof Channel;
     }
 
+    #[Override]
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, mixed $vote = null): bool
     {
         $user = $token->getUser();

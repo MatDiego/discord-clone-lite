@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Twig\Components\Server;
 
 use App\Entity\User;
@@ -8,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent('Server:Rail')]
-class Rail extends AbstractController
+final class Rail extends AbstractController
 {
     public function __construct(
         private readonly ServerRepository $serverRepository

@@ -1,15 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Dto\AddOverrideRequest;
+use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AddOverrideType extends AbstractType
+/**
+ * @extends AbstractType<AddOverrideRequest>
+ */
+final class AddOverrideType extends AbstractType
 {
+    #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -17,6 +24,7 @@ class AddOverrideType extends AbstractType
             ->add('target_id', HiddenType::class);
     }
 
+    #[Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

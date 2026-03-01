@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Twig\Components\Permission;
 
 use App\Dto\PermissionRowViewDTO;
@@ -9,14 +11,18 @@ use App\Form\ChannelPermissionsType;
 use App\Repository\ServerMemberRepository;
 use App\Repository\UserRoleRepository;
 use App\Service\ChannelPermissionService;
+use InvalidArgumentException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 use Symfony\UX\TwigComponent\Attribute\PostMount;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor — properties are populated by the Twig Component mount lifecycle.
+ */
 #[AsTwigComponent('Permission:Editor')]
-class Editor
+final class Editor
 {
     public Channel $channel;
     public string $selected;
@@ -39,7 +45,7 @@ class Editor
     {
         $parts = explode(':', $this->selected);
         if (count($parts) !== 2) {
-            throw new \InvalidArgumentException(sprintf('Invalid selected target format: "%s"', $this->selected));
+            throw new InvalidArgumentException(sprintf('Invalid selected target format: "%s"', $this->selected));
         }
 
         [$this->targetType, $this->targetUuid] = $parts;

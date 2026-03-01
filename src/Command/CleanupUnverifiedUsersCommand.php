@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
+use DateTimeInterface;
+use Exception;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,14 +21,15 @@ use Symfony\Component\Uid\Uuid;
     name: 'app:users:cleanup',
     description: 'Deletes unverified users older than a specific time (based on UUID v7).',
 )]
-class CleanupUnverifiedUsersCommand extends Command
+final class CleanupUnverifiedUsersCommand extends Command
 {
     public function __construct(
-        private UserRepository $userRepository
+        private readonly UserRepository $userRepository
     ) {
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this
@@ -31,16 +38,17 @@ class CleanupUnverifiedUsersCommand extends Command
         ;
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $minutes = $input->getOption('max-age');
 
         try {
-            $thresholdDate = new \DateTimeImmutable(sprintf('-%d minutes', $minutes));
+            $thresholdDate = new DateTimeImmutable(sprintf('-%d minutes', $minutes ?? 0));
             $cutoffUuid = $this->generateCutoffUuidV7($thresholdDate);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $io->error('Error calculating date/UUID: ' . $e->getMessage());
             return Command::FAILURE;
         }
@@ -49,7 +57,7 @@ class CleanupUnverifiedUsersCommand extends Command
         $io->text(sprintf(
             'Removing unverified accounts created before: %s (older than %d minutes).',
             $thresholdDate->format('Y-m-d H:i:s'),
-            $minutes
+            $minutes ?? 0
         ));
 
         $deletedCount = $this->userRepository->deleteUnverifiedUsersOlderThanId($cutoffUuid);
@@ -68,7 +76,7 @@ class CleanupUnverifiedUsersCommand extends Command
      * Any UUID generated after this date will be mathematically "greater".
      * Any UUID generated before this date will be mathematically "smaller".
      */
-    private function generateCutoffUuidV7(\DateTimeInterface $date): Uuid
+    private function generateCutoffUuidV7(DateTimeInterface $date): Uuid
     {
         $timestampMs = (int) $date->format('Uv');
         $hexTs = str_pad(dechex($timestampMs), 12, '0', STR_PAD_LEFT);

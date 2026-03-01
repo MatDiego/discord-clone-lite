@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
+use App\Dto\CreateMessageRequest;
 use App\Entity\Channel;
 use App\Entity\Server;
 use App\Entity\User;
@@ -44,7 +47,11 @@ final class MessageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $messageService->postMessage($form->getData(), $channel, $user);
+
+            /** @var CreateMessageRequest $createMessageData */
+            $createMessageData = $form->getData();
+
+            $messageService->postMessage($createMessageData, $channel, $user);
 
             if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
                 return new Response('', Response::HTTP_NO_CONTENT);

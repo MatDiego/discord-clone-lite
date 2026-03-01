@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
+use App\Dto\CreateChannelRequest;
 use App\Entity\Channel;
 use App\Entity\Server;
 use App\Form\ChannelType;
@@ -48,9 +51,6 @@ final class ChannelController extends AbstractController
         ]);
     }
 
-    /**
-     * Przekierowanie po kliknięciu w ikonę serwera
-     */
     #[Route('', name: 'app_server_default_channel', priority: -1)]
     #[IsGranted(ServerVoter::VIEW, subject: 'server')]
     public function defaultChannel(
@@ -60,7 +60,7 @@ final class ChannelController extends AbstractController
         $firstChannel = $channelService->getDefaultChannelForServer($server);
 
         if (!$firstChannel) {
-            throw $this->createNotFoundException('Ten serwer nie ma dostępnych kanałów.');
+            throw $this->createNotFoundException('This server has no channels available.');
         }
 
         return $this->redirectToRoute('app_chat_channel', [
@@ -80,7 +80,11 @@ final class ChannelController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $channel = $channelService->createChannel($form->getData(), $server);
+            $channelData = $form->getData();
+
+            /** @var CreateChannelRequest $channelData */
+            $channel = $channelService->createChannel($channelData, $server);
+
             $this->addFlash('success', 'Kanał został utworzony!');
 
             return $this->redirectToRoute('app_chat_channel', [
@@ -139,7 +143,9 @@ final class ChannelController extends AbstractController
         ChannelService $channelService
     ): Response {
 
-        if ($this->isCsrfTokenValid('delete_channel_' . $channel->getId(), $request->request->get('_csrf_token'))) {
+        $token = $request->request->getString('_csrf_token');
+
+        if ($this->isCsrfTokenValid('delete_channel_' . $channel->getId()->toRfc4122(), $token)) {
             $channelService->removeChannel($channel);
             $this->addFlash('success', 'Kanał został usunięty.');
             return $this->redirectToRoute('app_server_default_channel', [

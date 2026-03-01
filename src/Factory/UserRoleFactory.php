@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Factory;
 
 use App\Entity\UserRole;
+use Override;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -12,15 +15,16 @@ final class UserRoleFactory extends PersistentProxyObjectFactory
 {
     public function __construct()
     {
+        parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public static function class(): string
     {
         return UserRole::class;
     }
 
-    #[\Override]
+    #[Override]
     protected function defaults(): array|callable
     {
         return [
@@ -30,7 +34,7 @@ final class UserRoleFactory extends PersistentProxyObjectFactory
         ];
     }
 
-    #[\Override]
+    #[Override]
     protected function initialize(): static
     {
         return $this;

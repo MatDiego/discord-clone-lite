@@ -1,25 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
+use App\Dto\RegistrationRequest;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Service\RegistrationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
-class RegistrationController extends AbstractController
+final class RegistrationController extends AbstractController
 {
     public function __construct(
         private readonly RegistrationService $registrationService,
     ) {
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     #[Route('/register', name: 'app_register')]
     public function register(Request $request): Response
     {
@@ -31,7 +38,9 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->registrationService->register($form->getData());
+            /** @var RegistrationRequest $registrationRequest */
+            $registrationRequest = $form->getData();
+            $user = $this->registrationService->register($registrationRequest);
 
             $this->addFlash('success', 'Rejestracja udana! Sprawdź email, aby aktywować konto.');
             $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $user->getEmail());

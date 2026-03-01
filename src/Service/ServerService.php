@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Dto\CreateServerRequest;
@@ -10,7 +12,7 @@ use App\Entity\User;
 use App\Enum\ChannelTypeEnum;
 use Doctrine\ORM\EntityManagerInterface;
 
-class ServerService
+final readonly class ServerService
 {
     public function __construct(private EntityManagerInterface $em)
     {

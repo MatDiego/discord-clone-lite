@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dto;
 
 /**
- * Represents a group of channel overrides for a single target (role or member).
+ * Represents a group of channel overrides for a single final target (role or member).
  */
-class OverrideGroupDTO
+final class OverrideGroupDTO
 {
     /**
      * @param string $type 'role' or 'member'

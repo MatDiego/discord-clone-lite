@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Server;
@@ -21,7 +23,7 @@ class ServerRepository extends ServiceEntityRepository
     public function findForUser(User $user): array
     {
         return $this->createQueryBuilder('s')
-            ->innerJoin(ServerMember::class, 'sm', 'WITH', 'sm.server = s')
+            ->innerJoin(ServerMember::class, 'sm', \Doctrine\ORM\Query\Expr\Join::ON, 'sm.server = s')
             ->andWhere('sm.user = :user')
             ->setParameter('user', $user)
             ->orderBy('s.name', 'ASC')

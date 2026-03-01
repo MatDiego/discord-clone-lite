@@ -1,14 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Voter;
 
 use App\Entity\Server;
 use App\Entity\User;
 use App\Enum\UserPermissionEnum;
 use App\Service\PermissionService;
+use Override;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+
+/**
+ * @extends Voter<string, Server>
+ */
 final class ServerVoter extends Voter
 {
     public const EDIT = 'SERVER_EDIT';
@@ -21,19 +28,20 @@ final class ServerVoter extends Voter
     ) {
     }
 
+    #[Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::CREATE_CHANNEL])
             && $subject instanceof Server;
     }
 
+    #[Override]
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, mixed $vote = null): bool
     {
         $user = $token->getUser();
         if (!$user instanceof User)
             return false;
 
-        /** @var Server $server */
         $server = $subject;
 
         return match ($attribute) {
@@ -41,7 +49,7 @@ final class ServerVoter extends Voter
             self::EDIT => $this->permissionService->hasServerPermission($user, $server, UserPermissionEnum::MANAGE_SERVER),
             self::DELETE => $this->permissionService->isOwner($user, $server),
             self::CREATE_CHANNEL => $this->permissionService->hasServerPermission($user, $server, UserPermissionEnum::MANAGE_CHANNELS),
-            default => false,
+            default => throw new \LogicException('This code should not be reached!'),
         };
     }
 }
