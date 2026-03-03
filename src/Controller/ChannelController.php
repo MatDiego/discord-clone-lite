@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
+use App\Dto\CreateChannelRequest;
 use App\Entity\Channel;
 use App\Entity\Server;
-use App\Enum\ChannelTypeEnum;
 use App\Form\ChannelType;
-use App\Repository\ChannelRepository;
-use App\Repository\MessageRepository;
+use App\Form\CreateChannelType;
 use App\Security\Voter\ChannelVoter;
 use App\Security\Voter\ServerVoter;
-use App\Service\ChannelManager;
+use App\Service\ChannelService;
+use App\Service\MessageService;
 use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,44 +31,36 @@ final class ChannelController extends AbstractController
     #[Route('/{channelId}',
         name: 'app_chat_channel',
         requirements: ['serverId' => Requirement::UUID_V7, 'channelId' => Requirement::UUID_V7])]
-    #[IsGranted(ChannelVoter::VIEW, subject: 'channel')]
+    #[IsGranted(ChannelVoter::VIEW_CHANNEL, subject: 'channel')]
     public function channelView(
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,
-        MessageRepository $messageRepository,
+        MessageService $messageService,
         Authorization $authorization,
         Request $request,
     ): Response {
-        $messages = $messageRepository->findLatestByChannel($channel);
+        $messages = $messageService->getMessages($channel);
 
         $topic = sprintf('http://channels/%s', $channel->getId());
         $authorization->setCookie($request, [$topic]);
 
-        $response = $this->render('server/view.html.twig', [
+        return $this->render('server/view.html.twig', [
             'server' => $server,
             'channel' => $channel,
             'messages' => $messages,
         ]);
-
-        return $response;
     }
 
-    /**
-     * Przekierowanie po kliknięciu w ikonę serwera
-     */
     #[Route('', name: 'app_server_default_channel', priority: -1)]
     #[IsGranted(ServerVoter::VIEW, subject: 'server')]
     public function defaultChannel(
         #[MapEntity(id: 'serverId')] Server $server,
-        ChannelRepository $channelRepo
+        ChannelService $channelService,
     ): Response {
-        $firstChannel = $channelRepo->findOneBy([
-            'server' => $server,
-            'type' => ChannelTypeEnum::TEXT
-        ], ['createdAt' => 'ASC']);
+        $firstChannel = $channelService->getDefaultChannelForServer($server);
 
         if (!$firstChannel) {
-            throw $this->createNotFoundException('Ten serwer nie ma dostępnych kanałów.');
+            throw $this->createNotFoundException('This server has no channels available.');
         }
 
         return $this->redirectToRoute('app_chat_channel', [
@@ -79,22 +73,24 @@ final class ChannelController extends AbstractController
     #[IsGranted(ServerVoter::CREATE_CHANNEL, subject: 'server')]
     public function create(
         Request $request,
-        ChannelManager $channelManager,
+        ChannelService $channelService,
         #[MapEntity(id: 'serverId')] Server $server
     ): Response {
-        $channel = new Channel();
-
-        $form = $this->createForm(ChannelType::class, $channel);
+        $form = $this->createForm(CreateChannelType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $channelManager->saveChannel($server, $channel);
-            $this->addFlash('success', 'Kanał został utworzony!');
+            $channelData = $form->getData();
+
+            /** @var CreateChannelRequest $channelData */
+            $channel = $channelService->createChannel($channelData, $server);
+
+            $this->addFlash('success', 'Pomyślnie utworzono nowy kanał.');
 
             return $this->redirectToRoute('app_chat_channel', [
                 'serverId' => $server->getId(),
                 'channelId' => $channel->getId()
-            ]);
+            ], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('channel/create.html.twig', [
@@ -107,19 +103,19 @@ final class ChannelController extends AbstractController
      * @throws ORMException
      */
     #[Route('/{channelId}/edit', name: 'app_channel_edit', requirements: ['serverId' => Requirement::UUID_V7])]
-    #[IsGranted(ChannelVoter::EDIT, subject: 'channel')]
+    #[IsGranted(ChannelVoter::EDIT_CHANNEL, subject: 'channel')]
     public function edit(
         Request $request,
         #[MapEntity(id: 'channelId')] Channel $channel,
         #[MapEntity(id: 'serverId')] Server $server,
-        ChannelManager $channelManager
+        ChannelService $channelService
     ): Response {
 
         $form = $this->createForm(ChannelType::class, $channel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $channelManager->updateChannel();
+            $channelService->updateChannel();
 
             $this->addFlash('success', 'Ustawienia kanału zapisane.');
 
@@ -129,7 +125,7 @@ final class ChannelController extends AbstractController
             ]);
         }
 
-        $channelManager->refresh($channel);
+        $channelService->refresh($channel);
 
         return $this->render('channel/edit.html.twig', [
             'channel' => $channel,
@@ -139,23 +135,25 @@ final class ChannelController extends AbstractController
     }
 
     #[Route('/{channelId}/delete', name: 'app_channel_delete', requirements: ['serverId' => Requirement::UUID_V7], methods: ['POST'])]
-    #[IsGranted(ChannelVoter::DELETE, subject: 'channel')]
+    #[IsGranted(ChannelVoter::DELETE_CHANNEL, subject: 'channel')]
     public function delete(
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(id: 'channelId')] Channel $channel,
-        ChannelManager $channelManager
+        ChannelService $channelService
     ): Response {
 
-        if ($this->isCsrfTokenValid('delete_channel_' . $channel->getId(), $request->request->get('_csrf_token'))) {
-            $channelManager->removeChannel($channel);
-            $this->addFlash('success', 'Kanał został usunięty.');
+        $token = $request->request->getString('_csrf_token');
+
+        if ($this->isCsrfTokenValid('delete_channel_' . $channel->getId()->toRfc4122(), $token)) {
+            $channelService->removeChannel($channel);
+            $this->addFlash('success', 'Pomyślnie usunięto kanał.');
             return $this->redirectToRoute('app_server_default_channel', [
                 'serverId' => $server->getId()
             ]);
         }
 
-        $this->addFlash('error', 'Nieprawidłowy token bezpieczeństwa.');
+        $this->addFlash('error', 'Nieprawidłowy token bezpieczeństwa. Spróbuj ponownie.');
         return $this->redirectToRoute('app_channel_edit', [
             'serverId' => $server->getId(),
             'channelId' => $channel->getId()

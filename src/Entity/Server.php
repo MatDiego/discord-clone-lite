@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ServerRepository;
@@ -8,36 +10,44 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ServerRepository::class)]
 class Server
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    private ?Uuid $id;
+    #[ORM\Column(type: UuidType::NAME, unique: true, nullable: false)]
+    private Uuid $id;
 
-    #[ORM\Column(length: 100)]
-    private ?string $name = null;
+    #[ORM\Column(length: 100, nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 100)]
+    private string $name;
 
     #[ORM\ManyToOne(inversedBy: 'ownedServers')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $owner = null;
-
-    /**
-     * @var Collection<int, ServerMember>
-     */
-    #[ORM\OneToMany(targetEntity: ServerMember::class, mappedBy: 'server', orphanRemoval: true)]
-    private Collection $members;
+    #[Assert\NotNull]
+    private User $owner;
 
     /**
      * @var Collection<int, Channel>
      */
-    #[ORM\OneToMany(targetEntity: Channel::class, mappedBy: 'server', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Channel::class, mappedBy: 'server', cascade: ['persist'], orphanRemoval: true)]
     private Collection $channels;
 
-    public function setMembers(Collection $members): void
+    /**
+     * @var Collection<int, UserRole>
+     */
+    #[ORM\OneToMany(targetEntity: UserRole::class, mappedBy: 'server')]
+    private Collection $userRoles;
+
+    public function __construct(string $name, User $owner)
     {
-        $this->members = $members;
+        $this->id = Uuid::v7();
+        $this->name = $name;
+        $this->owner = $owner;
+        $this->channels = new ArrayCollection();
+        $this->userRoles = new ArrayCollection();
     }
 
     public function setChannels(Collection $channels): void
@@ -45,19 +55,12 @@ class Server
         $this->channels = $channels;
     }
 
-    public function __construct()
-    {
-        $this->id = Uuid::v7();
-        $this->members = new ArrayCollection();
-        $this->channels = new ArrayCollection();
-    }
-
-    public function getId(): ?Uuid
+    public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -69,44 +72,14 @@ class Server
         return $this;
     }
 
-    public function getOwner(): ?User
+    public function getOwner(): User
     {
         return $this->owner;
     }
 
-    public function setOwner(?User $owner): static
+    public function setOwner(User $owner): static
     {
         $this->owner = $owner;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ServerMember>
-     */
-    public function getMembers(): Collection
-    {
-        return $this->members;
-    }
-
-    public function addMember(ServerMember $member): static
-    {
-        if (!$this->members->contains($member)) {
-            $this->members->add($member);
-            $member->setServer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMember(ServerMember $member): static
-    {
-        if ($this->members->removeElement($member)) {
-            // set the owning side to null (unless already changed)
-            if ($member->getServer() === $this) {
-                $member->setServer(null);
-            }
-        }
 
         return $this;
     }
@@ -131,12 +104,31 @@ class Server
 
     public function removeChannel(Channel $channel): static
     {
-        if ($this->channels->removeElement($channel)) {
-            if ($channel->getServer() === $this) {
-                $channel->setServer(null);
-            }
+        $this->channels->removeElement($channel);
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserRole>
+     */
+    public function getUserRoles(): Collection
+    {
+        return $this->userRoles;
+    }
+
+    public function addUserRole(UserRole $userRole): static
+    {
+        if (!$this->userRoles->contains($userRole)) {
+            $this->userRoles->add($userRole);
+            $userRole->setServer($this);
         }
 
+        return $this;
+    }
+
+    public function removeUserRole(UserRole $userRole): static
+    {
+        $this->userRoles->removeElement($userRole);
         return $this;
     }
 }

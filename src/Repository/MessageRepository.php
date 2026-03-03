@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Channel;
@@ -17,6 +19,9 @@ class MessageRepository extends ServiceEntityRepository
         parent::__construct($registry, Message::class);
     }
 
+    /**
+     * @return Message[]
+     */
     public function findLatestByChannel(Channel $channel, int $limit = 50): array
     {
         $messages = $this->createQueryBuilder('m')
@@ -30,5 +35,15 @@ class MessageRepository extends ServiceEntityRepository
             ->getResult();
 
         return array_reverse($messages);
+    }
+
+    public function add(Message $message): void
+    {
+        $this->getEntityManager()->persist($message);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
     }
 }

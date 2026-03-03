@@ -1,19 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Channel;
 use App\Enum\ChannelTypeEnum;
+use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
-class ChannelType extends AbstractType
+/**
+ * @extends AbstractType<Channel>
+ */
+final class ChannelType extends AbstractType
 {
+    #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -25,23 +30,20 @@ class ChannelType extends AbstractType
                     'autofocus' => true,
                     'class' => 'form-control text-white'
                 ],
-                'constraints' => [
-                    new NotBlank(message: 'channel.name.not_blank'),
-                    new Length(min: 2, max: 255),
-                ],
             ])
             ->add('type', EnumType::class, [
                 'class' => ChannelTypeEnum::class,
                 'label' => 'channel.label_type',
                 'expanded' => true,
                 'multiple' => false,
-                'choice_attr' => function() {
+                'choice_attr' => function () {
                     return ['class' => 'btn-check'];
                 },
             ])
         ;
     }
 
+    #[Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

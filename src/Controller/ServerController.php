@@ -1,12 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
+use App\Dto\CreateServerRequest;
 use App\Entity\Server;
 use App\Entity\User;
+use App\Form\CreateServerType;
 use App\Form\ServerType;
 use App\Security\Voter\ServerVoter;
-use App\Service\ServerManager;
+use App\Service\ServerService;
+use RuntimeException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,19 +26,27 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ServerController extends AbstractController
 {
     #[Route('/new', name: 'app_server_create')]
-    public function create(Request $request, ServerManager $serverManager): Response
-    {
-        $server = new Server();
+    public function create(
+        Request $request,
+        ServerService $serverService
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
 
-        $form = $this->createForm(ServerType::class, $server);
+        $form = $this->createForm(CreateServerType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            /** @var User $user */
-            $user = $this->getUser();
-            $serverManager->createServer($server, $user);
+            /** @var CreateServerRequest $createServerData */
+            $createServerData = $form->getData();
+
+            $server = $serverService->createServer($createServerData, $user);
             $defaultChannel = $server->getChannels()->first();
+
+            if (!$defaultChannel) {
+                throw new RuntimeException('Server has no default channel.');
+            }
 
             $this->addFlash('success', 'Serwer został utworzony!');
 
@@ -53,15 +66,14 @@ final class ServerController extends AbstractController
     public function edit(
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server,
-        ServerManager $serverManager
-    ): Response
-    {
+        ServerService $serverService
+    ): Response {
 
         $form = $this->createForm(ServerType::class, $server);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $serverManager->updateServer();
+            $serverService->updateServer();
 
             $this->addFlash('success', 'Ustawienia serwera zapisane.');
 
@@ -79,12 +91,18 @@ final class ServerController extends AbstractController
     public function delete(
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server,
-        ServerManager $serverManager
-    ): Response
-    {
+        ServerService $serverService
+    ): Response {
 
-        if ($this->isCsrfTokenValid('delete_server_' . $server->getId(), $request->request->get('_csrf_token'))) {
-            $serverManager->removeServer($server);
+        if (
+            $this->isCsrfTokenValid(
+                'delete_server_' . $server->getId()->toRfc4122(),
+                $request->request->getString(
+                    '_csrf_token'
+                )
+            )
+        ) {
+            $serverService->removeServer($server);
             $this->addFlash('success', 'Serwer został pomyślnie usunięty.');
             return $this->redirectToRoute('app_dashboard');
         }

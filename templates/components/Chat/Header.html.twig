@@ -1,27 +1,40 @@
-{% props currentChannel = null %}
+{% props currentChannel = null, currentServer = null %}
 
-<div class="chat-column">
-    <div class="chat-header d-flex align-items-center justify-content-between p-2">
-        <div class="d-flex align-items-center overflow-hidden">
-            {% if currentChannel %}
-                <span class="text-secondary fs-4 fw-light">#</span>
-                <h6 class="mb-0 fw-semibold">{{ currentChannel.name }}</h6>
-            {% else %}
-                {{ ux_icon('bi:house-fill') }}
-                <h6 class="mb-0 fw-bold text-app-primary">Witaj w ChatApp</h6>
-            {% endif %}
-        </div>
+<div class="chat-header d-flex align-items-center justify-content-between p-2">
+    <div class="d-flex align-items-center overflow-hidden">
+        {% if currentChannel %}
+            <span class="text-secondary fs-4 fw-light">#</span>
+            <h6 class="mb-0 fw-semibold">{{ currentChannel.name }}</h6>
+        {% else %}
+            {{ ux_icon('bi:house-fill') }}
+            <h6 class="mb-0 fw-bold text-app-primary">Witaj w ChatApp</h6>
+        {% endif %}
+    </div>
 
-        <div class="d-flex align-items-center gap-3 flex-shrink-0">
-            <small class="text-app-secondary fw-medium d-none d-lg-block">{{ app.user.email }}</small>
-            <a href="{{ path('app_logout') }}"
-               class="btn btn-sm btn-danger d-flex align-items-center gap-2 fw-medium shadow-sm"
-               title="Wyloguj się"
-               data-turbo="false">
-
-                {{ ux_icon('bi:box-arrow-right') }}
-                <span class="d-none d-md-inline">Wyloguj</span>
+    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+        {% if currentChannel and currentServer and is_granted('CHANNEL_MANAGE_PERMISSIONS', currentChannel) %}
+            <a href="{{ path('app_channel_permissions', {serverId: currentServer.id, channelId: currentChannel.id}) }}"
+               class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+               title="Uprawnienia kanału">
+                {{ ux_icon('bi:shield-lock', {width: 16, height: 16}) }}
             </a>
-        </div>
+        {% endif %}
+        {% if currentChannel and currentServer and is_granted('CHANNEL_EDIT', currentChannel) %}
+            <a href="{{ path('app_channel_edit', {serverId: currentServer.id, channelId: currentChannel.id}) }}"
+               class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+               title="Ustawienia kanału">
+                {{ ux_icon('bi:gear', {width: 16, height: 16}) }}
+            </a>
+        {% endif %}
+        <small class="text-app-secondary fw-medium d-none d-lg-block">{{ app.user.email }}</small>
+        <a href="{{ path('app_logout') }}"
+           class="btn btn-sm btn-danger d-flex align-items-center gap-2 fw-medium shadow-sm"
+           title="Wyloguj się"
+           data-turbo="false">
+
+            {{ ux_icon('bi:box-arrow-right') }}
+            <span class="d-none d-md-inline">Wyloguj</span>
+        </a>
     </div>
 </div>
+

@@ -1,0 +1,29 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ],
+        "excludes": [
+            "Kernel.php",
+            "Controller",
+            "Command",
+            "DataFixtures",
+            "Dto",
+            "Entity",
+            "Enum",
+            "EventSubscriber",
+            "Factory",
+            "Form",
+            "Story",
+            "Twig",
+            "Repository"
+        ]
+    },
+    "logs": {
+        "text": "infection.log"
+    },
+    "mutators": {
+        "@default": true
+    }
+}

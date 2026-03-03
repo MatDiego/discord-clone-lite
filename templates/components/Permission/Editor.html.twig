@@ -1,0 +1,93 @@
+<div class="d-flex flex-column flex-grow-1 min-h-0 p-3 shadow-sm card-elevated">
+    {% set target = computed.targetInfo %}
+
+    <div class="d-flex flex-shrink-0 align-items-center justify-content-between mb-3 border-bottom border-secondary pb-3">
+        <h6 class="d-flex align-items-center gap-2 mb-0 fw-bold text-app-primary">
+            {{ ux_icon(target.icon, {class: target.class}) }}
+            {{ target.name }}
+        </h6>
+
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-sm btn-outline-danger"
+                    data-bs-toggle="modal" data-bs-target="#removeOverridesModal">
+                {{ ux_icon('bi:trash3') }}
+            </button>
+        </div>
+    </div>
+
+    {% set form = computed.form %}
+    {{ form_start(form, {
+        'action': path('app_channel_permission_save', {serverId: server.id, channelId: channel.id}),
+        'method': 'POST'
+    }) }}
+
+        <input type="hidden" name="target_type" value="{{ target.type }}">
+        <input type="hidden" name="target_id" value="{{ selected|split(':')[1] }}">
+
+        <div class="d-flex flex-shrink-0 justify-content-end mb-2">
+             <button type="submit" class="btn btn-sm btn-primary d-flex align-items-center gap-2">
+                {{ ux_icon('bi:check2') }} Zatwierdź Zmiany
+            </button>
+        </div>
+
+        <div class="overflow-y-auto overflow-x-hidden dark-scrollbar flex-grow-1 min-h-0">
+            <div class="row flex-shrink-0 align-items-center pb-2 mb-2 border-bottom border-secondary gx-2">
+                <div class="col-5 col-sm-6">
+                    <span class="perm-text-xs fw-bold text-app-muted">UPRAWNIENIE</span>
+                </div>
+
+                <div class="col-7 col-sm-6">
+                    <div class="row align-items-center text-center gx-1">
+                        <div class="col-4"><span class="perm-text-xs fw-bold text-app-muted">BASE</span></div>
+                        <div class="col-4"><span class="perm-text-xs fw-bold text-app-muted">ZEZWÓL</span></div>
+                        <div class="col-4"><span class="perm-text-xs fw-bold text-app-muted">ZABROŃ</span></div>
+                    </div>
+                </div>
+            </div>
+
+            {% for row in computed.rows %}
+                <div class="row align-items-center py-2 border-bottom border-dark-light perm-row-hover gx-2">
+                    <div class="col-5 col-sm-6 text-truncate">
+                        <span class="small text-app-secondary">{{ row.label }}</span>
+                    </div>
+
+                    <div class="col-7 col-sm-6">
+                        <div class="row align-items-center text-center gx-1">
+                            {# BASE (Inherited) #}
+                            <div class="col-4 d-flex justify-content-center">
+                                <span class="perm-base-badge {{ row.baseBadgeClass }}" title="Uprawnienie bazowe (z ról)">
+                                    {{ ux_icon(row.baseIcon, {class: 'perm-base-icon'}) }}
+                                </span>
+                            </div>
+
+                            {% set formRow = form[row.permission.value] %}
+
+                            {{ form_widget(formRow[0], {'attr': {'class': 'd-none'}}) }}
+
+                            <div class="col-4 d-flex justify-content-center">
+                                {{ form_widget(formRow[1]) }}
+                                <label class="btn btn-sm perm-toggle perm-toggle--allow-radio d-inline-flex align-items-center justify-content-center p-0 mb-0" for="{{ formRow[1].vars.id }}">
+                                     {{ ux_icon('bi:check-lg') }}
+                                </label>
+                            </div>
+
+                            <div class="col-4 d-flex justify-content-center">
+                                {{ form_widget(formRow[2]) }}
+                                <label class="btn btn-sm perm-toggle perm-toggle--deny-radio d-inline-flex align-items-center justify-content-center p-0 mb-0" for="{{ formRow[2].vars.id }}">
+                                     {{ ux_icon('bi:x-lg') }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {{ form_end(form) }}
+</div>
+
+{% include 'components/Permission/_remove_modal.html.twig' with {
+    target: target,
+    server: server,
+    channel: channel,
+    selected: selected,
+} only %}

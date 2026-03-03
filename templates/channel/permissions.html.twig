@@ -1,0 +1,50 @@
+{% extends 'layout_app.html.twig' %}
+
+{% block title %}Uprawnienia kanału - #{{ channel.name }}{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-column flex-grow-1 min-h-0 py-4 px-5 overflow-hidden">
+        <div class=" d-flex flex-shrink-0 justify-content-between mb-4 align-items-center">
+            <div>
+                <h2 class="d-flex align-items-center gap-2 fw-bold text-white mb-1 ">
+                    {{ ux_icon('bi:shield-lock-fill', {class: 'text-primary'}) }}
+                    Uprawnienia kanału
+                </h2>
+                <p class="small mb-0 text-app-secondary ">
+                    Kanał: <span class="fw-bold text-white">#{{ channel.name }}</span>
+                </p>
+            </div>
+            <a href="{{ path('app_channel_edit', {serverId: server.id, channelId: channel.id}) }}"
+               class="btn btn-sm btn-outline-secondary">
+                {{ ux_icon('bi:arrow-left') }} Ustawienia
+            </a>
+        </div>
+
+        <div class="d-flex flex-grow-1 min-h-0 gap-4 pb-4">
+            <div class="perm-sidebar-col overflow-y-auto pe-2 dark-scrollbar">
+                <twig:Permission:Sidebar
+                    :channel="channel"
+                    :server="server"
+                    :selected="selected"
+                />
+            </div>
+            <div class="flex-grow-1 d-flex flex-column min-w-0 min-h-0">
+                <turbo-frame id="permission_editor" class="flex-grow-1 d-flex flex-column overflow-hidden min-h-0">
+                    {% if selected %}
+                        <twig:Permission:Editor
+                            :server="server"
+                            :channel="channel"
+                            :selected="selected"
+                        />
+                    {% else %}
+                        <div class="d-flex flex-column justify-content-center align-items-center p-5 text-center shadow-sm card-elevated perm-card">
+                            {{ ux_icon('bi:arrow-left-circle', {class: 'fs-1 mb-3 opacity-25 text-white'}) }}
+                            <p class="text-white fw-bold">Wybierz cel nadpisania</p>
+                            <p class="text-app-secondary small">Wybierz rolę lub członka z listy po lewej.</p>
+                        </div>
+                    {% endif %}
+                </turbo-frame>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,6 +1,6 @@
-@mixin dark-scrollbar {
+@mixin dark-scrollbar($track-color: transparent) {
     scrollbar-width: thin;
-    scrollbar-color: $app-bg-elevated transparent;
+    scrollbar-color: $app-bg-elevated $track-color;
 
     &::-webkit-scrollbar {
         width: 0.5rem;
@@ -8,7 +8,7 @@
     }
 
     &::-webkit-scrollbar-track {
-        background: transparent;
+        background: $track-color;
         margin-block: 0.25rem;
     }
 

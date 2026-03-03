@@ -213,6 +213,20 @@ fabric.properties
 # PHPUnit
 /app/phpunit.xml
 /phpunit.xml
+.phpunit.cache/test-results
+/.phpunit.result.cache
+
+# Coverage
+/public/coverage/
+
+# Infection
+/infection.log
+/infection-log.json
+/infection-summary.log
+
+# Psalm
+/.psalm/
+/psalm-cache/
 
 # Build data
 /build/

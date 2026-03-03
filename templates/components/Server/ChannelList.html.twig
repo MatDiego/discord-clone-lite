@@ -24,11 +24,13 @@
                         <span class="text-truncate flex-grow-1">{{ channel.name }}</span>
 
                     </a>
-                    <a href="{{ path('app_channel_edit', {serverId: currentServer.id, channelId: channel.id}) }}"
-                       class="settings-icon text-app-secondary text-decoration-none d-flex align-items-center px-3 rounded"
-                       title="Edytuj kanał">
-                        {{ ux_icon('bi:gear-fill', {class: 'fs-6'}) }}
-                    </a>
+                    {% if is_granted('CHANNEL_EDIT', channel) %}
+                        <a href="{{ path('app_channel_edit', {serverId: currentServer.id, channelId: channel.id}) }}"
+                           class="settings-icon text-app-secondary text-decoration-none d-flex align-items-center px-3 rounded"
+                           title="Edytuj kanał">
+                            {{ ux_icon('bi:gear-fill', {class: 'fs-6'}) }}
+                        </a>
+                    {% endif %}
 
                 </div>
 

@@ -1,0 +1,24 @@
+.member-list-panel {
+    flex: 0 0 15rem;
+    background-color: $app-bg-darker;
+    border-left: 1px solid $app-border;
+}
+
+.member-list-header {
+    min-height: 3rem;
+    background-color: $app-bg-darkest;
+}
+
+.member-item {
+    color: $app-text-secondary;
+    transition: all 0.15s ease;
+
+    &:hover {
+        background-color: $app-bg-elevated;
+        color: $app-text-primary;
+    }
+}
+
+.owner-badge {
+    font-size: 0.65rem;
+}

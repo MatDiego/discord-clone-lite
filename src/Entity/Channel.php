@@ -1,16 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Enum\ChannelTypeEnum;
 use App\Repository\ChannelRepository;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChannelRepository::class)]
 #[ORM\UniqueConstraint(
@@ -19,47 +20,47 @@ use Symfony\Component\Uid\Uuid;
 )]
 #[UniqueEntity(
     fields: ['server', 'name'],
-    message: 'Na tym serwerze istnieje już kanał o tej nazwie.',
+    message: 'channel.name.unique',
     errorPath: 'name'
 )]
 class Channel
 {
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    private ?Uuid $id;
+    #[ORM\Column(type: UuidType::NAME, unique: true, nullable: false)]
+    private Uuid $id;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[ORM\Column(length: 25, nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 1, max: 25)]
+    #[Assert\Regex(pattern: '/^[\p{L}0-9-]+$/u')]
+    private string $name;
 
-    #[ORM\Column(length: 20, enumType: ChannelTypeEnum::class)]
+    #[ORM\Column(length: 20, nullable: false, enumType: ChannelTypeEnum::class)]
+    #[Assert\NotNull]
     private ChannelTypeEnum $type;
 
     #[ORM\ManyToOne(inversedBy: 'channels')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Server $server = null;
+    #[ORM\JoinColumn(nullable: false, onDelete: 'cascade')]
+    private Server $server;
 
-    /**
-     * @var Collection<int, Message>
-     */
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'channel', orphanRemoval: true)]
-    private Collection $messages;
+    #[ORM\Column(nullable: false)]
+    private DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt;
 
-    public function __construct()
+    public function __construct(string $name, Server $server)
     {
         $this->id = Uuid::v7();
         $this->type = ChannelTypeEnum::TEXT;
-        $this->messages = new ArrayCollection();
         $this->createdAt = new DateTimeImmutable();
+        $this->server = $server;
+        $this->name = $name;
     }
-    public function getId(): ?Uuid
+    public function getId(): Uuid
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -83,54 +84,24 @@ class Channel
         return $this;
     }
 
-    public function getServer(): ?Server
+    public function getServer(): Server
     {
         return $this->server;
     }
 
-    public function setServer(?Server $server): static
+    public function setServer(Server $server): static
     {
         $this->server = $server;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Message>
-     */
-    public function getMessages(): Collection
-    {
-        return $this->messages;
-    }
-
-    public function addMessage(Message $message): static
-    {
-        if (!$this->messages->contains($message)) {
-            $this->messages->add($message);
-            $message->setChannel($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMessage(Message $message): static
-    {
-        if ($this->messages->removeElement($message)) {
-            // set the owning side to null (unless already changed)
-            if ($message->getChannel() === $this) {
-                $message->setChannel(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 

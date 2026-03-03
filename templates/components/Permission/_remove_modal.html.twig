@@ -1,0 +1,36 @@
+<div class="modal fade" id="removeOverridesModal" tabindex="-1" aria-labelledby="removeOverridesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content perm-modal">
+            <div class="modal-header border-secondary">
+                <h5 class="d-flex align-items-center gap-2 modal-title text-white" id="removeOverridesModalLabel">
+                    {{ ux_icon('bi:exclamation-triangle-fill', {class: 'text-danger'}) }}
+                    Usunięcie nadpisań
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Zamknij"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">Czy na pewno chcesz usunąć <strong class="text-white">wszystkie nadpisania</strong> uprawnień dla:</p>
+                <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded">
+                    {{ ux_icon(target.icon, {class: target.class}) }}
+                    <span class="fw-bold text-white">{{ target.name }}</span>
+                </div>
+                <p class="small text-app-muted mb-0">
+                    Po usunięciu nadpisań wszystkie uprawnienia tego {{ target.type == 'role' ? 'roli' : 'członka' }}
+                    na tym kanale powrócą do stanu dziedziczonego z ról serwera.
+                    {{ target.type == 'role' ? 'Rola' : 'Członek' }} zniknie z listy nadpisań po lewej stronie.
+                </p>
+            </div>
+            <div class="modal-footer border-secondary d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <form action="{{ path('app_channel_permission_remove', {serverId: server.id, channelId: channel.id}) }}" method="POST" data-turbo-frame="_top">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('channel_permissions_remove_' ~ channel.id) }}">
+                    <input type="hidden" name="target_type" value="{{ target.type }}">
+                    <input type="hidden" name="target_id" value="{{ selected|split(':')[1] }}">
+                    <button type="submit" class="btn btn-sm btn-danger d-flex align-items-center gap-2">
+                        {{ ux_icon('bi:trash3') }} Usuń nadpisania
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

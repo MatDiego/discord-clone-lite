@@ -1,19 +1,60 @@
 register:
     password:
         min_length: 'Hasło musi mieć minimum {{ limit }} znaków.'
+        max_length: 'Hasło może mieć maksymalnie {{ limit }} znaków.'
         not_blank: 'Proszę podać hasło.'
+
+    email:
+        not_blank: 'Musisz podać e-mail.'
+        invalid: 'Podany e-mail jest nieprawidłowy.'
+        max_length: 'Adres email może mieć maksymalnie {{ limit }} znaków.'
+
+    username:
+        not_blank: 'Musisz podać nazwę użytkownika.'
+        min_length: 'Nazwa użytkownika musi mieć minimum {{ limit }} znaki.'
+        max_length: 'Nazwa użytkownika może mieć maksymalnie {{ limit }} znaków.'
 
     agree_terms:
         is_true: 'Musisz zaakceptować regulamin.'
 
 server:
     name:
-        not_blank: 'Podaj nazwę serwera'
+        not_blank: 'Podaj nazwę serwera.'
+        min_length: 'Nazwa serwera musi mieć minimum {{ limit }} znaki.'
+        max_length: 'Nazwa serwera może mieć maksymalnie {{ limit }} znaków.'
 
 channel:
     name:
-        not_blank: 'Podaj nazwę kanału'
+        not_blank: 'Podaj nazwę kanału.'
+        min_length: 'Nazwa kanału musi mieć minimum {{ limit }} znak.'
+        max_length: 'Nazwa kanału może mieć maksymalnie {{ limit }} znaków.'
+        regex: 'Nazwa kanału może zawierać tylko litery, cyfry i myślniki.'
+        unique: 'Na tym serwerze istnieje już kanał o tej nazwie.'
 
 message:
     content:
         not_blank: 'Wiadomość nie może być pusta.'
+
+user:
+    email:
+        not_blank: 'Email jest wymagany.'
+        email: 'Podaj poprawny adres email.'
+        unique: 'Istnieje już konto powiązane z tym adresem email.'
+    username:
+        not_blank: 'Nazwa użytkownika jest wymagana.'
+        min_length: 'Nazwa musi mieć minimum {{ limit }} znaki.'
+        max_length: 'Nazwa może mieć maksymalnie {{ limit }} znaków.'
+
+role:
+    name:
+        not_blank: 'Nazwa roli jest wymagana.'
+    position:
+        positive_or_zero: 'Pozycja musi być liczbą nieujemną.'
+
+override:
+    target_type:
+        not_blank: 'Typ celu nadpisania jest wymagany.'
+        invalid: 'Nieprawidłowy typ celu. Dozwolone wartości: rola, członek.'
+    target_id:
+        not_blank: 'Identyfikator celu nadpisania jest wymagany.'
+

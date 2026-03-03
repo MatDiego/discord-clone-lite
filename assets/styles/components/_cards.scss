@@ -3,9 +3,9 @@
 }
 
 .card-elevated {
+    @extend .shadow-sm;
     background-color: $app-bg-elevated;
     border-radius: 0.5rem;
-    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.4);
     color: $app-text-primary;
 
     .form-control {
@@ -17,5 +17,18 @@
             border-color: $app-accent;
             box-shadow: none;
         }
+    }
+}
+
+.perm-card {
+    min-height: 300px;
+}
+
+.perm-sidebar-col {
+    width: 33.333%;
+    flex-shrink: 0;
+
+    @media (max-width: 767.98px) {
+        width: 100%;
     }
 }

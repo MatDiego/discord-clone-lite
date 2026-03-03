@@ -1,0 +1,112 @@
+.perm-dropdown {
+    max-height: 300px;
+    min-width: 200px;
+    overflow-y: auto;
+    @include dark-scrollbar($app-bg-darkest);
+    background-color: $app-bg-darkest;
+    border: 1px solid $app-border;
+    box-shadow: $app-shadow-lg;
+
+    .dropdown-item {
+        color: $app-text-secondary;
+
+        &:hover {
+            background-color: $app-bg-elevated;
+            color: $app-text-primary;
+        }
+    }
+}
+
+.perm-section-label {
+    font-size: 0.65rem;
+}
+
+.btn.perm-toggle {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+        border-color: rgba(255, 255, 255, 0.5);
+        color: rgba(255, 255, 255, 0.7);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    svg {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+
+.perm-toggle--allow {
+    background-color: $app-success;
+    border-color: $app-success;
+    color: #fff;
+    box-shadow: 0 0 8px rgba($app-success, 0.4);
+
+    &:hover {
+        background-color: darken($app-success, 10%);
+        border-color: darken($app-success, 10%);
+        color: #fff;
+    }
+}
+
+.btn-check:checked+.perm-toggle--allow-radio {
+    @extend .perm-toggle--allow;
+}
+
+.perm-toggle--deny {
+    background-color: $app-danger;
+    border-color: $app-danger;
+    color: #fff;
+    box-shadow: 0 0 8px rgba($app-danger, 0.4);
+
+    &:hover {
+        background-color: darken($app-danger, 10%);
+        border-color: darken($app-danger, 10%);
+        color: #fff;
+    }
+}
+
+.btn-check:checked+.perm-toggle--deny-radio {
+    @extend .perm-toggle--deny;
+}
+
+
+.perm-base-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.perm-base-badge--allow .perm-base-icon {
+    color: $app-success;
+}
+
+.perm-base-badge--deny .perm-base-icon {
+    color: $app-danger;
+    opacity: 0.85;
+}
+
+
+.perm-row-hover {
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+}
+
+.perm-text-xs {
+    font-size: 0.75rem;
+}
+
+.perm-modal {
+    background-color: $app-bg-dark;
+    border: 1px solid $app-border;
+    box-shadow: $app-shadow-lg;
+    color: $app-text-secondary;
+}

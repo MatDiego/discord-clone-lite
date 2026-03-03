@@ -1,0 +1,35 @@
+<div class="dropdown w-100" data-controller="permission_search">
+    <button class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
+            type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+        {{ ux_icon('bi:plus-circle') }} Dodaj rolę lub członka
+    </button>
+
+    <div class="dropdown-menu p-2 border-secondary shadow-lg bg-app-darker perm-dropdown">
+        <input type="text" class="form-control form-control-sm mb-2 bg-dark text-white border-secondary"
+               placeholder="Szukaj..." data-permission-search-target="input" data-action="input->permission_search#filter">
+
+        <div class="overflow-auto custom-scrollbar" data-permission-search-target="list">
+            <div class="px-2 py-1"><small class="text-muted fw-bold text-uppercase perm-section-label">Role</small></div>
+            {% for role in this.roles %}
+                <a href="{{ path('app_channel_permissions', {serverId: server.id, channelId: channel.id, selected: 'role:' ~ role.id}) }}"
+                   data-turbo-frame="main_content"
+                   class="d-flex align-items-center gap-2 py-2 rounded small dropdown-item"
+                   data-name="{{ role.name|lower }}">
+                    {{ ux_icon('bi:shield-fill', {class: 'text-primary'}) }} {{ role.name }}
+                </a>
+            {% endfor %}
+
+            <div class="dropdown-divider border-secondary"></div>
+
+            <div class="px-2 py-1"><small class="text-muted fw-bold text-uppercase perm-section-label">Członkowie</small></div>
+            {% for member in this.members %}
+                <a href="{{ path('app_channel_permissions', {serverId: server.id, channelId: channel.id, selected: 'member:' ~ member.id}) }}"
+                   data-turbo-frame="main_content"
+                   class="d-flex align-items-center gap-2 py-2 rounded small dropdown-item"
+                   data-name="{{ member.user.username|lower }}">
+                    {{ ux_icon('bi:person-fill', {class: 'text-info'}) }} @{{ member.user.username }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>

@@ -1,8 +1,6 @@
 {% props message = null %}
 
-{% set colors = ['blue', 'green', 'red', 'purple', 'orange'] %}
-{% set colorIndex = message.author.username|length % colors|length %}
-{% set avatarColor = colors[colorIndex] %}
+{% set avatarColor = avatar_color(message.author.username) %}
 
 <div class="message-item d-flex gap-3 mt-1">
 
