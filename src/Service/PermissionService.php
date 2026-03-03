@@ -57,7 +57,7 @@ final readonly class PermissionService
 
         $roleIds = $this->memberRoleRepository->findRoleIdsByMember($member);
         $granted = $this->rolePermissionRepository->hasPermissionInRoles($roleIds, $permission);
-        $overrides = $this->channelOverrideRepository->findOverridesForChannel(
+        $overrides = $this->channelOverrideRepository->findApplicableOverrides(
             $channel,
             $permission,
             $roleIds,

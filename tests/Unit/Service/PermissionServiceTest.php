@@ -188,7 +188,7 @@ final class PermissionServiceTest extends TestCase
     {
         // Arrange
         $this->stubMemberWithRoles(hasPermission: true);
-        $this->channelOverrideRepo->method('findOverridesForChannel')->willReturn([]);
+        $this->channelOverrideRepo->method('findApplicableOverrides')->willReturn([]);
 
         // Act
         $result = $this->service->hasChannelPermission($this->regularUser, $this->channel, UserPermissionEnum::SEND_MESSAGES);
@@ -204,7 +204,7 @@ final class PermissionServiceTest extends TestCase
         $this->stubMemberWithRoles(hasPermission: true);
 
         $roleOverrideDeny = $this->createOverrideStub(serverMember: null, allow: false);
-        $this->channelOverrideRepo->method('findOverridesForChannel')->willReturn([$roleOverrideDeny]);
+        $this->channelOverrideRepo->method('findApplicableOverrides')->willReturn([$roleOverrideDeny]);
 
         // Act
         $result = $this->service->hasChannelPermission($this->regularUser, $this->channel, UserPermissionEnum::SEND_MESSAGES);
@@ -220,7 +220,7 @@ final class PermissionServiceTest extends TestCase
         $this->stubMemberWithRoles(hasPermission: false);
 
         $roleOverrideAllow = $this->createOverrideStub(serverMember: null, allow: true);
-        $this->channelOverrideRepo->method('findOverridesForChannel')->willReturn([$roleOverrideAllow]);
+        $this->channelOverrideRepo->method('findApplicableOverrides')->willReturn([$roleOverrideAllow]);
 
         // Act
         $result = $this->service->hasChannelPermission($this->regularUser, $this->channel, UserPermissionEnum::SEND_MESSAGES);
@@ -237,7 +237,7 @@ final class PermissionServiceTest extends TestCase
 
         $roleAllow = $this->createOverrideStub(serverMember: null, allow: true);
         $roleDeny = $this->createOverrideStub(serverMember: null, allow: false);
-        $this->channelOverrideRepo->method('findOverridesForChannel')->willReturn([$roleAllow, $roleDeny]);
+        $this->channelOverrideRepo->method('findApplicableOverrides')->willReturn([$roleAllow, $roleDeny]);
 
         // Act
         $result = $this->service->hasChannelPermission($this->regularUser, $this->channel, UserPermissionEnum::SEND_MESSAGES);
@@ -254,7 +254,7 @@ final class PermissionServiceTest extends TestCase
 
         $roleDeny = $this->createOverrideStub(serverMember: null, allow: false);
         $memberAllow = $this->createOverrideStub(serverMember: $this->serverMember, allow: true);
-        $this->channelOverrideRepo->method('findOverridesForChannel')->willReturn([$roleDeny, $memberAllow]);
+        $this->channelOverrideRepo->method('findApplicableOverrides')->willReturn([$roleDeny, $memberAllow]);
 
         // Act
         $result = $this->service->hasChannelPermission($this->regularUser, $this->channel, UserPermissionEnum::SEND_MESSAGES);
@@ -271,7 +271,7 @@ final class PermissionServiceTest extends TestCase
 
         $roleAllow = $this->createOverrideStub(serverMember: null, allow: true);
         $memberDeny = $this->createOverrideStub(serverMember: $this->serverMember, allow: false);
-        $this->channelOverrideRepo->method('findOverridesForChannel')->willReturn([$roleAllow, $memberDeny]);
+        $this->channelOverrideRepo->method('findApplicableOverrides')->willReturn([$roleAllow, $memberDeny]);
 
         // Act
         $result = $this->service->hasChannelPermission($this->regularUser, $this->channel, UserPermissionEnum::SEND_MESSAGES);

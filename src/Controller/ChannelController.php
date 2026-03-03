@@ -85,7 +85,7 @@ final class ChannelController extends AbstractController
             /** @var CreateChannelRequest $channelData */
             $channel = $channelService->createChannel($channelData, $server);
 
-            $this->addFlash('success', 'Kanał został utworzony!');
+            $this->addFlash('success', 'Pomyślnie utworzono nowy kanał.');
 
             return $this->redirectToRoute('app_chat_channel', [
                 'serverId' => $server->getId(),
@@ -147,13 +147,13 @@ final class ChannelController extends AbstractController
 
         if ($this->isCsrfTokenValid('delete_channel_' . $channel->getId()->toRfc4122(), $token)) {
             $channelService->removeChannel($channel);
-            $this->addFlash('success', 'Kanał został usunięty.');
+            $this->addFlash('success', 'Pomyślnie usunięto kanał.');
             return $this->redirectToRoute('app_server_default_channel', [
                 'serverId' => $server->getId()
             ]);
         }
 
-        $this->addFlash('error', 'Nieprawidłowy token bezpieczeństwa.');
+        $this->addFlash('error', 'Nieprawidłowy token bezpieczeństwa. Spróbuj ponownie.');
         return $this->redirectToRoute('app_channel_edit', [
             'serverId' => $server->getId(),
             'channelId' => $channel->getId()

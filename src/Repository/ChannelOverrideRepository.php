@@ -26,7 +26,7 @@ class ChannelOverrideRepository extends ServiceEntityRepository
      * @param Uuid[] $roleIds
      * @return ChannelOverride[]
      */
-    public function findOverridesForChannel(
+    public function findApplicableOverrides(
         Channel $channel,
         UserPermissionEnum $permission,
         array $roleIds,
