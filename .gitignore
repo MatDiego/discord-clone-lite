@@ -213,7 +213,7 @@ fabric.properties
 # PHPUnit
 /app/phpunit.xml
 /phpunit.xml
-.phpunit.cache/test-results
+.phpunit.cache/
 /.phpunit.result.cache
 
 # Coverage
