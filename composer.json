@@ -52,7 +52,9 @@
         "twig/cssinliner-extra": "^3.23",
         "twig/extra-bundle": "^2.12|^3.23",
         "twig/inky-extra": "^3.23",
-        "twig/twig": "^2.12|^3.23"
+        "twig/twig": "^2.12|^3.23",
+        "doctrine/doctrine-fixtures-bundle": "^4.3.1",
+        "zenstruck/foundry": "^2.9.2"
     },
     "config": {
         "allow-plugins": {
@@ -109,8 +111,7 @@
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.6",
         "dg/bypass-finals": "^1.9",
-        "doctrine/doctrine-fixtures-bundle": "^4.3.1",
-        "infection/infection": "^0.32.5",
+        "infection/infection": "^0.32.6",
         "phpunit/phpunit": "^12.5.14",
         "psalm/plugin-phpunit": "^0.19.5",
         "psalm/plugin-symfony": "^5.3",
@@ -121,7 +122,6 @@
         "symfony/stopwatch": "7.3.*",
         "symfony/web-profiler-bundle": "7.3.*",
         "vimeo/psalm": "^6.15.1",
-        "weirdan/doctrine-psalm-plugin": "^2.10",
-        "zenstruck/foundry": "^2.9.2"
+        "weirdan/doctrine-psalm-plugin": "^2.10"
     }
 }

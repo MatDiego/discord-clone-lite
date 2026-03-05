@@ -16,3 +16,8 @@ when@dev: &dev
     #        autoconfigure: true
 
 when@test: *dev
+
+when@prod:
+    zenstruck_foundry:
+        persistence:
+            flush_once: true

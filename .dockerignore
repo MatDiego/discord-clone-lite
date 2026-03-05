@@ -1,0 +1,11 @@
+.git
+.idea
+var/
+vendor/
+node_modules/
+.env.local
+.env.*.local
+.env.test
+docker-compose.yml
+docker-compose.prod.yml
+README.md

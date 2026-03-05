@@ -19,51 +19,15 @@ final class Version20260212014041 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE channel DROP CONSTRAINT fk_a2f98e471844e6b7');
-        $this->addSql('ALTER TABLE channel ADD CONSTRAINT FK_A2F98E471844E6B7 FOREIGN KEY (server_id) REFERENCES server (id) ON DELETE CASCADE NOT DEFERRABLE');
-        $this->addSql('ALTER TABLE channel_override DROP CONSTRAINT fk_f5b3754c72f5a1aa');
-        $this->addSql('ALTER TABLE channel_override DROP CONSTRAINT fk_f5b3754cfed90cca');
-        $this->addSql('ALTER TABLE channel_override ADD CONSTRAINT FK_F5B3754C72F5A1AA FOREIGN KEY (channel_id) REFERENCES channel (id) ON DELETE CASCADE NOT DEFERRABLE');
-        $this->addSql('ALTER TABLE channel_override ADD CONSTRAINT FK_F5B3754CFED90CCA FOREIGN KEY (permission_id) REFERENCES permission (id) ON DELETE CASCADE NOT DEFERRABLE');
-        $this->addSql('ALTER TABLE member_role DROP CONSTRAINT fk_abe1a636b78289d8');
-        $this->addSql('ALTER TABLE member_role DROP CONSTRAINT fk_abe1a636d60322ac');
-        $this->addSql('ALTER TABLE member_role ADD CONSTRAINT FK_ABE1A636B78289D8 FOREIGN KEY (server_member_id) REFERENCES server_member (id) ON DELETE CASCADE NOT DEFERRABLE');
-        $this->addSql('ALTER TABLE member_role ADD CONSTRAINT FK_ABE1A636D60322AC FOREIGN KEY (role_id) REFERENCES user_role (id) ON DELETE CASCADE NOT DEFERRABLE');
-        $this->addSql('ALTER TABLE role_permission DROP CONSTRAINT fk_6f7df886fed90cca');
-        $this->addSql('ALTER TABLE role_permission DROP CONSTRAINT fk_6f7df886d60322ac');
-        $this->addSql('ALTER TABLE role_permission ADD CONSTRAINT FK_6F7DF886FED90CCA FOREIGN KEY (permission_id) REFERENCES permission (id) ON DELETE CASCADE NOT DEFERRABLE');
-        $this->addSql('ALTER TABLE role_permission ADD CONSTRAINT FK_6F7DF886D60322AC FOREIGN KEY (role_id) REFERENCES user_role (id) ON DELETE CASCADE NOT DEFERRABLE');
-        $this->addSql('ALTER TABLE server_member DROP CONSTRAINT fk_998c3be1844e6b7');
-        $this->addSql('ALTER TABLE server_member DROP CONSTRAINT fk_998c3bea76ed395');
-        $this->addSql('ALTER TABLE server_member ADD CONSTRAINT FK_998C3BE1844E6B7 FOREIGN KEY (server_id) REFERENCES server (id) ON DELETE CASCADE NOT DEFERRABLE');
-        $this->addSql('ALTER TABLE server_member ADD CONSTRAINT FK_998C3BEA76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE');
-        $this->addSql('ALTER TABLE user_role DROP CONSTRAINT fk_2de8c6a31844e6b7');
-        $this->addSql('ALTER TABLE user_role ADD CONSTRAINT FK_2DE8C6A31844E6B7 FOREIGN KEY (server_id) REFERENCES server (id) ON DELETE CASCADE NOT DEFERRABLE');
+        // Intentionally empty — original CREATE TABLE migration was deleted.
+        // Operations on channel_override, member_role, role_permission, user_role
+        // reference tables not yet created at this point.
+        // Operations on channel and server_member (ON DELETE CASCADE)
+        // are handled correctly by Version20260304114927.
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE channel DROP CONSTRAINT FK_A2F98E471844E6B7');
-        $this->addSql('ALTER TABLE channel ADD CONSTRAINT fk_a2f98e471844e6b7 FOREIGN KEY (server_id) REFERENCES server (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE channel_override DROP CONSTRAINT FK_F5B3754C72F5A1AA');
-        $this->addSql('ALTER TABLE channel_override DROP CONSTRAINT FK_F5B3754CFED90CCA');
-        $this->addSql('ALTER TABLE channel_override ADD CONSTRAINT fk_f5b3754c72f5a1aa FOREIGN KEY (channel_id) REFERENCES channel (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE channel_override ADD CONSTRAINT fk_f5b3754cfed90cca FOREIGN KEY (permission_id) REFERENCES permission (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE member_role DROP CONSTRAINT FK_ABE1A636B78289D8');
-        $this->addSql('ALTER TABLE member_role DROP CONSTRAINT FK_ABE1A636D60322AC');
-        $this->addSql('ALTER TABLE member_role ADD CONSTRAINT fk_abe1a636b78289d8 FOREIGN KEY (server_member_id) REFERENCES server_member (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE member_role ADD CONSTRAINT fk_abe1a636d60322ac FOREIGN KEY (role_id) REFERENCES user_role (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE role_permission DROP CONSTRAINT FK_6F7DF886D60322AC');
-        $this->addSql('ALTER TABLE role_permission DROP CONSTRAINT FK_6F7DF886FED90CCA');
-        $this->addSql('ALTER TABLE role_permission ADD CONSTRAINT fk_6f7df886d60322ac FOREIGN KEY (role_id) REFERENCES user_role (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE role_permission ADD CONSTRAINT fk_6f7df886fed90cca FOREIGN KEY (permission_id) REFERENCES permission (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE server_member DROP CONSTRAINT FK_998C3BEA76ED395');
-        $this->addSql('ALTER TABLE server_member DROP CONSTRAINT FK_998C3BE1844E6B7');
-        $this->addSql('ALTER TABLE server_member ADD CONSTRAINT fk_998c3bea76ed395 FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE server_member ADD CONSTRAINT fk_998c3be1844e6b7 FOREIGN KEY (server_id) REFERENCES server (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE user_role DROP CONSTRAINT FK_2DE8C6A31844E6B7');
-        $this->addSql('ALTER TABLE user_role ADD CONSTRAINT fk_2de8c6a31844e6b7 FOREIGN KEY (server_id) REFERENCES server (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        // Intentionally empty — symmetric with up().
     }
 }

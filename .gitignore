@@ -189,6 +189,7 @@ fabric.properties
 !var/cache/.gitkeep
 !var/logs/.gitkeep
 !var/sessions/.gitkeep
+/var/
 
 # Logs (Symfony4)
 /var/log/*
@@ -213,7 +214,7 @@ fabric.properties
 # PHPUnit
 /app/phpunit.xml
 /phpunit.xml
-.phpunit.cache/test-results
+.phpunit.cache/
 /.phpunit.result.cache
 
 # Coverage
@@ -247,6 +248,7 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/phpstorm,phpstorm+all,symfony
 /.env.local
 /.env.*.local
+/.env.local.php
 
 /public/bundles
 
@@ -254,6 +256,6 @@ compose.override.yaml
 
 ###> symfonycasts/sass-bundle ###
 /public/assets/
-###< symfonycasts/sass-bundle ###
 
-/var/
+# Secrets
+prod.decrypt.private.php

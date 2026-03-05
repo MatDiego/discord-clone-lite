@@ -1,0 +1,27 @@
+{
+    frankenphp
+}
+
+{$DOMAIN_NAME:localhost} {
+    log
+    encode zstd br gzip
+
+    mercure {
+        publisher_jwt {$MERCURE_JWT_SECRET}
+        subscriber_jwt {$MERCURE_JWT_SECRET}
+        cors_origins *
+        publish_origins *
+        ui
+    }
+
+    root * /app/public
+    php_server
+}
+
+http://localhost:8080 {
+    mercure {
+        publisher_jwt {$MERCURE_JWT_SECRET}
+        subscriber_jwt {$MERCURE_JWT_SECRET}
+        publish_origins *
+    }
+}
