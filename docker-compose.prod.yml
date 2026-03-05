@@ -1,0 +1,55 @@
+services:
+    frankenphp:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        environment:
+            APP_ENV: prod
+            DOMAIN_NAME: matnas.pl
+            DEFAULT_URI: https://${DOMAIN_NAME}
+
+            POSTGRES_DB: communicator_prod
+            POSTGRES_USER: postgres
+            DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?serverVersion=16&charset=utf8
+
+            SYMFONY_DECRYPTION_SECRET: ${SYMFONY_DECRYPTION_SECRET:-}
+
+            MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET}
+            MERCURE_URL: http://localhost:8080/.well-known/mercure
+            MERCURE_PUBLIC_URL: https://${DOMAIN_NAME}/.well-known/mercure
+            MERCURE_HUB_URL: http://localhost:8080/.well-known/mercure
+
+        ports:
+            - "80:80"
+            - "443:443"
+            - "443:443/udp"
+        volumes:
+            - caddy_data:/data
+            - caddy_config:/config
+        depends_on:
+            - database
+
+    database:
+        image: postgres:16-alpine
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: communicator_prod
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        volumes:
+            - database_data_prod:/var/lib/postgresql/data
+
+    mailer:
+        image: axllent/mailpit
+        ports:
+            - "1025:1025"
+            - "8025:8025"
+        environment:
+            MP_SMTP_AUTH_ACCEPT_ANY: 1
+            MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+volumes:
+    database_data_prod:
+    caddy_data:
+    caddy_config:
