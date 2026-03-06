@@ -155,6 +155,10 @@ jobs:
                         echo "MERCURE_PUBLIC_URL=https://matnas.pl/.well-known/mercure" >> .env.local
                         echo "MERCURE_HUB_URL=http://localhost:8080/.well-known/mercure" >> .env.local
 
+                        export POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
+                        export MERCURE_JWT_SECRET="${{ secrets.MERCURE_JWT_SECRET }}"
+                        export SYMFONY_DECRYPTION_SECRET="${{ secrets.SYMFONY_DECRYPTION_SECRET }}"
+
                         docker compose -f docker-compose.prod.yml up -d --build --remove-orphans --wait
 
                         docker compose -f docker-compose.prod.yml exec -T frankenphp \
