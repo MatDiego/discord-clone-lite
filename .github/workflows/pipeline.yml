@@ -88,6 +88,9 @@ jobs:
             -   name: Download UX Icons (if not committed)
                 run: php bin/console ux:icons:lock --no-interaction
 
+            -   name: Build SASS assets
+                run: php bin/console sass:build
+
             -   name: Create test database and run migrations
                 run: |
                     php bin/console doctrine:database:create --if-not-exists
