@@ -16,6 +16,7 @@ COPY Caddyfile /etc/frankenphp/Caddyfile
 WORKDIR /app
 
 COPY composer.json composer.lock symfony.lock ./
+COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction --prefer-dist
 
 COPY . /app

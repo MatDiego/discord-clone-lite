@@ -126,11 +126,25 @@ jobs:
                     username: ${{ secrets.SERVER_USER }}
                     key: ${{ secrets.SSH_PRIVATE_KEY }}
                     script: |
+                        set -e
                         cd /opt/discord-clone
 
-                        POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-                        MERCURE_JWT_SECRET=${{ secrets.MERCURE_JWT_SECRET }} \
-                        SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }} \
+                        echo "APP_ENV=prod" > .env
+                        echo "SERVER_NAME=matnas.pl" >> .env
+
+                        echo "POSTGRES_DB=communicator_prod" >> .env
+                        echo "POSTGRES_USER=postgres" >> .env
+                        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+                        echo "DATABASE_URL=postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@database:5432/communicator_prod?serverVersion=16&charset=utf8" >> .env
+
+                        echo "SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }}" >> .env
+                        echo "MERCURE_JWT_SECRET=${{ secrets.MERCURE_JWT_SECRET }}" >> .env
+
+                        echo "MERCURE_URL=http://localhost/.well-known/mercure" >> .env  # Wewnętrzny URL dla FrankenPHP
+                        echo "MERCURE_PUBLIC_URL=https://matnas.pl/.well-known/mercure" >> .env
+                        echo "MERCURE_HUB_URL=https://matnas.pl/.well-known/mercure" >> .env
+                        echo "CORS_ALLOWED_ORIGINS=^https?://(www\.)?matnas\.pl$" >> .env
+
                         docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
 
                         docker compose -f docker-compose.prod.yml exec -T frankenphp \
