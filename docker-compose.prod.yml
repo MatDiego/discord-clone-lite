@@ -7,7 +7,7 @@ services:
         environment:
             APP_ENV: prod
             DOMAIN_NAME: matnas.pl
-            DEFAULT_URI: https://${DOMAIN_NAME}
+            DEFAULT_URI: https://matnas.pl
 
             POSTGRES_DB: communicator_prod
             POSTGRES_USER: postgres
@@ -17,7 +17,7 @@ services:
 
             MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET}
             MERCURE_URL: http://localhost:8080/.well-known/mercure
-            MERCURE_PUBLIC_URL: https://${DOMAIN_NAME}/.well-known/mercure
+            MERCURE_PUBLIC_URL: https://matnas.pl/.well-known/mercure
             MERCURE_HUB_URL: http://localhost:8080/.well-known/mercure
             MAILER_DSN: "null://null"
 
