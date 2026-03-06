@@ -88,6 +88,12 @@ jobs:
             -   name: Download UX Icons (if not committed)
                 run: php bin/console ux:icons:lock --no-interaction
 
+            -   name: Cache Dart Sass binary
+                uses: actions/cache@v4
+                with:
+                    path: var/sass
+                    key: ${{ runner.os }}-dart-sass-${{ hashFiles('composer.lock') }}
+
             -   name: Build SASS assets
                 run: php bin/console sass:build
 
