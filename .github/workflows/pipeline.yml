@@ -118,7 +118,6 @@ jobs:
                     key: ${{ secrets.SSH_PRIVATE_KEY }}
                     source: "./"
                     target: "/opt/discord-clone"
-                    rm: true
 
             -   name: Build and Deploy on VPS via SSH
                 uses: appleboy/ssh-action@v1
