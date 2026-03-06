@@ -86,8 +86,7 @@ final class ChannelControllerTest extends WebTestCase
     {
         // Arrange
         $client = ChannelControllerTest::createClient([], [
-            'HTTP_HOST' => 'example.com',
-            'HTTPS' => 'true'
+            'HTTP_HOST' => 'localhost'
         ]);
         $serverOwner = UserFactory::createOne();
         $server = ServerFactory::createOne(['owner' => $serverOwner]);

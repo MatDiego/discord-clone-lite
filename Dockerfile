@@ -13,12 +13,13 @@ RUN install-php-extensions \
 
 COPY Caddyfile /etc/frankenphp/Caddyfile
 
-COPY . /app
 WORKDIR /app
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY composer.json composer.lock symfony.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction --prefer-dist
 
-RUN composer install --no-dev --optimize-autoloader --classmap-authoritative --no-interaction
+COPY . /app
+RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
 
 RUN php bin/console sass:build \
     && php bin/console asset-map:compile \
