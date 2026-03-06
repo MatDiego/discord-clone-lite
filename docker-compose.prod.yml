@@ -5,6 +5,23 @@ services:
             dockerfile: Dockerfile
         restart: unless-stopped
 
+        environment:
+            APP_ENV: prod
+            DOMAIN_NAME: matnas.pl
+            DEFAULT_URI: https://matnas.pl
+
+            POSTGRES_DB: communicator_prod
+            POSTGRES_USER: postgres
+            DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@database:5432/communicator_prod?serverVersion=16&charset=utf8
+
+            SYMFONY_DECRYPTION_SECRET: ${SYMFONY_DECRYPTION_SECRET:-}
+
+            MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET}
+            MERCURE_URL: http://localhost:8080/.well-known/mercure
+            MERCURE_PUBLIC_URL: https://matnas.pl/.well-known/mercure
+            MERCURE_HUB_URL: http://localhost:8080/.well-known/mercure
+            MAILER_DSN: "null://null"
+
         ports:
             - "80:80"
             - "443:443"
