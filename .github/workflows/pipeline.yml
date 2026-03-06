@@ -131,6 +131,7 @@ jobs:
 
                         echo "APP_ENV=prod" > .env
                         echo "SERVER_NAME=matnas.pl" >> .env
+                        echo "DEFAULT_URI=https://matnas.pl" >> .env
 
                         echo "POSTGRES_DB=communicator_prod" >> .env
                         echo "POSTGRES_USER=postgres" >> .env
@@ -140,7 +141,10 @@ jobs:
                         echo "SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }}" >> .env
                         echo "MERCURE_JWT_SECRET=${{ secrets.MERCURE_JWT_SECRET }}" >> .env
 
-                        echo "MERCURE_URL=http://localhost/.well-known/mercure" >> .env  # Wewnętrzny URL dla FrankenPHP
+                        echo "MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0" >> .env
+                        echo "MAILER_DSN=null://null" >> .env
+
+                        echo "MERCURE_URL=http://localhost/.well-known/mercure" >> .env
                         echo "MERCURE_PUBLIC_URL=https://matnas.pl/.well-known/mercure" >> .env
                         echo "MERCURE_HUB_URL=https://matnas.pl/.well-known/mercure" >> .env
                         echo "CORS_ALLOWED_ORIGINS=^https?://(www\.)?matnas\.pl$" >> .env
