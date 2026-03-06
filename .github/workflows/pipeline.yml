@@ -59,10 +59,10 @@ jobs:
             APP_ENV: test
             APP_SECRET: '$ecretf0rt3st'
             DATABASE_URL: "postgresql://app:secret@127.0.0.1:5432/app_test?serverVersion=16&charset=utf8"
-            MERCURE_URL: "null://null"
-            MERCURE_HUB_URL: "null://null"
-            MERCURE_PUBLIC_URL: "null://null"
-            MERCURE_JWT_SECRET: "test-secret-key-for-ci-only"
+            MERCURE_URL: "http://localhost/.well-known/mercure"
+            MERCURE_HUB_URL: "http://localhost/.well-known/mercure"
+            MERCURE_PUBLIC_URL: "http://localhost/.well-known/mercure"
+            MERCURE_JWT_SECRET: "test-secret-key-for-ci-only-32ch"
 
         steps:
             -   name: Checkout code
@@ -82,10 +82,13 @@ jobs:
                     key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
                     restore-keys: ${{ runner.os }}-composer-
 
-            -   name: Install Composer dependencies (with dev)
+            -   name: Install Composer dependencies
                 run: composer install --prefer-dist --no-interaction --no-progress
 
-            -   name: Create test database & run migrations
+            -   name: Download UX Icons (if not committed)
+                run: php bin/console ux:icons:lock --no-interaction
+
+            -   name: Create test database and run migrations
                 run: |
                     php bin/console doctrine:database:create --if-not-exists
                     php bin/console doctrine:migrations:migrate --no-interaction
