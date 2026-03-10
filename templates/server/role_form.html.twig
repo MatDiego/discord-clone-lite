@@ -1,6 +1,6 @@
 {% extends 'layout_app.html.twig' %}
 
-{% block title %}{{ is_edit|default(false) ? 'Edycja roli' : 'Tworzenie roli na serwerze' }}: {{ server.name }}{% endblock %}
+{% block title %}{{ 'role.form_title'|trans }}: {{ server.name }}{% endblock %}
 
 {% block content %}
     <div class="d-flex flex-column flex-grow-1 min-h-0 overflow-hidden bg-app-dark">
@@ -10,9 +10,9 @@
 
                     <div class="row align-items-center justify-content-between flex-shrink-0 mb-4 mx-0">
                         <div class="col-12 col-sm-8 mb-3 mb-sm-0 px-0">
-                            <h2 class="mb-1 fw-bold text-white">{{ is_edit|default(false) ? 'Edytuj rolę' : 'role.form_title'|trans }}</h2>
+                            <h2 class="mb-1 fw-bold text-white">{{ 'role.form_title'|trans }}</h2>
                             <p class="mb-0 small text-app-secondary">
-                                {{ is_edit|default(false) ? 'Dostosuj uprawnienia dla roli na serwerze' : 'role.form_subtitle'|trans }} <span class="fw-bold text-white">{{ server.name }}</span>
+                                {{ 'role.form_subtitle'|trans }} <span class="fw-bold text-white">{{ server.name }}</span>
                             </p>
                         </div>
                         <div class="col-12 col-sm-4 px-0 text-sm-end">
@@ -72,7 +72,7 @@
                                         {{ 'role.btn_cancel'|trans }}
                                     </a>
                                     <button type="submit" class="px-4 py-2 fw-semibold shadow-sm btn btn-primary">
-                                        {{ is_edit|default(false) ? 'Zapisz zmiany' : 'role.btn_submit'|trans }}
+                                        {{ 'role.btn_submit'|trans }}
                                     </button>
                                 </div>
                             </div>
