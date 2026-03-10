@@ -4,40 +4,46 @@
 
 {% block content %}
 
-    <div class="flex-grow-1 bg-app-dark overflow-auto ">
+    <div class="flex-grow-1 overflow-auto bg-app-dark">
         <div class="container py-5">
 
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-8 col-xl-7">
                     <div class="mb-4">
-                        <h2 class="fw-bold text-white mb-1">Przegląd serwera</h2>
-                        <p class="text-app-secondary small">
+                        <h2 class="mb-1 fw-bold text-white">Przegląd serwera</h2>
+                        <p class="small text-app-secondary">
                             Zarządzaj podstawowymi ustawieniami i wyglądem.
                         </p>
                     </div>
-                    <div class="card-elevated p-4 mb-5">
+                    <div class="mb-5 p-4 card-elevated">
                         {% include 'server/_form.html.twig' with {
                             'cancelUrl': path('app_server_default_channel', { 'serverId': server.id })
                         } %}
                     </div>
-                    <hr class="border-secondary opacity-25 my-5">
+
+                    <hr class="my-5 border-secondary opacity-25">
+
+                    <twig:Server:RoleList :server="server" />
+
+                    <hr class="my-5 border-secondary opacity-25">
+
                     <div>
-                        <h5 class="fw-bold text-app-primary mb-3 text-uppercase small">
+                        <h5 class="mb-3 small fw-bold text-uppercase text-app-primary">
                             Strefa niebezpieczna
                         </h5>
 
-                        <div class="card border border-danger border-opacity-50 bg-transparent rounded-3">
-                            <div class="card-body p-4">
+                        <div class="bg-transparent border border-danger border-opacity-50 rounded-3 card">
+                            <div class="p-4 card-body">
                                 <div class="row align-items-center g-3">
                                     <div class="col-12 col-sm-8">
-                                        <h6 class="text-white fw-bold mb-1">Usuń serwer</h6>
-                                        <p class="text-app-secondary small mb-0">
+                                        <h6 class="mb-1 fw-bold text-white">Usuń serwer</h6>
+                                        <p class="mb-0 small text-app-secondary">
                                             Ta operacja jest nieodwracalna. Wszystkie kanały, wiadomości i role zostaną trwale usunięte.
                                         </p>
                                     </div>
                                     <div class="col-12 col-sm-4 text-sm-end">
                                         <button type="button"
-                                                class="btn btn-outline-danger px-3 py-2 fw-semibold w-sm-auto"
+                                                class="w-sm-auto px-3 py-2 fw-semibold btn btn-outline-danger"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#deleteServerModal">
                                             {{ ux_icon('bi:trash3-fill', {class: 'me-1'}) }} Usuń serwer
