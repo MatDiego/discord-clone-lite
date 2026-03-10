@@ -22,6 +22,7 @@ final class ServerVoter extends Voter
     public const VIEW = 'SERVER_VIEW';
     public const DELETE = 'SERVER_DELETE';
     public const CREATE_CHANNEL = 'SERVER_CREATE_CHANNEL';
+    public const MANAGE_ROLES = 'SERVER_MANAGE_ROLES';
 
     public function __construct(
         private readonly PermissionService $permissionService,
@@ -31,7 +32,13 @@ final class ServerVoter extends Voter
     #[Override]
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::VIEW, self::DELETE, self::CREATE_CHANNEL])
+        return in_array($attribute, [
+                self::EDIT,
+                self::VIEW,
+                self::DELETE,
+                self::CREATE_CHANNEL,
+                self::MANAGE_ROLES
+            ])
             && $subject instanceof Server;
     }
 
@@ -49,6 +56,7 @@ final class ServerVoter extends Voter
             self::EDIT => $this->permissionService->hasServerPermission($user, $server, UserPermissionEnum::MANAGE_SERVER),
             self::DELETE => $this->permissionService->isOwner($user, $server),
             self::CREATE_CHANNEL => $this->permissionService->hasServerPermission($user, $server, UserPermissionEnum::MANAGE_CHANNELS),
+            self::MANAGE_ROLES => $this->permissionService->hasServerPermission($user, $server, UserPermissionEnum::MANAGE_ROLES),
             default => throw new \LogicException('This code should not be reached!'),
         };
     }

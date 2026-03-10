@@ -16,7 +16,7 @@ final readonly class PermissionRowViewDTO
 
     public function getLabel(): string
     {
-        return $this->permission->value;
+        return $this->permission->trans();
     }
 
     public function getEffectiveState(): string
