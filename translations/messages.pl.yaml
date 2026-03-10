@@ -28,3 +28,13 @@ server:
 
 message:
     content_placeholder: 'Napisz wiadomość na #%name%'
+
+profile:
+    label_username: 'Nazwa użytkownika'
+    username_placeholder: 'Wpisz nazwę użytkownika'
+
+    label_email: 'Adres e-mail'
+    email_placeholder: 'Wpisz adres e-mail'
+
+    label_password: 'Nowe hasło (opcjonalne)'
+    password_placeholder: 'Wpisz, aby zmienić'
