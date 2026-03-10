@@ -49,15 +49,26 @@ final readonly class ServerRoleService
     {
         $role->setName($request->name);
 
-        // Clear existing permissions
-        foreach ($role->getRolePermissions() as $existingPermission) {
-            $role->removeRolePermission($existingPermission);
+        $newPermissionIds = array_map(
+            fn($p) => $p->getId()->toRfc4122(),
+            $request->permissions->toArray()
+        );
+
+        foreach ($role->getRolePermissions()->toArray() as $rolePermission) {
+            if (!in_array($rolePermission->getPermission()->getId()->toRfc4122(), $newPermissionIds, true)) {
+                $role->removeRolePermission($rolePermission);
+            }
         }
 
-        // Add new permissions
-        foreach ($request->permissions as $permissionEntity) {
-            $rolePermission = new RolePermission($role, $permissionEntity);
-            $role->addRolePermission($rolePermission);
+        $currentPermissionIds = array_map(
+            fn($rp) => $rp->getPermission()->getId()->toRfc4122(),
+            $role->getRolePermissions()->toArray()
+        );
+
+        foreach ($request->permissions as $permission) {
+            if (!in_array($permission->getId()->toRfc4122(), $currentPermissionIds, true)) {
+                $role->addRolePermission(new RolePermission($role, $permission));
+            }
         }
 
         $this->userRoleRepository->flush();
