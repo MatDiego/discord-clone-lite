@@ -48,8 +48,11 @@ user:
 role:
     name:
         not_blank: 'Nazwa roli jest wymagana.'
+        max_length: 'Nazwa roli nie może być dłuższa niż 30 znaków.'
     position:
         positive_or_zero: 'Pozycja musi być liczbą nieujemną.'
+    permission:
+        min_count: 'Wybierz co najmniej jedno uprawnienie.'
 
 override:
     target_type:
@@ -57,4 +60,3 @@ override:
         invalid: 'Nieprawidłowy typ celu. Dozwolone wartości: rola, członek.'
     target_id:
         not_blank: 'Identyfikator celu nadpisania jest wymagany.'
-
