@@ -88,6 +88,12 @@ jobs:
             -   name: Download UX Icons (if not committed)
                 run: php bin/console ux:icons:lock --no-interaction
 
+            -   name: Cache Dart Sass binary
+                uses: actions/cache@v4
+                with:
+                    path: var/sass
+                    key: ${{ runner.os }}-dart-sass-${{ hashFiles('composer.lock') }}
+
             -   name: Build SASS assets
                 run: php bin/console sass:build
 
@@ -114,11 +120,10 @@ jobs:
                 uses: appleboy/scp-action@v0.1.7
                 with:
                     host: ${{ secrets.SERVER_IP }}
-                    username: ${{ secrets.SERVER_USER}}
+                    username: ${{ secrets.SERVER_USER }}
                     key: ${{ secrets.SSH_PRIVATE_KEY }}
                     source: "./"
                     target: "/opt/discord-clone"
-                    rm: true
 
             -   name: Build and Deploy on VPS via SSH
                 uses: appleboy/ssh-action@v1
@@ -127,12 +132,34 @@ jobs:
                     username: ${{ secrets.SERVER_USER }}
                     key: ${{ secrets.SSH_PRIVATE_KEY }}
                     script: |
+                        set -e
                         cd /opt/discord-clone
 
-                        POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-                        MERCURE_JWT_SECRET=${{ secrets.MERCURE_JWT_SECRET }} \
-                        SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }} \
-                        docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+                        echo "APP_ENV=prod" > .env.local
+                        echo "DOMAIN_NAME=matnas.pl" >> .env.local
+                        echo "DEFAULT_URI=https://matnas.pl" >> .env.local
+                        echo "CORS_ALLOWED_ORIGINS=^https?://(www\.)?matnas\.pl$" >> .env.local
+
+                        echo "POSTGRES_DB=communicator_prod" >> .env.local
+                        echo "POSTGRES_USER=postgres" >> .env.local
+                        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env.local
+                        echo "DATABASE_URL=postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@database:5432/communicator_prod?serverVersion=16&charset=utf8" >> .env.local
+
+                        echo "SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }}" >> .env.local
+                        echo "MERCURE_JWT_SECRET=${{ secrets.MERCURE_JWT_SECRET }}" >> .env.local
+
+                        echo "MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0" >> .env.local
+                        echo "MAILER_DSN=null://null" >> .env.local
+
+                        echo "MERCURE_URL=http://localhost:8080/.well-known/mercure" >> .env.local
+                        echo "MERCURE_PUBLIC_URL=https://matnas.pl/.well-known/mercure" >> .env.local
+                        echo "MERCURE_HUB_URL=http://localhost:8080/.well-known/mercure" >> .env.local
+
+                        export POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
+                        export MERCURE_JWT_SECRET="${{ secrets.MERCURE_JWT_SECRET }}"
+                        export SYMFONY_DECRYPTION_SECRET="${{ secrets.SYMFONY_DECRYPTION_SECRET }}"
+
+                        docker compose -f docker-compose.prod.yml up -d --build --remove-orphans --wait
 
                         docker compose -f docker-compose.prod.yml exec -T frankenphp \
                           php bin/console doctrine:migrations:migrate --no-interaction

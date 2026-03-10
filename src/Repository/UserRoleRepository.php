@@ -17,4 +17,19 @@ class UserRoleRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, UserRole::class);
     }
+
+    public function add(UserRole $entity): void
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
+    public function remove(UserRole $entity): void
+    {
+        $this->getEntityManager()->remove($entity);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
 }

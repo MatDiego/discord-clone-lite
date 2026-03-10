@@ -1,5 +1,9 @@
-.hover-underline:hover {
-    text-decoration: underline !important;
+.border-secondary-hover {
+    --bs-border-color: transparent;
+
+    &:hover {
+        --bs-border-color: var(--bs-secondary);
+    }
 }
 
 .min-h-0 {
@@ -8,4 +12,36 @@
 
 .dark-scrollbar {
     @include dark-scrollbar($app-bg-elevated);
+}
+
+.form-error-list ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.role-edit-pill {
+    cursor: pointer;
+    background-color: var(--app-bg-dark);
+    --bs-border-color: rgba(255, 255, 255, 0.1);
+    opacity: 0.5;
+    transition: all 0.2s ease;
+
+    .role-pill-icon {
+        color: var(--bs-secondary);
+        transition: all 0.2s ease;
+    }
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+input[type="checkbox"]:checked + .role-edit-pill {
+    opacity: 1;
+    --bs-border-color: var(--bs-primary);
+
+    .role-pill-icon {
+        color: var(--bs-primary);
+    }
 }

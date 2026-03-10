@@ -1,0 +1,54 @@
+<turbo-frame id="member-roles-frame">
+    <div class="text-app-primary bg-app-elevated border border-secondary modal-content">
+        {{ form_start(form, {
+            'action': path('app_member_roles_edit', {'serverId': server.id, 'memberId': member.id})
+        }) }}
+        <div class="border-bottom border-secondary modal-header">
+            <h5 class="d-flex align-items-center gap-2 fw-bold modal-title">
+                {{ ux_icon('bi:shield-fill', {class: 'fs-5 text-primary'}) }}
+                Edycja ról — {{ member.user.username }}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="p-0 modal-body">
+            {% if not form.vars.valid %}
+                <div class="m-3 p-2 small alert alert-danger">
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            <div class="d-flex flex-column overflow-x-hidden overflow-y-auto min-h-0 dark-scrollbar">
+                {% if form.roles|length > 0 %}
+                    <div class="d-flex flex-wrap gap-2 p-3">
+                        {% for child in form.roles %}
+                            <div class="position-relative m-0 p-0">
+                                {{ form_widget(child) }}
+                                <label class="d-flex align-items-center m-0 px-2 py-1 gap-2 user-select-none border rounded role-edit-pill" for="{{ child.vars.id }}">
+                                    {{ ux_icon('bi:shield-fill', {class: 'role-pill-icon'}) }}
+                                    <span class="small fw-medium">{{ child.vars.label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="d-flex flex-column align-items-center py-4 text-app-muted">
+                        {{ ux_icon('bi:shield-slash', {class: 'mb-2 fs-3 opacity-50'}) }}
+                        <span class="small">Brak ról możliwych do przypisania.</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between bg-app-dark border-top border-secondary modal-footer">
+            <a href="{{ path('app_member_roles_fragment', {'serverId': server.id, 'memberId': member.id}) }}" class="btn text-white border border-secondary-hover transition-all">
+                Anuluj
+            </a>
+            <button type="submit" class="d-flex align-items-center gap-2 btn btn-primary" data-turbo-submits-with="Zapisywanie...">
+                {{ ux_icon('bi:check2', {class: 'fs-5'}) }}
+                Zapisz zmiany
+            </button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</turbo-frame>

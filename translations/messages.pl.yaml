@@ -38,3 +38,15 @@ profile:
 
     label_password: 'Nowe hasło (opcjonalne)'
     password_placeholder: 'Wpisz, aby zmienić'
+
+role:
+    label_name: 'Nazwa Roli'
+    name_placeholder: 'np. Administrator, Moderator...'
+    label_permissions: 'Uprawnienia'
+    form_text_name: 'Podaj nazwę (maks. 30 znaków).'
+    header_permission: 'Uprawnienie'
+    header_allow: 'Zezwól'
+    form_title: 'Stwórz nową rolę'
+    form_subtitle: 'Dodaj nową rolę dla serwera'
+    btn_cancel: 'Anuluj'
+    btn_submit: 'Stwórz rolę'

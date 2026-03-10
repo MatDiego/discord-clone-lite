@@ -1,0 +1,147 @@
+{% extends 'layout_app.html.twig' %}
+
+{% block title %}Zarządzanie rolami - {{ server.name }}{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-column flex-grow-1 min-h-0 py-4 px-5 overflow-hidden">
+
+        <div class="d-flex flex-shrink-0 justify-content-between mb-4 align-items-center">
+            <div>
+                <h2 class="d-flex align-items-center gap-2 mb-1 fw-bold text-white">
+                    {{ ux_icon('bi:shield-fill', {class: 'text-primary'}) }}
+                    Zarządzanie rolami
+                </h2>
+                <p class="mb-0 small text-app-secondary">
+                    Serwer: <span class="fw-bold text-white">{{ server.name }}</span>
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ path('app_server_role_create', {serverId: server.id}) }}"
+                   class="d-flex align-items-center gap-2 btn btn-sm btn-primary">
+                    {{ ux_icon('bi:plus-lg') }} Utwórz rolę
+                </a>
+                <a href="{{ path('app_server_edit', {serverId: server.id}) }}"
+                   class="btn btn-sm btn-outline-secondary">
+                    {{ ux_icon('bi:arrow-left') }} Ustawienia
+                </a>
+            </div>
+        </div>
+
+        <div class="d-flex flex-grow-1 min-h-0 gap-4 pb-4">
+
+            <div class="role-sidebar-col overflow-y-auto pe-2 dark-scrollbar">
+                <div class="d-flex flex-column p-3 card-elevated perm-card">
+                    <h6 class="d-flex align-items-center gap-2 mb-3 fw-bold text-app-primary">
+                        {{ ux_icon('bi:list-ul') }} Role serwera
+                    </h6>
+                    <div class="d-flex flex-column overflow-auto dark-scrollbar pe-1">
+                        {% set editableRoles = roles|filter(r => r.name not in ['Admin']) %}
+                        {% for role in editableRoles %}
+                            {% set isSelected = selectedRole and selectedRole.id == role.id %}
+                            <div class="d-flex align-items-center gap-1 mb-1 role-sidebar-item {{ isSelected ? 'active' : '' }}">
+                                <a href="{{ path('app_server_role_edit', {serverId: server.id, roleId: role.id}) }}"
+                                   class="d-flex flex-grow-1 min-w-0 align-items-center gap-2 p-2 text-decoration-none">
+                                    {{ ux_icon('bi:shield-fill', {class: 'flex-shrink-0 ' ~ (isSelected ? 'text-primary' : 'text-app-muted')}) }}
+                                    <span class="small fw-medium text-truncate {{ isSelected ? 'text-white' : 'text-app-secondary' }}">
+                                        {{ role.name }}
+                                    </span>
+                                </a>
+                                {% if role.name not in ['Moderator', 'Członek'] %}
+                                    <button type="button"
+                                            class="flex-shrink-0 p-1 d-flex align-items-center text-app-muted btn btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteRoleMgmtModal_{{ role.id }}"
+                                            title="Usuń rolę">
+                                        {{ ux_icon('bi:x-lg') }}
+                                    </button>
+                                    <twig:Modal:DeleteConfirm
+                                        modalId="deleteRoleMgmtModal_{{ role.id }}"
+                                        title="Usuń rolę"
+                                        entityName="{{ role.name }}"
+                                        actionUrl="{{ path('app_server_role_delete', {serverId: server.id, roleId: role.id}) }}"
+                                        csrfTokenId="{{ 'delete_role_' ~ role.id }}"
+                                    />
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="py-5 small text-center text-app-muted">
+                                Brak ról do edycji.
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-grow-1 d-flex flex-column min-w-0 min-h-0">
+                {% if selectedRole %}
+                    <div class="d-flex flex-column flex-grow-1 min-h-0 p-4 card-elevated">
+                        {{ form_start(form) }}
+
+                            <div class="row flex-shrink-0 mb-4 mx-0">
+                                <div class="col-12 col-sm-8 col-md-6 px-0">
+                                    <div class="mb-2 small fw-bold text-uppercase text-app-secondary">{{ form_label(form.name) }}</div>
+                                    {{ form_widget(form.name) }}
+                                    <div class="mt-1 small text-app-muted form-text">{{ 'role.form_text_name'|trans }}</div>
+                                    <div class="mt-1 small text-danger form-error-list">{{ form_errors(form.name) }}</div>
+                                </div>
+                            </div>
+
+                            <hr class="flex-shrink-0 my-3 border-secondary opacity-25">
+
+                            <div class="d-flex flex-column flex-grow-1 min-h-0">
+                                <div class="row align-items-center flex-shrink-0 px-3 pb-2 mb-2 gx-2 mx-0 border-bottom border-secondary">
+                                    <div class="col-10 col-sm-11 px-0">
+                                        <span class="small fw-bold text-uppercase text-app-muted">{{ 'role.header_permission'|trans }}</span>
+                                    </div>
+                                    <div class="col-2 col-sm-1 px-0 text-center">
+                                        <span class="small fw-bold text-uppercase text-app-muted">{{ 'role.header_allow'|trans }}</span>
+                                    </div>
+                                </div>
+
+                                {% if not form.permissions.vars.valid %}
+                                    <div class="flex-shrink-0 mb-2 px-3 py-2 small rounded-2 form-error-list alert alert-danger">
+                                        {{ form_errors(form.permissions) }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="d-flex flex-column flex-grow-1 overflow-x-hidden overflow-y-auto min-h-0 ps-1 pe-2 pb-1 dark-scrollbar">
+                                    {% for child in form.permissions %}
+                                        <div class="row align-items-center flex-nowrap m-0 py-2 gx-2 border-bottom border-dark-light perm-row-hover">
+                                            <div class="col-10 col-sm-11 d-flex align-items-center pe-2 text-truncate">
+                                                {{ form_label(child) }}
+                                            </div>
+                                            <div class="col-2 col-sm-1 d-flex justify-content-center">
+                                                {{ form_widget(child) }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    {% do form.permissions.setRendered() %}
+                                </div>
+                            </div>
+
+                            <div class="row flex-shrink-0 mt-4 pt-3 border-top border-secondary mx-0">
+                                <div class="col-12 d-flex justify-content-end gap-3 px-0">
+                                    <a href="{{ path('app_server_roles_manage', {serverId: server.id}) }}"
+                                       class="px-4 py-2 fw-semibold text-decoration-none btn btn-outline-secondary">
+                                        Anuluj
+                                    </a>
+                                    <button type="submit" class="px-4 py-2 fw-semibold shadow-sm btn btn-primary">
+                                        Zapisz zmiany
+                                    </button>
+                                </div>
+                            </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                {% else %}
+                    <div class="d-flex flex-column justify-content-center align-items-center p-5 text-center shadow-sm card-elevated perm-card">
+                        {{ ux_icon('bi:arrow-left-circle', {class: 'fs-1 mb-3 opacity-25 text-white'}) }}
+                        <p class="mb-1 fw-bold text-white">Wybierz rolę do edycji</p>
+                        <p class="mb-0 small text-app-secondary">Wybierz rolę z listy po lewej lub utwórz nową.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
