@@ -2,16 +2,21 @@
 
 <div class="row mb-5 py-3 card-elevated">
     <div class="col-12 d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0 small fw-bold text-uppercase text-app-primary">Role w serwerze</h5>
-        <a href="{{ path('app_server_role_create', {'serverId': server.id}) }}" class="d-flex align-items-center px-2 py-1 gap-2 btn btn-sm btn-primary">
-            {{ ux_icon('bi:plus-lg') }} Utwórz rolę
-        </a>
+        <h5 class="mb-0 small fw-bold text-uppercase text-app-secondary">Role na serwerze</h5>
+        <div class="d-flex gap-2">
+            <a href="{{ path('app_server_roles_manage', {'serverId': server.id}) }}" class="d-flex align-items-center px-2 py-1 gap-2 btn btn-sm btn-outline-secondary">
+                {{ ux_icon('bi:gear') }} Zarządzaj
+            </a>
+            <a href="{{ path('app_server_role_create', {'serverId': server.id}) }}" class="d-flex align-items-center px-2 py-1 gap-2 btn btn-sm btn-primary">
+                {{ ux_icon('bi:plus-lg') }} Utwórz rolę
+            </a>
+        </div>
     </div>
 
     <div class="col-12 d-flex flex-wrap gap-2">
         {% for role in server.userRoles %}
              <div class="position-relative d-flex align-items-center px-3 py-2 fs-6 fw-normal text-white bg-app-tertiary border border-secondary border-opacity-25 rounded-pill badge">
-                  <span class="d-inline-flex text-truncate" style="max-width: 150px;" title="{{ role.name }}">{{ role.name }}</span>
+                  <span class="d-inline-flex text-truncate" title="{{ role.name }}">{{ role.name }}</span>
 
                   {% if role.name not in ['Admin', 'Moderator', 'Członek'] %}
                       <div class="d-flex align-items-center ms-2">
@@ -21,21 +26,6 @@
                               {{ ux_icon('bi:pencil') }}
                           </a>
 
-                          <button type="button"
-                                  class="d-flex align-items-center m-0 ms-1 p-0 text-app-muted hover-text-danger bg-transparent border-0 btn btn-sm"
-                                  title="Usuń rolę"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#deleteRoleModal_{{ role.id }}">
-                              {{ ux_icon('bi:x-lg') }}
-                          </button>
-
-                          <twig:Modal:DeleteConfirm
-                              modalId="deleteRoleModal_{{ role.id }}"
-                              title="Usuń rolę"
-                              entityName="{{ role.name }}"
-                              actionUrl="{{ path('app_server_role_delete', {'serverId': server.id, 'roleId': role.id}) }}"
-                              csrfTokenId="{{ 'delete_role_' ~ role.id }}"
-                          />
                       </div>
                   {% endif %}
              </div>

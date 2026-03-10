@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\CustomRoleRequest;
+use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\Server;
 use App\Entity\UserRole;
 use App\Form\CustomRoleType;
@@ -20,6 +21,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
+#[IsGranted(ServerVoter::MANAGE_ROLES, subject: 'server')]
 #[Route('/servers/{serverId}/roles', requirements: ['serverId' => Requirement::UUID_V7])]
 final class ServerRoleController extends AbstractController
 {
@@ -28,14 +30,27 @@ final class ServerRoleController extends AbstractController
     ) {
     }
 
+    #[Route('/manage', name: 'app_server_roles_manage', methods: ['GET'])]
+    public function manage(
+        #[MapEntity(id: 'serverId')] Server $server
+    ): Response {
+        return $this->render('server/role_manage.html.twig', [
+            'server' => $server,
+            'roles' => $this->serverRoleService->getRolesForServer($server),
+            'selectedRole' => null,
+            'form' => null,
+        ]);
+    }
+
     #[Route('/new', name: 'app_server_role_create', methods: ['GET', 'POST'])]
-    #[IsGranted(ServerVoter::MANAGE_ROLES, subject: 'server')]
     public function create(
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server
     ): Response {
         $form = $this->createForm(CustomRoleType::class);
         $form->handleRequest($request);
+
+        $responseStatus = Response::HTTP_OK;
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var CustomRoleRequest $roleData */
@@ -51,6 +66,7 @@ final class ServerRoleController extends AbstractController
 
             if ($isDuplicate) {
                 $form->get('name')->addError(new FormError('Rola o takiej nazwie już istnieje na tym serwerze.'));
+                $responseStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
             } else {
                 $this->serverRoleService->createCustomRole($server, $roleData);
 
@@ -58,17 +74,17 @@ final class ServerRoleController extends AbstractController
 
                 return $this->redirectToRoute('app_server_edit', ['serverId' => $server->getId()]);
             }
+        } elseif ($form->isSubmitted()) {
+            $responseStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
         }
 
         return $this->render('server/role_form.html.twig', [
             'server' => $server,
             'form' => $form->createView(),
-            'is_edit' => false,
-        ]);
+        ], new Response(status: $responseStatus));
     }
 
     #[Route('/{roleId}/edit', name: 'app_server_role_edit', requirements: ['roleId' => Requirement::UUID_V7], methods: ['GET', 'POST'])]
-    #[IsGranted(ServerVoter::MANAGE_ROLES, subject: 'server')]
     public function edit(
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server,
@@ -80,10 +96,14 @@ final class ServerRoleController extends AbstractController
 
         $roleData = new CustomRoleRequest();
         $roleData->name = $role->getName();
-        $roleData->permissions = array_map(fn($rp) => $rp->getPermission(), $role->getRolePermissions()->toArray());
+        $roleData->permissions = new ArrayCollection(
+            array_map(fn($rp) => $rp->getPermission(), $role->getRolePermissions()->toArray())
+        );
 
         $form = $this->createForm(CustomRoleType::class, $roleData);
         $form->handleRequest($request);
+
+        $responseStatus = Response::HTTP_OK;
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var CustomRoleRequest $submittedData */
@@ -99,24 +119,27 @@ final class ServerRoleController extends AbstractController
 
             if ($isDuplicate) {
                 $form->get('name')->addError(new FormError('Rola o takiej nazwie już istnieje na tym serwerze.'));
+                $responseStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
             } else {
                 $this->serverRoleService->updateCustomRole($role, $submittedData);
 
                 $this->addFlash('success', 'Zaktualizowano rolę pomyślnie!');
 
-                return $this->redirectToRoute('app_server_edit', ['serverId' => $server->getId()]);
+                return $this->redirectToRoute('app_server_roles_manage', ['serverId' => $server->getId()]);
             }
+        } elseif ($form->isSubmitted()) {
+            $responseStatus = Response::HTTP_UNPROCESSABLE_ENTITY;
         }
 
-        return $this->render('server/role_form.html.twig', [
+        return $this->render('server/role_manage.html.twig', [
             'server' => $server,
+            'roles' => $this->serverRoleService->getRolesForServer($server),
+            'selectedRole' => $role,
             'form' => $form->createView(),
-            'is_edit' => true,
-        ]);
+        ], new Response(status: $responseStatus));
     }
 
     #[Route('/{roleId}/delete', name: 'app_server_role_delete', requirements: ['roleId' => Requirement::UUID_V7], methods: ['POST'])]
-    #[IsGranted(ServerVoter::MANAGE_ROLES, subject: 'server')]
     public function delete(
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server,
@@ -133,6 +156,6 @@ final class ServerRoleController extends AbstractController
             $this->addFlash('error', 'Nieprawidłowy token bezpieczeństwa.');
         }
 
-        return $this->redirectToRoute('app_server_edit', ['serverId' => $server->getId()]);
+        return $this->redirectToRoute('app_server_roles_manage', ['serverId' => $server->getId()]);
     }
 }
