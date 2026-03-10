@@ -33,13 +33,12 @@
                     </div>
 
                     <div class="dropdown-menu dropdown-menu-dark" data-context-menu-target="menu">
-                        <button class="d-flex align-items-center gap-2 dropdown-item"
-                                type="button"
-                                disabled
-                                title="Wkrótce dostępne">
+                        <a href="{{ path('app_profile', {id: member.user.id}) }}"
+                           class="d-flex align-items-center gap-2 dropdown-item text-decoration-none"
+                           data-turbo-frame="_top">
                             {{ ux_icon('bi:person-fill', {class: 'fs-6'}) }}
                             Profil
-                        </button>
+                        </a>
 
                         <button class="d-flex align-items-center gap-2 dropdown-item"
                                 type="button"

@@ -44,7 +44,12 @@ export default class extends Controller {
         document.removeEventListener('contextmenu', this.boundClose);
 
         if (this.dropdown) {
+            this.dropdown.hide();
             this.dropdown.dispose();
+        }
+        
+        if (this.hasMenuTarget) {
+            this.menuTarget.classList.remove('show');
         }
     }
 
