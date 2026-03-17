@@ -1,0 +1,41 @@
+<turbo-stream action="replace" target="notification-count">
+    <template>
+        <span id="notification-count">
+            {% if count > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                      style="font-size: 0.6rem; pointer-events: none">
+                    {{ count > 99 ? '99+' : count }}
+                </span>
+            {% endif %}
+        </span>
+    </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="notification-dropdown-frame">
+    <template>
+        {% if notifications is defined %}
+            <turbo-frame id="notification-dropdown-frame">
+                {% include 'notification/dropdown.html.twig' %}
+            </turbo-frame>
+        {% else %}
+            <turbo-frame id="notification-dropdown-frame" src="{{ path('app_notifications_dropdown') }}" loading="lazy">
+                <div class="d-flex justify-content-center py-4">
+                    <div class="spinner-border spinner-border-sm text-app-muted" role="status"></div>
+                </div>
+            </turbo-frame>
+        {% endif %}
+    </template>
+</turbo-stream>
+
+{% if joinedServer is defined and joinedServer is not null %}
+    <turbo-stream action="append" target="server_list">
+        <template>
+            <div {{ stimulus_controller('reveal') }}>
+                <twig:Server:Icon
+                    :server="joinedServer"
+                    :active="false"
+                />
+            </div>
+        </template>
+    </turbo-stream>
+{% endif %}
