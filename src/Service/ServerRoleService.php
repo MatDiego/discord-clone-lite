@@ -23,16 +23,35 @@ final readonly class ServerRoleService
 
     public function createCustomRole(Server $server, CustomRoleRequest $request): void
     {
-        $maxPosition = 0;
+        $topRole = null;
+        $topPosition = 0;
+
         foreach ($server->getUserRoles() as $existingRole) {
-            if ($existingRole->getPosition() > $maxPosition) {
-                $maxPosition = $existingRole->getPosition();
+            if ($existingRole->getPosition() > $topPosition) {
+                $topPosition = $existingRole->getPosition();
+                $topRole = $existingRole;
             }
+        }
+
+        $maxCustomPosition = 1;
+        foreach ($server->getUserRoles() as $existingRole) {
+            if ($existingRole === $topRole) {
+                continue;
+            }
+            if ($existingRole->getPosition() > $maxCustomPosition) {
+                $maxCustomPosition = $existingRole->getPosition();
+            }
+        }
+
+        $newPosition = $maxCustomPosition + 1;
+
+        if ($topRole !== null && $newPosition >= $topRole->getPosition()) {
+            $topRole->setPosition($topRole->getPosition() + 1);
         }
 
         $role = new UserRole(
             $request->name,
-            $maxPosition + 1,
+            $newPosition,
             $server
         );
 

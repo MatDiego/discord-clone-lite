@@ -6,12 +6,17 @@ namespace App\Service;
 
 use App\Dto\CreateServerRequest;
 use App\Entity\Channel;
+use App\Entity\RolePermission;
 use App\Entity\Server;
 use App\Entity\ServerMember;
 use App\Entity\User;
+use App\Entity\UserRole;
+use App\Enum\UserPermissionEnum;
 use App\Repository\ChannelRepository;
+use App\Repository\PermissionRepository;
 use App\Repository\ServerMemberRepository;
 use App\Repository\ServerRepository;
+use App\Repository\UserRoleRepository;
 
 final readonly class ServerService
 {
@@ -19,6 +24,8 @@ final readonly class ServerService
         private ServerRepository $serverRepository,
         private ChannelRepository $channelRepository,
         private ServerMemberRepository $serverMemberRepository,
+        private UserRoleRepository $userRoleRepository,
+        private PermissionRepository $permissionRepository,
     ) {
     }
 
@@ -27,11 +34,33 @@ final readonly class ServerService
         $server = new Server($dto->name, $owner);
         $generalChannel = new Channel('ogólny', $server);
         $server->addChannel($generalChannel);
+
         $member = new ServerMember($server, $owner);
+
+        $memberRole = new UserRole('Członek', 1, $server);
+        $memberPermissions = $this->permissionRepository->findBy([
+            'name' => [
+                UserPermissionEnum::VIEW_CHANNELS,
+                UserPermissionEnum::VIEW_CHANNEL,
+                UserPermissionEnum::SEND_MESSAGES,
+                UserPermissionEnum::CREATE_INVITE,
+            ],
+        ]);
+        foreach ($memberPermissions as $permission) {
+            $memberRole->addRolePermission(new RolePermission($memberRole, $permission));
+        }
+
+        $adminRole = new UserRole('Admin', 5, $server);
+        $allPermissions = $this->permissionRepository->findAll();
+        foreach ($allPermissions as $permission) {
+            $adminRole->addRolePermission(new RolePermission($adminRole, $permission));
+        }
 
         $this->serverRepository->add($server);
         $this->channelRepository->add($generalChannel);
         $this->serverMemberRepository->add($member);
+        $this->userRoleRepository->add($memberRole);
+        $this->userRoleRepository->add($adminRole);
         $this->serverRepository->flush();
 
         return $server;
