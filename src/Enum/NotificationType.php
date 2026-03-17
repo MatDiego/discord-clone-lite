@@ -10,5 +10,6 @@ enum NotificationType: string
     case INVITATION_ACCEPTED        = 'invitation_accepted';
     case KICKED_FROM_SERVER         = 'kicked_from_server';
     case BANNED_FROM_SERVER         = 'banned_from_server';
-
+    case FRIEND_INVITATION          = 'friend_invitation';
+    case FRIEND_INVITATION_ACCEPTED = 'friend_invitation_accepted';
 }
