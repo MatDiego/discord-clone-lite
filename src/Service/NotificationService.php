@@ -55,6 +55,14 @@ final readonly class NotificationService
         $this->persist($notification);
     }
 
+    public function createServerDeletedNotification(User $recipient, string $serverName): void
+    {
+        $notification = new Notification($recipient, NotificationType::SERVER_DELETED);
+        $notification->setServerName($serverName);
+
+        $this->persist($notification);
+    }
+
     public function publishMemberJoinedStream(Server $server): void
     {
         $this->publisher->publishMemberJoined($server);

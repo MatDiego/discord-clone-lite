@@ -10,8 +10,12 @@ use App\Entity\Server;
 use App\Entity\ServerMember;
 use App\Entity\User;
 use App\Repository\ChannelRepository;
+use App\Repository\PermissionRepository;
 use App\Repository\ServerMemberRepository;
 use App\Repository\ServerRepository;
+use App\Repository\UserRoleRepository;
+use App\Service\MercureNotificationPublisher;
+use App\Service\NotificationService;
 use App\Service\ServerService;
 use Override;
 use PHPUnit\Framework\Attributes\Test;
@@ -22,6 +26,10 @@ final class ServerServiceTest extends TestCase
     private ServerRepository $serverRepository;
     private ChannelRepository $channelRepository;
     private ServerMemberRepository $serverMemberRepository;
+    private UserRoleRepository $userRoleRepository;
+    private PermissionRepository $permissionRepository;
+    private MercureNotificationPublisher $mercurePublisher;
+    private NotificationService $notificationService;
     private ServerService $service;
 
     private User $owner;
@@ -64,18 +72,39 @@ final class ServerServiceTest extends TestCase
 
         $this->serverMemberRepository = new class () extends ServerMemberRepository {
             public array $members = [];
-            public function __construct()
-            {}
+            public function __construct() {}
             public function add(ServerMember $member): void
             {
                 $this->members[] = $member;
             }
+            /** @return array<never> */
+            public function findByServerExcludingOwner(\App\Entity\Server $server): array { return []; }
         };
+
+        $this->userRoleRepository = new class () extends UserRoleRepository {
+            public function __construct() {}
+            public function add(\App\Entity\UserRole $entity): void {}
+        };
+
+        $this->permissionRepository = new class () extends PermissionRepository {
+            public function __construct() {}
+            /** @return array<never> */
+            public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array { return []; }
+            /** @return array<never> */
+            public function findAll(): array { return []; }
+        };
+
+        $this->mercurePublisher = $this->createMock(MercureNotificationPublisher::class);
+        $this->notificationService = $this->createMock(NotificationService::class);
 
         $this->service = new ServerService(
             $this->serverRepository,
             $this->channelRepository,
-            $this->serverMemberRepository
+            $this->serverMemberRepository,
+            $this->userRoleRepository,
+            $this->permissionRepository,
+            $this->mercurePublisher,
+            $this->notificationService,
         );
 
         $this->owner = new User('owner@example.com', 'OwnerUser', 'password');

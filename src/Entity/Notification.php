@@ -112,7 +112,7 @@ class Notification
 
     public function isServerDeleted(): bool
     {
-        return $this->type === NotificationType::SERVER_INVITATION && null === $this->invitation;
+        return $this->type === NotificationType::SERVER_DELETED;
     }
 
     public function isInvitationPending(): bool

@@ -26,6 +26,8 @@ final readonly class ServerService
         private ServerMemberRepository $serverMemberRepository,
         private UserRoleRepository $userRoleRepository,
         private PermissionRepository $permissionRepository,
+        private MercureNotificationPublisher $mercurePublisher,
+        private NotificationService $notificationService,
     ) {
     }
 
@@ -68,8 +70,18 @@ final readonly class ServerService
 
     public function removeServer(Server $server): void
     {
+        $members = $this->serverMemberRepository->findByServerExcludingOwner($server);
+        $memberUsers = array_map(fn (ServerMember $m) => $m->getUser(), $members);
+        $serverName = $server->getName();
+
+        foreach ($memberUsers as $user) {
+            $this->notificationService->createServerDeletedNotification($user, $serverName);
+        }
+
         $this->serverRepository->remove($server);
         $this->serverRepository->flush();
+
+        $this->mercurePublisher->publishServerDeleted($memberUsers);
     }
 
     public function updateServer(): void

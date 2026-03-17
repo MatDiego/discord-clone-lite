@@ -8,3 +8,7 @@ StreamActions['close-modal'] = function () {
     const modal = bootstrap.Modal.getInstance(el);
     if (modal) modal.hide();
 };
+
+StreamActions['redirect'] = function () {
+    window.location.href = this.getAttribute('url');
+};
