@@ -2,13 +2,41 @@
 
 <div class="app-sidebar d-none d-md-flex flex-column border-end border-end">
     {% if currentServer %}
-        <div class="app-sidebar-header border-bottom">
-            <div class="d-flex align-items-center justify-content-between">
-                <h6 class=" fw-bold mb-0 text-truncate">
-                    {{ currentServer.name }}
-                </h6>
-            </div>
+        <div class="app-sidebar-header border-bottom dropdown">
+            <button type="button"
+                    class="sidebar-header-btn d-flex align-items-center justify-content-between w-100 fw-bold text-white bg-transparent border-0 text-start"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                <h6 class="mb-0 text-truncate">{{ currentServer.name }}</h6>
+                {{ ux_icon('bi:chevron-down', {class: 'sidebar-header-chevron flex-shrink-0 small text-app-muted'}) }}
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-dark w-100 mt-0 rounded-top-0 border-top-0 shadow">
+                {% if is_granted('SERVER_CREATE_INVITE', currentServer) %}
+                    <li>
+                        <button type="button"
+                                class="d-flex align-items-center gap-2 dropdown-item"
+                                data-bs-toggle="modal"
+                                data-bs-target="#inviteModal">
+                            {{ ux_icon('bi:person-plus-fill', {class: 'fs-6 text-primary'}) }}
+                            Zaproś członka
+                        </button>
+                    </li>
+                {% endif %}
+
+                {% if is_granted('SERVER_EDIT', currentServer) %}
+                    <li>
+                        <a class="d-flex align-items-center gap-2 dropdown-item"
+                           href="{{ path('app_server_edit', {serverId: currentServer.id}) }}">
+                            {{ ux_icon('bi:gear-fill', {class: 'fs-6'}) }}
+                            Zarządzaj serwerem
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
         </div>
+
+        <twig:Server:InviteModal :server="currentServer" />
     {% endif %}
 
     <twig:Server:ChannelList
@@ -16,7 +44,10 @@
         :currentChannel="currentChannel"
     />
 
-    <div class="user-panel border-top mt-auto d-flex align-items-center gap-2">
+    {% set topic = 'http://notifications/' ~ app.user.id %}
+    <div class="user-panel border-top mt-auto d-flex align-items-center gap-2"
+         data-controller="mercure-stream"
+         data-mercure-stream-url-value="{{ mercure(topic) }}">
         <div class="position-relative">
             <div class="avatar rounded-circle avatar-gradient-blue d-flex align-items-center justify-content-center fw-semibold">
                 {{ app.user.username|slice(0, 1)|upper }}
@@ -25,7 +56,7 @@
         </div>
         <div class="flex-grow-1 overflow-hidden">
             <div class="small fw-bold text-truncate">{{ app.user.username }}</div>
-
         </div>
+        <twig:Notification:Bell />
     </div>
 </div>
