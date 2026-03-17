@@ -1,0 +1,7 @@
+framework:
+    rate_limiter:
+        server_invitation:
+            policy: sliding_window
+            limit: 10
+            interval: '10 minutes'
+            cache_pool: cache.rate_limiter
