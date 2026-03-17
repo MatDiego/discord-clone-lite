@@ -1,6 +1,6 @@
 <div class="d-flex flex-column member-list-panel" id="memberListPanel">
     <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom member-list-header">
-        <span class="small fw-bold text-uppercase text-app-secondary">
+        <span class="small fw-bold text-uppercase text-app-secondary" id="memberListCount">
             Członkowie — {{ members|length }}
         </span>
     </div>
@@ -39,6 +39,17 @@
                             {{ ux_icon('bi:person-fill', {class: 'fs-6'}) }}
                             Profil
                         </a>
+
+                        {% if member.user.id != app.user.id %}
+                            <form method="post" action="{{ path('app_friend_invite_send') }}" data-turbo-frame="_top">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('friend_invite') }}">
+                                <input type="hidden" name="username" value="{{ member.user.username }}">
+                                <button type="submit" class="d-flex align-items-center gap-2 dropdown-item text-primary">
+                                    {{ ux_icon('bi:person-plus-fill', {class: 'fs-6'}) }}
+                                    Dodaj do znajomych
+                                </button>
+                            </form>
+                        {% endif %}
 
                         <button class="d-flex align-items-center gap-2 dropdown-item"
                                 type="button"

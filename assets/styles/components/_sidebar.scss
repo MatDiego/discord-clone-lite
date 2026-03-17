@@ -8,6 +8,24 @@
     min-height: 3rem;
 }
 
+.sidebar-header-btn {
+    padding: 0;
+
+    .sidebar-header-chevron {
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    &:hover .sidebar-header-chevron,
+    &[aria-expanded="true"] .sidebar-header-chevron {
+        transform: rotate(-20deg);
+    }
+}
+
+.notification-panel {
+    width: 300px;
+}
+
 .channel-item {
     color: $app-text-secondary;
     transition: all 0.15s ease;

@@ -1,0 +1,79 @@
+<div class="friend-list-section">
+    <div class="d-flex align-items-center justify-content-between px-3 py-2">
+        <span class="small fw-bold text-uppercase text-app-secondary">
+            Znajomi — {{ friends|length }}
+            {% if pendingReceived|length > 0 %}
+                <span class="badge bg-danger ms-1" style="font-size: 0.6rem;">{{ pendingReceived|length }}</span>
+            {% endif %}
+        </span>
+    </div>
+
+    {% if pendingReceived|length > 0 %}
+        <div class="px-3 pb-1">
+            <span class="fw-semibold text-uppercase text-app-muted" style="font-size: 0.65rem;">
+                Oczekujące ({{ pendingReceived|length }})
+            </span>
+        </div>
+        {% for fi in pendingReceived %}
+            <div class="d-flex align-items-center px-2 py-1 mb-1 rounded mx-2 member-item gap-2">
+                <div class="flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle fw-semibold text-white avatar avatar-sm
+                    avatar-gradient-{{ avatar_color(fi.senderName) }}">
+                    {{ fi.senderName|slice(0, 1)|upper }}
+                </div>
+                <span class="small text-truncate flex-grow-1">{{ fi.senderName }}</span>
+                <span class="badge bg-warning text-dark" style="font-size: 0.6rem;">Nowe</span>
+            </div>
+        {% endfor %}
+        <div class="mx-3 mb-2 border-bottom border-secondary opacity-50"></div>
+    {% endif %}
+
+    {% if friends is empty and pendingReceived is empty %}
+        <div class="d-flex flex-column align-items-center py-3 text-app-muted">
+            {{ ux_icon('bi:people', {class: 'mb-1 fs-5 opacity-50'}) }}
+            <span class="small">Brak znajomych</span>
+        </div>
+    {% else %}
+        {% for fi in friends %}
+            {% set friend = fi.getFriendOf(user) %}
+
+            <div {{ stimulus_controller('context_menu') }}>
+                <div class="dropdown">
+                    <div class="d-flex align-items-center px-2 py-1 mb-1 rounded mx-2 member-item gap-2"
+                         data-context-menu-target="trigger"
+                         aria-expanded="false">
+                        <div class="position-relative flex-shrink-0">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle fw-semibold text-white avatar avatar-sm
+                                avatar-gradient-{{ avatar_color(friend.username) }}">
+                                {{ friend.username|slice(0, 1)|upper }}
+                            </div>
+                            <span class="status-indicator status-online"></span>
+                        </div>
+                        <span class="small text-truncate">{{ friend.username }}</span>
+                    </div>
+
+                    <div class="dropdown-menu dropdown-menu-dark" data-context-menu-target="menu">
+                        <a href="{{ path('app_profile', {id: friend.id}) }}"
+                           class="d-flex align-items-center gap-2 dropdown-item text-decoration-none"
+                           data-turbo-frame="_top">
+                            {{ ux_icon('bi:person-fill', {class: 'fs-6'}) }}
+                            Profil
+                        </a>
+
+                        <div class="dropdown-divider"></div>
+
+                        <button type="button"
+                                class="d-flex align-items-center gap-2 dropdown-item text-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#removeFriendModal"
+                                data-invitation-id="{{ fi.id }}"
+                                data-friend-name="{{ friend.username }}"
+                                data-csrf-token="{{ csrf_token('friend_remove_' ~ fi.id) }}">
+                            {{ ux_icon('bi:person-dash-fill', {class: 'fs-6'}) }}
+                            Usuń znajomego
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
