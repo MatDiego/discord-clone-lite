@@ -164,7 +164,7 @@ final class ChannelControllerTest extends WebTestCase
             $channelToDelete->getId()->toRfc4122()
         ));
 
-        $csrfToken = $crawler->filter('input[name="_csrf_token"]')->attr('value');
+        $csrfToken = $crawler->filter('#deleteChannelModal input[name="_csrf_token"]')->attr('value');
 
         // Act
         $client->request(
