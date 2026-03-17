@@ -11,7 +11,7 @@
             </div>
 
             <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                <a href="{{ path('app_dashboard') }}" 
+                <a href="{{ path('app_dashboard') }}"
                    class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
                    data-controller="go-back"
                    data-action="click->go-back#back">
@@ -26,7 +26,7 @@
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                     <div class="card card-elevated border-secondary">
                         <div class="card-body p-4 p-md-5 d-flex flex-column align-items-center text-center">
-                            
+
                             <div class="mb-4">
                                 <div class="rounded-circle bg-primary bg-opacity-25 d-flex align-items-center justify-content-center text-primary mx-auto shadow-sm" style="width: 96px; height: 96px; font-size: 2.5rem;">
                                     {{ user.username|first|upper }}
@@ -40,7 +40,7 @@
 
                             <div class="w-100 text-start mb-4">
                                 <h5 class="fw-semibold text-white mb-3">Szczegóły konta</h5>
-                                
+
                                 <div class="d-flex flex-column gap-2">
                                     <div class="d-flex justify-content-between align-items-center p-2 rounded bg-app-secondary bg-opacity-10">
                                         <span class="text-secondary fw-medium fs-sm">Nazwa użytkownika</span>
@@ -57,18 +57,64 @@
                                 </div>
                             </div>
 
-                            {% if app.user and app.user.userIdentifier == user.userIdentifier %}
+                            {% if isSelf %}
                                 <div class="d-flex w-100 flex-column flex-sm-row gap-2 mt-auto">
                                     <a href="{{ path('app_profile_edit') }}" class="btn btn-primary flex-grow-1">
                                         {{ ux_icon('bi:pencil-square', {class: 'me-1'}) }}
                                         Edytuj profil
                                     </a>
-                                    <a href="{{ path('app_logout') }}" 
-                                       class="btn btn-danger flex-grow-1" 
+                                    <a href="{{ path('app_logout') }}"
+                                       class="btn btn-danger flex-grow-1"
                                        data-turbo="false">
                                        {{ ux_icon('bi:box-arrow-right', {class: 'me-1'}) }}
                                        Wyloguj
                                     </a>
+                                </div>
+                            {% else %}
+                                {# Sekcja znajomości dla cudzego profilu #}
+                                <div class="w-100 mt-auto">
+                                    {% if isFriend %}
+                                        <div class="d-flex align-items-center justify-content-center gap-2 p-2 rounded border border-success text-success">
+                                            {{ ux_icon('bi:people-fill', {class: 'fs-5'}) }}
+                                            <span class="fw-semibold">Jesteście znajomymi</span>
+                                        </div>
+                                    {% elseif pendingInvitation %}
+                                        {% if pendingInvitation.sender.id == app.user.id %}
+                                            <div class="d-flex align-items-center justify-content-center gap-2 p-2 rounded border border-secondary text-app-muted">
+                                                {{ ux_icon('bi:hourglass-split', {class: 'fs-5'}) }}
+                                                <span class="fw-semibold">Zaproszenie wysłane</span>
+                                            </div>
+                                        {% else %}
+                                            <div class="d-flex flex-column gap-2">
+                                                <p class="small text-app-muted mb-1">
+                                                    {{ user.username }} zaprasza Cię do znajomych.
+                                                </p>
+                                                <div class="d-flex gap-2">
+                                                    <form method="post" action="{{ path('app_friend_invite_accept', {invitationId: pendingInvitation.id}) }}" class="flex-grow-1">
+                                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('friend_invite_accept_' ~ pendingInvitation.id) }}">
+                                                        <button type="submit" class="btn btn-primary w-100">
+                                                            {{ ux_icon('bi:check-lg', {class: 'me-1'}) }} Akceptuj
+                                                        </button>
+                                                    </form>
+                                                    <form method="post" action="{{ path('app_friend_invite_decline', {invitationId: pendingInvitation.id}) }}" class="flex-grow-1">
+                                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('friend_invite_decline_' ~ pendingInvitation.id) }}">
+                                                        <button type="submit" class="btn btn-outline-secondary w-100">
+                                                            {{ ux_icon('bi:x-lg', {class: 'me-1'}) }} Odrzuć
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <form method="post" action="{{ path('app_friend_invite_send') }}">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('friend_invite') }}">
+                                            <input type="hidden" name="username" value="{{ user.username }}">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                {{ ux_icon('bi:person-plus-fill', {class: 'me-1'}) }}
+                                                Dodaj do znajomych
+                                            </button>
+                                        </form>
+                                    {% endif %}
                                 </div>
                             {% endif %}
 

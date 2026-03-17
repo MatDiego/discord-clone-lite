@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Dto\UpdateProfileRequest;
 use App\Entity\User;
 use App\Form\UpdateProfileType;
+use App\Service\FriendInvitationService;
 use App\Service\ProfileService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,18 +19,33 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ProfileController extends AbstractController
 {
     #[Route(path: '/profile/{id?}', name: 'app_profile', methods: ['GET'])]
-    public function index(?User $displayedUser): Response
-    {
+    public function index(
+        ?User $displayedUser,
+        FriendInvitationService $friendService,
+    ): Response {
         if ($displayedUser === null) {
+            /** @var User $displayedUser */
             $displayedUser = $this->getUser();
         }
 
-        if (!$displayedUser) {
-            throw $this->createAccessDeniedException('Musisz być zalogowany, żeby wejść na profil.');
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+        $isSelf = $currentUser->getId()->equals($displayedUser->getId());
+        $isFriend = false;
+        $pendingInvitation = null;
+
+        if (!$isSelf) {
+            $isFriend = $friendService->areFriends($currentUser, $displayedUser);
+            if (!$isFriend) {
+                $pendingInvitation = $friendService->findPendingBetween($currentUser, $displayedUser);
+            }
         }
 
         return $this->render('profile/index.html.twig', [
-            'user' => $displayedUser,
+            'user'              => $displayedUser,
+            'isSelf'            => $isSelf,
+            'isFriend'          => $isFriend,
+            'pendingInvitation' => $pendingInvitation,
         ]);
     }
 

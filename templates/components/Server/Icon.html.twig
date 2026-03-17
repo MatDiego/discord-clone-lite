@@ -4,7 +4,8 @@
 
 {% set can_edit = is_granted('SERVER_EDIT', server) %}
 
-<div class="mb-2 position-relative" {{ can_edit ? stimulus_controller('context_menu') : '' }}>
+<div class="mb-2 position-relative"
+    {{ can_edit ? stimulus_controller('context_menu') : '' }}>
     <div class="dropdown dropend">
         <a href="{{ path('app_server_default_channel', {serverId: server.id}) }}"
            id="server-dropdown-{{ server.id }}"
