@@ -85,4 +85,11 @@ class FriendInvitation
     {
         return $this->recipient->getUsername();
     }
+
+    public function getFriendOf(User $user): User
+    {
+        return $this->sender->getId()->equals($user->getId())
+            ? $this->recipient
+            : $this->sender;
+    }
 }
