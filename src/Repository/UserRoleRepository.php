@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Server;
 use App\Entity\UserRole;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -31,5 +32,9 @@ class UserRoleRepository extends ServiceEntityRepository
     public function flush(): void
     {
         $this->getEntityManager()->flush();
+    }
+    public function findDefaultRoleForServer(Server $server): ?UserRole
+    {
+        return $this->findOneBy(['server' => $server, 'name' => 'Członek']);
     }
 }
