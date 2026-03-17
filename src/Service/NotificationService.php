@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\FriendInvitation;
 use App\Entity\Notification;
 use App\Entity\Server;
 use App\Entity\ServerInvitation;
@@ -55,6 +56,24 @@ final readonly class NotificationService
         $this->persist($notification);
     }
 
+    public function createFriendInvitationNotification(FriendInvitation $invitation): void
+    {
+        $notification = new Notification($invitation->getRecipient(), NotificationType::FRIEND_INVITATION);
+        $notification->setFriendInvitation($invitation);
+        $notification->setActorName($invitation->getSenderName());
+
+        $this->persist($notification);
+    }
+
+    public function createFriendAcceptedNotification(FriendInvitation $invitation): void
+    {
+        $notification = new Notification($invitation->getSender(), NotificationType::FRIEND_INVITATION_ACCEPTED);
+        $notification->setFriendInvitation($invitation);
+        $notification->setActorName($invitation->getRecipientName());
+
+        $this->persist($notification);
+    }
+
     public function publishMemberJoinedStream(Server $server): void
     {
         $this->publisher->publishMemberJoined($server);
@@ -65,6 +84,10 @@ final readonly class NotificationService
         $this->publisher->publishBadge($user, $this->notificationRepository->countUnread($user));
     }
 
+    public function publishFriendListUpdate(User $user): void
+    {
+        $this->publisher->publishFriendList($user);
+    }
 
     public function markAllAsRead(User $user): void
     {
@@ -80,6 +103,11 @@ final readonly class NotificationService
     public function markReadByInvitation(ServerInvitation $invitation): void
     {
         $this->notificationRepository->markReadByInvitation($invitation);
+    }
+
+    public function markReadByFriendInvitation(FriendInvitation $invitation): void
+    {
+        $this->notificationRepository->markReadByFriendInvitation($invitation);
     }
 
     public function getUnreadCount(User $user): int

@@ -40,4 +40,15 @@ final readonly class MercureNotificationPublisher
             $this->hub->publish(new Update($topic, $content, true));
         }
     }
+
+    public function publishFriendList(User $user): void
+    {
+        $content = $this->twig->render('friends/stream_friend_list.stream.html.twig', [
+            'user' => $user,
+        ]);
+
+        $topic = sprintf('http://friends/%s', $user->getId()->toRfc4122());
+
+        $this->hub->publish(new Update($topic, $content, true));
+    }
 }
