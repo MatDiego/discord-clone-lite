@@ -10,6 +10,7 @@ use App\Entity\Server;
 use App\Entity\User;
 use App\Form\CreateMessageType;
 use App\Security\Voter\ChannelVoter;
+use App\Service\ChannelReadStateService;
 use App\Service\MessageService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,7 +55,7 @@ final class MessageController extends AbstractController
             $messageService->postMessage($createMessageData, $channel, $user);
 
             if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
-                return new Response('', Response::HTTP_NO_CONTENT);
+                return new Response('', Response::HTTP_OK, ['Content-Type' => TurboBundle::STREAM_MEDIA_TYPE]);
             }
         }
 
@@ -71,5 +72,84 @@ final class MessageController extends AbstractController
         $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         return $response;
+    }
+
+    #[Route('/older', name: 'app_chat_messages_older', methods: ['GET'])]
+    #[IsGranted(ChannelVoter::VIEW_CHANNEL, subject: 'channel')]
+    public function older(
+        Request $request,
+        #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,
+        MessageService $messageService,
+    ): Response {
+        $beforeId = $request->query->get('before');
+
+        if ($beforeId === null) {
+            return new Response('', Response::HTTP_BAD_REQUEST);
+        }
+
+        $referenceMessage = $messageService->getMessageById($beforeId);
+
+        if (!$referenceMessage) {
+            return new Response('', Response::HTTP_NOT_FOUND);
+        }
+
+        $messages = $messageService->getOlderMessages($channel, $referenceMessage);
+
+        return $this->render('chat/message_chunk.html.twig', [
+            'messages' => $messages,
+        ]);
+    }
+
+    #[Route('/newer', name: 'app_chat_messages_newer', methods: ['GET'])]
+    #[IsGranted(ChannelVoter::VIEW_CHANNEL, subject: 'channel')]
+    public function newer(
+        Request $request,
+        #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,
+        MessageService $messageService,
+    ): Response {
+        $afterId = $request->query->get('after');
+
+        if ($afterId === null) {
+            return new Response('', Response::HTTP_BAD_REQUEST);
+        }
+
+        $referenceMessage = $messageService->getMessageById($afterId);
+
+        if (!$referenceMessage) {
+            return new Response('', Response::HTTP_NOT_FOUND);
+        }
+
+        $messages = $messageService->getNewerMessages($channel, $referenceMessage);
+
+        return $this->render('chat/message_chunk.html.twig', [
+            'messages' => $messages,
+        ]);
+    }
+
+    #[Route('/read', name: 'app_chat_read', methods: ['POST'])]
+    #[IsGranted(ChannelVoter::VIEW_CHANNEL, subject: 'channel')]
+    public function updateReadState(
+        Request $request,
+        #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,
+        MessageService $messageService,
+        ChannelReadStateService $readStateService
+    ): Response {
+        /** @var array{lastReadId?: string} $content */
+        $content = json_decode($request->getContent(), true);
+        $lastReadId = $content['lastReadId'] ?? null;
+
+        if ($lastReadId === null) {
+            return new Response('Missing lastReadId', Response::HTTP_BAD_REQUEST);
+        }
+
+        $message = $messageService->getMessageById($lastReadId);
+
+        if ($message && $message->getChannel() === $channel) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $readStateService->updateReadState($user, $channel, $message);
+        }
+
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 }
