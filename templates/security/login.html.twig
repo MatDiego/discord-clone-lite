@@ -17,6 +17,22 @@
                             Cieszymy się, że znów Cię widzimy
                         </p>
 
+                        {% if session_kicked %}
+                            <div class="alert alert-info d-flex align-items-center p-2 mb-3 small" role="alert">
+                                {{ ux_icon('bi:person-dash-fill', {class: 'flex-shrink-0 me-2'}) }}
+                                <div>
+                                    Zostałeś wylogowany, ponieważ ktoś zalogował się na Twoje konto.
+                                </div>
+                            </div>
+                        {% elseif session_expired %}
+                            <div class="alert alert-warning d-flex align-items-center p-2 mb-3 small" role="alert">
+                                {{ ux_icon('bi:clock-history', {class: 'flex-shrink-0 me-2'}) }}
+                                <div>
+                                    Twoja sesja wygasła. Zaloguj się ponownie.
+                                </div>
+                            </div>
+                        {% endif %}
+
                         {% if error %}
                             <div class="alert alert-danger d-flex align-items-center p-2 mb-3 small" role="alert">
                                 {{ ux_icon('bi:exclamation-triangle-fill', {class: 'flex-shrink-0 me-2'}) }}

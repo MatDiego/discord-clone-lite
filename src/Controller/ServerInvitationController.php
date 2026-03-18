@@ -16,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -37,7 +37,7 @@ final class ServerInvitationController extends AbstractController
     public function send(
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server,
-        RateLimiterFactory $serverInvitationLimiter,
+        RateLimiterFactoryInterface $serverInvitationLimiter,
     ): Response {
         /** @var User $currentUser */
         $currentUser = $this->getUser();

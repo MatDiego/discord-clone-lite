@@ -143,6 +143,10 @@
     }
 }
 
+.chat-send-btn--disabled {
+    opacity: 0.4;
+}
+
 .chat-attach-icon {
     color: $app-text-secondary;
     transition: color 0.2s;

@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -28,7 +29,7 @@ final class RegistrationController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request): Response
+    public function register(Request $request, RateLimiterFactoryInterface $registrationLimiter): Response
     {
         if ($this->getUser()) {
             return $this->redirectToRoute('app_dashboard');
@@ -36,6 +37,16 @@ final class RegistrationController extends AbstractController
 
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $ip = $request->getClientIp() ?? 'unknown';
+            $limiter = $registrationLimiter->create($ip);
+            if (!$limiter->consume()->isAccepted()) {
+                $this->addFlash('error', 'Zbyt wiele prób rejestracji. Spróbuj ponownie za kilka minut.');
+
+                return $this->redirectToRoute('app_register');
+            }
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var RegistrationRequest $registrationRequest */

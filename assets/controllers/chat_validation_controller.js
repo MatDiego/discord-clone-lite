@@ -9,7 +9,9 @@ export default class extends Controller {
 
     validate() {
         if (this.hasSubmitTarget) {
-            this.submitTarget.disabled = this.isEmpty();
+            const empty = this.isEmpty();
+            this.submitTarget.disabled = empty;
+            this.submitTarget.classList.toggle('chat-send-btn--disabled', empty);
         }
     }
 
