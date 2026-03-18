@@ -34,4 +34,8 @@
             <twig:Server:MemberList :server="server" />
         {% endif %}
     </div>
+
+    {% include 'components/Server/_roles_modal.html.twig' %}
+    {% include 'components/Server/_kick_member_modal.html.twig' %}
+    {% include 'components/Server/_ban_member_modal.html.twig' %}
 {% endblock %}
