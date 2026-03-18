@@ -19,6 +19,9 @@
             <twig:Chat:MessageList
                 :messages="messages"
                 :channel="channel"
+                :server="server"
+                :lastReadMessage="lastReadMessage|default(null)"
+                :firstUnreadMessage="firstUnreadMessage|default(null)"
             />
 
             <twig:Chat:Input

@@ -30,6 +30,26 @@ final readonly class MessageService
         return $this->messageRepository->findLatestByChannel($channel);
     }
 
+    public function getMessagesAround(Channel $channel, ?Message $referenceMessage): array
+    {
+        return $this->messageRepository->findMessagesAround($channel, $referenceMessage);
+    }
+
+    public function getOlderMessages(Channel $channel, Message $referenceMessage, int $limit = 50): array
+    {
+        return $this->messageRepository->findBefore($channel, $referenceMessage, $limit);
+    }
+
+    public function getNewerMessages(Channel $channel, Message $referenceMessage, int $limit = 50): array
+    {
+        return $this->messageRepository->findAfter($channel, $referenceMessage, $limit);
+    }
+
+    public function getMessageById(string $id): ?Message
+    {
+        return $this->messageRepository->find($id);
+    }
+
     /**
      * @throws SyntaxError
      * @throws RuntimeError

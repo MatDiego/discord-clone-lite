@@ -7,10 +7,12 @@ namespace App\Controller;
 use App\Dto\CreateChannelRequest;
 use App\Entity\Channel;
 use App\Entity\Server;
+use App\Entity\User;
 use App\Form\ChannelType;
 use App\Form\CreateChannelType;
 use App\Security\Voter\ChannelVoter;
 use App\Security\Voter\ServerVoter;
+use App\Service\ChannelReadStateService;
 use App\Service\ChannelService;
 use App\Service\MessageService;
 use Doctrine\ORM\Exception\ORMException;
@@ -36,10 +38,25 @@ final class ChannelController extends AbstractController
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,
         MessageService $messageService,
+        ChannelReadStateService $readStateService,
         Authorization $authorization,
         Request $request,
     ): Response {
-        $messages = $messageService->getMessages($channel);
+        /** @var User $user */
+        $user = $this->getUser();
+        $lastReadMessage = $readStateService->getLastReadMessageForUserInChannel($user, $channel);
+        $messages = $messageService->getMessagesAround($channel, $lastReadMessage);
+
+        $firstUnreadMessage = null;
+        if ($lastReadMessage) {
+            $lastReadId = $lastReadMessage->getId()->toRfc4122();
+            foreach ($messages as $msg) {
+                if ($msg->getId()->toRfc4122() > $lastReadId) {
+                    $firstUnreadMessage = $msg;
+                    break;
+                }
+            }
+        }
 
         $topic = sprintf('http://channels/%s', $channel->getId());
         $authorization->setCookie($request, [$topic]);
@@ -48,6 +65,8 @@ final class ChannelController extends AbstractController
             'server' => $server,
             'channel' => $channel,
             'messages' => $messages,
+            'lastReadMessage' => $lastReadMessage,
+            'firstUnreadMessage' => $firstUnreadMessage,
         ]);
     }
 
