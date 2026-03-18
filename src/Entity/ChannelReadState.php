@@ -18,7 +18,7 @@ class ChannelReadState
     private Uuid $id;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'cascade')]
     private Channel $channel;
 
     #[ORM\ManyToOne]

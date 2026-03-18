@@ -73,7 +73,9 @@ final class ChannelController extends AbstractController
         $firstChannel = $channelService->getDefaultChannelForServer($server);
 
         if (!$firstChannel) {
-            throw $this->createNotFoundException('This server has no channels available.');
+            return $this->render('server/empty.html.twig', [
+                'server' => $server,
+            ]);
         }
 
         return $this->redirectToRoute('app_chat_channel', [

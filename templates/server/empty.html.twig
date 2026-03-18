@@ -1,0 +1,24 @@
+{% extends 'layout_app.html.twig' %}
+
+{% block title %}{{ server.name }} - ChatApp{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-grow-1 align-items-center justify-content-center">
+        <div class="text-center">
+            <div class="mb-3">
+                {{ ux_icon('bi:hash', {class: 'fs-1 text-app-muted opacity-50'}) }}
+            </div>
+            <h5 class="fw-bold text-app-secondary mb-2">Brak kanałów</h5>
+            <p class="text-app-muted mb-3">
+                Ten serwer nie ma jeszcze żadnych kanałów.
+            </p>
+            {% if is_granted('SERVER_CREATE_CHANNEL', server) %}
+                <a href="{{ path('app_channel_create', {serverId: server.id}) }}"
+                   class="btn btn-primary"
+                   data-turbo-frame="main_content">
+                    Utwórz kanał
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
