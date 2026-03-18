@@ -1,0 +1,46 @@
+{% props server %}
+
+<div class="modal fade" id="inviteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-app-elevated text-app-primary border border-secondary">
+
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title fw-bold">
+                    {{ ux_icon('bi:person-plus-fill', {class: 'me-2 text-primary'}) }}
+                    Zaproś do serwera
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Zamknij"></button>
+            </div>
+
+            <form method="post"
+                  action="{{ path('app_server_invitation_send', {serverId: server.id}) }}"
+                  data-turbo-frame="_top">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('server_invite_' ~ server.id) }}">
+
+                <div class="modal-body">
+                    <label for="invite-username" class="mb-2 small fw-bold text-uppercase text-app-secondary">
+                        Nazwa użytkownika
+                    </label>
+                    <input type="text"
+                           id="invite-username"
+                           name="username"
+                           class="form-control text-white"
+                           placeholder="Wpisz nazwę użytkownika..."
+                           autocomplete="off"
+                           required>
+                    <div class="mt-2 small text-app-muted">
+                        Użytkownik otrzyma powiadomienie z zaproszeniem.
+                    </div>
+                </div>
+
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="d-flex align-items-center gap-2 btn btn-primary" data-turbo-submits-with="Wysyłanie...">
+                        {{ ux_icon('bi:send-fill') }} Wyślij zaproszenie
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

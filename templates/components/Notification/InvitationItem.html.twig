@@ -1,0 +1,59 @@
+<div id="notification-{{ notification.id }}" class="d-flex flex-column gap-2 p-3 border-bottom border-secondary">
+    <div class="d-flex align-items-start gap-2">
+        <div class="flex-shrink-0 mt-1">
+            {{ ux_icon(this.icon, {class: this.iconColorClass ~ ' fs-5'}) }}
+        </div>
+
+        <div class="flex-grow-1 min-w-0">
+            <p class="mb-1 small text-app-primary">
+                {{ this.messageHtml|raw }}
+            </p>
+            <p class="mb-0 small text-app-muted">
+                {{ notification.createdAt|date('d.m.Y H:i') }}
+            </p>
+        </div>
+    </div>
+
+    {% if notification.isInvitationPending and notification.invitation %}
+        {# Zaproszenie na serwer #}
+        <div class="d-flex gap-2">
+            <form method="post" action="{{ path('app_invitation_accept', {serverId: notification.invitation.server.id, invitationId: notification.invitation.id}) }}" data-turbo-frame="_top">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('invitation_accept_' ~ notification.invitation.id) }}">
+                <button type="submit" class="d-flex align-items-center gap-1 px-3 py-1 small btn btn-primary btn-sm">
+                    {{ ux_icon('bi:check-lg') }} Akceptuj
+                </button>
+            </form>
+
+            <form method="post" action="{{ path('app_invitation_decline', {serverId: notification.invitation.server.id, invitationId: notification.invitation.id}) }}" data-turbo-frame="_top">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('invitation_decline_' ~ notification.invitation.id) }}">
+                <button type="submit" class="d-flex align-items-center gap-1 px-3 py-1 small btn btn-outline-secondary btn-sm">
+                    {{ ux_icon('bi:x-lg') }} Odrzuć
+                </button>
+            </form>
+        </div>
+    {% elseif notification.isInvitationPending and notification.friendInvitation %}
+        {# Zaproszenie do znajomych #}
+        <div class="d-flex gap-2">
+            <form method="post" action="{{ path('app_friend_invite_accept', {invitationId: notification.friendInvitation.id}) }}" data-turbo-frame="_top">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('friend_invite_accept_' ~ notification.friendInvitation.id) }}">
+                <button type="submit" class="d-flex align-items-center gap-1 px-3 py-1 small btn btn-primary btn-sm">
+                    {{ ux_icon('bi:check-lg') }} Akceptuj
+                </button>
+            </form>
+
+            <form method="post" action="{{ path('app_friend_invite_decline', {invitationId: notification.friendInvitation.id}) }}" data-turbo-frame="_top">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('friend_invite_decline_' ~ notification.friendInvitation.id) }}">
+                <button type="submit" class="d-flex align-items-center gap-1 px-3 py-1 small btn btn-outline-secondary btn-sm">
+                    {{ ux_icon('bi:x-lg') }} Odrzuć
+                </button>
+            </form>
+        </div>
+    {% elseif notification.needsOkButton %}
+        <form method="post" action="{{ path('app_notification_read', {notificationId: notification.id}) }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('notification_read_' ~ notification.id) }}">
+            <button type="submit" class="d-flex align-items-center gap-1 px-3 py-1 small btn btn-outline-secondary btn-sm">
+                {{ ux_icon('bi:check-lg') }} OK
+            </button>
+        </form>
+    {% endif %}
+</div>
