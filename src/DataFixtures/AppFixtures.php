@@ -62,7 +62,6 @@ final class AppFixtures extends Fixture
         foreach (ServerFactory::all() as $serverProxy) {
             $server = $serverProxy->_real();
 
-            // Create admin as member (owner)
             $adminMember = ServerMemberFactory::findOrCreate([
                 'user' => $admin,
                 'server' => $server,
@@ -147,7 +146,7 @@ final class AppFixtures extends Fixture
         }
 
         foreach (ChannelFactory::all() as $channel) {
-            MessageFactory::createMany(rand(5, 25), ['channel' => $channel]);
+            MessageFactory::createMany(rand(100, 300), ['channel' => $channel]);
         }
 
         $manager->flush();
