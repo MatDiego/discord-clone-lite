@@ -42,6 +42,11 @@ final readonly class MercureNotificationSubscriber implements EventSubscriberInt
             sprintf('http://friends/%s', $userIdRfc),
             ];
 
+        $serverId = $request->attributes->get('serverId');
+        if ($serverId) {
+            $topics[] = sprintf('http://servers/%s', $serverId);
+        }
+
         $channelId = $request->attributes->get('channelId');
         if ($channelId) {
             $topics[] = sprintf('http://channels/%s', $channelId);

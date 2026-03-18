@@ -14,6 +14,7 @@ use App\Security\Voter\ChannelVoter;
 use App\Security\Voter\ServerVoter;
 use App\Service\ChannelReadStateService;
 use App\Service\ChannelService;
+use App\Service\MercureNotificationPublisher;
 use App\Service\MessageService;
 use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -89,6 +90,7 @@ final class ChannelController extends AbstractController
     public function create(
         Request $request,
         ChannelService $channelService,
+        MercureNotificationPublisher $mercurePublisher,
         #[MapEntity(id: 'serverId')] Server $server
     ): Response {
         $form = $this->createForm(CreateChannelType::class);
@@ -99,6 +101,7 @@ final class ChannelController extends AbstractController
 
             /** @var CreateChannelRequest $channelData */
             $channel = $channelService->createChannel($channelData, $server);
+            $mercurePublisher->publishChannelCreated($channel);
 
             $this->addFlash('success', 'Pomyślnie utworzono nowy kanał.');
 
@@ -155,12 +158,14 @@ final class ChannelController extends AbstractController
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(id: 'channelId')] Channel $channel,
-        ChannelService $channelService
+        ChannelService $channelService,
+        MercureNotificationPublisher $mercurePublisher,
     ): Response {
 
         $token = $request->request->getString('_csrf_token');
 
         if ($this->isCsrfTokenValid('delete_channel_' . $channel->getId()->toRfc4122(), $token)) {
+            $mercurePublisher->publishChannelDeleted($channel, $server);
             $channelService->removeChannel($channel);
             $this->addFlash('success', 'Pomyślnie usunięto kanał.');
             return $this->redirectToRoute('app_server_default_channel', [
