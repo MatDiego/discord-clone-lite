@@ -48,10 +48,11 @@ final readonly class NotificationService
         $this->persist($notification);
     }
 
-    public function createBannedNotification(User $recipient, Server $server): void
+    public function createBannedNotification(User $recipient, Server $server, ?string $duration = null): void
     {
         $notification = new Notification($recipient, NotificationType::BANNED_FROM_SERVER);
         $notification->setServerName($server->getName());
+        $notification->setBanDuration($duration);
 
         $this->persist($notification);
     }

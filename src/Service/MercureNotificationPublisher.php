@@ -9,6 +9,9 @@ use App\Entity\User;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 final readonly class MercureNotificationPublisher
 {
@@ -18,6 +21,11 @@ final readonly class MercureNotificationPublisher
     ) {
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function publishBadge(User $user, int $count): void
     {
         $content = $this->twig->render('notification/stream_badge.stream.html.twig', [
@@ -31,6 +39,9 @@ final readonly class MercureNotificationPublisher
 
     /**
      * @param User[] $members
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
      */
     public function publishServerDeleted(array $members): void
     {
@@ -42,6 +53,11 @@ final readonly class MercureNotificationPublisher
         }
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function publishMemberJoined(Server $server): void
     {
         $content = $this->twig->render('notification/stream_member_list.stream.html.twig', [
@@ -54,6 +70,11 @@ final readonly class MercureNotificationPublisher
         }
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function publishFriendList(User $user): void
     {
         $content = $this->twig->render('friends/stream_friend_list.stream.html.twig', [
@@ -61,6 +82,20 @@ final readonly class MercureNotificationPublisher
         ]);
 
         $topic = sprintf('http://friends/%s', $user->getId()->toRfc4122());
+
+        $this->hub->publish(new Update($topic, $content, true));
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function publishRedirect(User $user): void
+    {
+        $content = $this->twig->render('server/stream_redirect_dashboard.stream.html.twig');
+
+        $topic = sprintf('http://notifications/%s', $user->getId()->toRfc4122());
 
         $this->hub->publish(new Update($topic, $content, true));
     }

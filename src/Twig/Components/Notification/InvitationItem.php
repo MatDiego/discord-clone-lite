@@ -70,10 +70,20 @@ final class InvitationItem
             $serverName = htmlspecialchars($this->notification->getRelatedServerName());
             $serverBadge = sprintf('<span class="fw-semibold text-white">%s</span>', $serverName);
 
+            if ($type === 'banned_from_server') {
+                $durationText = match ($this->notification->getBanDuration()) {
+                    'day'   => 'na 1 dzień',
+                    'week'  => 'na 1 tydzień',
+                    'month' => 'na 1 miesiąc',
+                    default => 'permanentnie',
+                };
+
+                return sprintf('Zostałeś zbanowany na serwerze %s %s.', $serverBadge, $durationText);
+            }
+
             return match ($type) {
                 'invitation_accepted' => sprintf('%s zaakceptował(a) Twoje zaproszenie na serwer %s.', $userBadge, $serverBadge),
                 'kicked_from_server'  => sprintf('Zostałeś wyrzucony z serwera %s.', $serverBadge),
-                'banned_from_server'  => sprintf('Zostałeś zbanowany na serwerze %s.', $serverBadge),
                 default               => sprintf('%s zaprasza Cię na serwer %s.', $userBadge, $serverBadge),
             };
         }

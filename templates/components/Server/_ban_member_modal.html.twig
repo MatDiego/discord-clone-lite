@@ -1,0 +1,59 @@
+<div class="modal fade" id="banMemberModal" tabindex="-1" aria-labelledby="banMemberModalLabel" aria-hidden="true"
+     data-controller="ban-member-modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-app-elevated border border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="d-flex align-items-center gap-2 modal-title text-white" id="banMemberModalLabel">
+                    {{ ux_icon('bi:hammer', {class: 'text-danger'}) }}
+                    Zbanuj członka
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Zamknij"></button>
+            </div>
+            <form method="post" action="" data-turbo-frame="_top">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('member_ban') }}">
+                <div class="modal-body">
+                    <p class="mb-3">
+                        Czy na pewno chcesz zbanować
+                        <strong class="text-white" data-member-name-placeholder></strong>?
+                    </p>
+
+                    <label class="form-label text-app-secondary small fw-semibold mb-2">Czas trwania bana</label>
+
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="duration" id="banDay" value="day">
+                            <label class="form-check-label text-white" for="banDay">
+                                1 dzień
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="duration" id="banWeek" value="week">
+                            <label class="form-check-label text-white" for="banWeek">
+                                1 tydzień
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="duration" id="banMonth" value="month">
+                            <label class="form-check-label text-white" for="banMonth">
+                                1 miesiąc
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="duration" id="banPerm" value="permanent" checked>
+                            <label class="form-check-label text-white" for="banPerm">
+                                Permanentny
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-sm btn-danger d-flex align-items-center gap-2">
+                        {{ ux_icon('bi:hammer') }}
+                        Zbanuj
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

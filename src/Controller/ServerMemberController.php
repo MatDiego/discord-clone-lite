@@ -6,13 +6,17 @@ namespace App\Controller;
 
 use App\Entity\Server;
 use App\Entity\ServerMember;
+use App\Entity\User;
 use App\Form\MemberRoleType;
+use App\Security\Voter\ServerMemberVoter;
 use App\Security\Voter\ServerVoter;
+use App\Service\ServerMemberService;
 use App\Service\ServerRoleService;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +25,55 @@ use Symfony\Component\HttpFoundation\Request;
 #[Route('/servers/{serverId}/members')]
 final class ServerMemberController extends AbstractController
 {
+    public function __construct(
+        private readonly ServerMemberService $serverMemberService,
+    ) {
+    }
+
+    #[Route('/{memberId}/kick', name: 'app_member_kick', methods: ['POST'])]
+    #[IsGranted(ServerMemberVoter::KICK, subject: 'member')]
+    public function kick(
+        Request $request,
+        #[MapEntity(id: 'memberId')] ServerMember $member,
+    ): Response {
+        $token = $request->request->getString('_csrf_token');
+
+        if (!$this->isCsrfTokenValid('member_kick', $token)) {
+            throw new BadRequestHttpException('Nieprawidłowy token CSRF.');
+        }
+
+        $this->serverMemberService->kick($member);
+        $this->addFlash('success', sprintf('Użytkownik %s został wyrzucony z serwera.', $member->getUser()->getUsername()));
+
+        return $this->render('server/stream_moderation.stream.html.twig', [
+            'modal' => 'kickMemberModal',
+        ], new Response('', 200, ['Content-Type' => 'text/vnd.turbo-stream.html']));
+    }
+
+    #[Route('/{memberId}/ban', name: 'app_member_ban', methods: ['POST'])]
+    #[IsGranted(ServerMemberVoter::BAN, subject: 'member')]
+    public function ban(
+        Request $request,
+        #[MapEntity(id: 'memberId')] ServerMember $member,
+    ): Response {
+        $token = $request->request->getString('_csrf_token');
+
+        if (!$this->isCsrfTokenValid('member_ban', $token)) {
+            throw new BadRequestHttpException('Nieprawidłowy token CSRF.');
+        }
+
+        $duration = $request->request->getString('duration') ?: null;
+
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
+        $this->serverMemberService->ban($member, $duration, $currentUser);
+        $this->addFlash('success', sprintf('Użytkownik %s został zbanowany.', $member->getUser()->getUsername()));
+
+        return $this->render('server/stream_moderation.stream.html.twig', [
+            'modal' => 'banMemberModal',
+        ], new Response('', 200, ['Content-Type' => 'text/vnd.turbo-stream.html']));
+    }
 
     #[Route('/{memberId}/roles', name: 'app_member_roles_fragment')]
     public function memberRolesFragment(
