@@ -31,6 +31,10 @@ final class InvitationItem
             return 'bi:person-check-fill';
         }
 
+        if ($type === 'friend_invitation') {
+            return 'bi:person-plus-fill';
+        }
+
         return 'bi:envelope-fill';
     }
 
@@ -62,17 +66,22 @@ final class InvitationItem
         $userName = htmlspecialchars($this->notification->getUserName());
         $userBadge = sprintf('<span class="fw-semibold text-white">%s</span>', $userName);
 
-        $serverName = htmlspecialchars($this->notification->getRelatedServerName());
-        $serverBadge = sprintf('<span class="fw-semibold text-white">%s</span>', $serverName);
+        if (in_array($type, ['server_invitation', 'invitation_accepted', 'kicked_from_server', 'banned_from_server'])) {
+            $serverName = htmlspecialchars($this->notification->getRelatedServerName());
+            $serverBadge = sprintf('<span class="fw-semibold text-white">%s</span>', $serverName);
+
+            return match ($type) {
+                'invitation_accepted' => sprintf('%s zaakceptował(a) Twoje zaproszenie na serwer %s.', $userBadge, $serverBadge),
+                'kicked_from_server'  => sprintf('Zostałeś wyrzucony z serwera %s.', $serverBadge),
+                'banned_from_server'  => sprintf('Zostałeś zbanowany na serwerze %s.', $serverBadge),
+                default               => sprintf('%s zaprasza Cię na serwer %s.', $userBadge, $serverBadge),
+            };
+        }
 
         return match ($type) {
-            'invitation_accepted' => sprintf('%s zaakceptował(a) Twoje zaproszenie na serwer %s.', $userBadge, $serverBadge),
-            'kicked_from_server'  => sprintf('Zostałeś wyrzucony z serwera %s.', $serverBadge),
-            'banned_from_server'  => sprintf('Zostałeś zbanowany na serwerze %s.', $serverBadge),
-            default               => sprintf('%s zaprasza Cię na serwer %s.', $userBadge, $serverBadge),
+            'friend_invitation'          => sprintf('%s zaprasza Cię do znajomych.', $userBadge),
+            'friend_invitation_accepted' => sprintf('%s zaakceptował(a) Twoje zaproszenie do znajomych.', $userBadge),
+            default                      => 'Nowe powiadomienie.',
         };
-
-
-
     }
 }

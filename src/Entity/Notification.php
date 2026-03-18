@@ -29,6 +29,9 @@ class Notification
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?ServerInvitation $invitation = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?FriendInvitation $friendInvitation = null;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $serverName = null;
@@ -73,6 +76,16 @@ class Notification
     public function setInvitation(?ServerInvitation $invitation): void
     {
         $this->invitation = $invitation;
+    }
+
+    public function getFriendInvitation(): ?FriendInvitation
+    {
+        return $this->friendInvitation;
+    }
+
+    public function setFriendInvitation(?FriendInvitation $friendInvitation): void
+    {
+        $this->friendInvitation = $friendInvitation;
     }
 
     public function getServerName(): ?string
@@ -121,6 +134,10 @@ class Notification
             return $this->invitation !== null && $this->invitation->isPending();
         }
 
+        if ($this->type === NotificationType::FRIEND_INVITATION) {
+            return $this->friendInvitation !== null && $this->friendInvitation->isPending();
+        }
+
         return false;
     }
 
@@ -130,6 +147,7 @@ class Notification
             NotificationType::INVITATION_ACCEPTED,
             NotificationType::KICKED_FROM_SERVER,
             NotificationType::BANNED_FROM_SERVER,
+            NotificationType::FRIEND_INVITATION_ACCEPTED,
         ]);
     }
 
@@ -142,6 +160,14 @@ class Notification
     {
         if ($this->type === NotificationType::INVITATION_ACCEPTED) {
             return $this->invitation?->getRecipientName() ?? $this->actorName ?? $fallback;
+        }
+
+        if ($this->type === NotificationType::FRIEND_INVITATION) {
+            return $this->friendInvitation?->getSenderName() ?? $this->actorName ?? $fallback;
+        }
+
+        if ($this->type === NotificationType::FRIEND_INVITATION_ACCEPTED) {
+            return $this->friendInvitation?->getRecipientName() ?? $this->actorName ?? $fallback;
         }
 
         return $this->invitation?->getSenderName() ?? $this->actorName ?? $fallback;

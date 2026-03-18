@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\FriendInvitation;
 use App\Entity\Notification;
 use App\Entity\ServerInvitation;
 use App\Entity\User;
@@ -62,6 +63,18 @@ class NotificationRepository extends ServiceEntityRepository
             ->update()
             ->set('n.isRead', ':read')
             ->where('n.invitation = :invitation')
+            ->setParameter('read', true, Types::BOOLEAN)
+            ->setParameter('invitation', $invitation)
+            ->getQuery()
+            ->execute();
+    }
+
+    public function markReadByFriendInvitation(FriendInvitation $invitation): void
+    {
+        $this->createQueryBuilder('n')
+            ->update()
+            ->set('n.isRead', ':read')
+            ->where('n.friendInvitation = :invitation')
             ->setParameter('read', true, Types::BOOLEAN)
             ->setParameter('invitation', $invitation)
             ->getQuery()
