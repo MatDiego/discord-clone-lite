@@ -39,6 +39,9 @@ class Notification
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $actorName = null;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $banDuration = null;
+
     #[ORM\Column]
     private bool $isRead = false;
 
@@ -106,6 +109,16 @@ class Notification
     public function setActorName(?string $actorName): void
     {
         $this->actorName = $actorName;
+    }
+
+    public function getBanDuration(): ?string
+    {
+        return $this->banDuration;
+    }
+
+    public function setBanDuration(?string $banDuration): void
+    {
+        $this->banDuration = $banDuration;
     }
 
     public function isRead(): bool

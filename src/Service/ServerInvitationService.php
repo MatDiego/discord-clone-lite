@@ -41,6 +41,11 @@ final readonly class ServerInvitationService
             throw new ConflictHttpException('Zaproszenie dla tego użytkownika już istnieje.');
         }
 
+        $activeBan = $this->serverMemberService->getActiveBan($recipient, $server);
+        if ($activeBan !== null) {
+            throw new ConflictHttpException('Ten użytkownik jest zbanowany na tym serwerze.');
+        }
+
         $invitation = new ServerInvitation($server, $sender, $recipient);
         $this->invitationRepository->add($invitation);
         $this->invitationRepository->flush();
@@ -52,6 +57,11 @@ final readonly class ServerInvitationService
     {
         $this->assertRecipient($invitation, $currentUser);
         $this->assertPending($invitation);
+
+        $activeBan = $this->serverMemberService->getActiveBan($invitation->getRecipient(), $invitation->getServer());
+        if ($activeBan !== null) {
+            throw new ConflictHttpException('Jesteś zbanowany na tym serwerze i nie możesz do niego dołączyć.');
+        }
 
         $member = $this->serverMemberService->addMember($invitation->getServer(), $invitation->getRecipient());
 

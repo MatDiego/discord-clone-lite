@@ -15,6 +15,8 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
  */
 final class ChannelFactory extends PersistentProxyObjectFactory
 {
+    private static ?DateTimeImmutable $lastDate = null;
+
     public function __construct()
     {
         parent::__construct();
@@ -29,13 +31,21 @@ final class ChannelFactory extends PersistentProxyObjectFactory
     #[Override]
     protected function defaults(): array|callable
     {
+        if (self::$lastDate === null) {
+            self::$lastDate = new DateTimeImmutable('-1 year');
+        }
+
+        $minutesToAdd = rand(1, 120);
+        $currentDate = self::$lastDate->modify("+{$minutesToAdd} minutes");
+        self::$lastDate = $currentDate;
+
         $channelNames = ['ogólny', 'pomoc', 'off-topic', 'newsy', 'pytania', 'media', 'linki', 'memy', 'muzyka', 'gry'];
 
         return [
             'name' => self::faker()->randomElement($channelNames) . '-' . self::faker()->numberBetween(1, 99),
             'server' => ServerFactory::new(),
             'type' => self::faker()->randomElement(ChannelTypeEnum::cases()),
-            'createdAt' => DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year')),
+            'createdAt' => $currentDate,
         ];
     }
 

@@ -27,6 +27,12 @@
     </template>
 </turbo-stream>
 
+<turbo-stream action="update" target="flash-container">
+    <template>
+        <twig:Common:FlashToasts />
+    </template>
+</turbo-stream>
+
 {% if joinedServer is defined and joinedServer is not null %}
     <turbo-stream action="append" target="server_list">
         <template>
