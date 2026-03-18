@@ -9,6 +9,7 @@ RUN install-php-extensions \
     opcache \
     zip \
     xsl \
+    redis \
     && apk add --no-cache git unzip
 
 COPY Caddyfile /etc/frankenphp/Caddyfile

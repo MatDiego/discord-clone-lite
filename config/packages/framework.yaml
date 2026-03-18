@@ -4,8 +4,11 @@ framework:
 
     # Note that the session will be started ONLY if you read or write from it.
     session:
+        handler_id: App\Session\FixedLifetimeRedisSessionHandler
         cookie_samesite: none
         cookie_secure: true
+        cookie_lifetime: 0
+        gc_maxlifetime: '%env(int:SESSION_LIFETIME)%'
 
     #esi: true
     #fragments: true

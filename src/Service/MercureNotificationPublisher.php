@@ -99,4 +99,32 @@ final readonly class MercureNotificationPublisher
 
         $this->hub->publish(new Update($topic, $content, true));
     }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function publishSessionExpired(string $userId): void
+    {
+        $content = $this->twig->render('session/stream_session_expired.stream.html.twig');
+
+        $topic = sprintf('http://notifications/%s', $userId);
+
+        $this->hub->publish(new Update($topic, $content, true));
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function publishSessionKicked(string $userId): void
+    {
+        $content = $this->twig->render('session/stream_session_kicked.stream.html.twig');
+
+        $topic = sprintf('http://notifications/%s', $userId);
+
+        $this->hub->publish(new Update($topic, $content, true));
+    }
 }
