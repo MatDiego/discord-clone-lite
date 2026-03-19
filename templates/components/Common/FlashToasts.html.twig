@@ -4,9 +4,10 @@
         {% for message in messages %}
 
             {% set isSuccess = label == 'success' %}
-            {% set borderColor = isSuccess ? '#00c853' : '#f44336' %}
+            {% set isWarning = label == 'warning' %}
             {% set icon = isSuccess ? 'bi:check-circle-fill' : 'bi:exclamation-triangle-fill' %}
-            {% set iconColorClass = isSuccess ? 'text-success' : 'text-danger' %}
+            {% set iconColorClass = isSuccess ? 'text-success' : (isWarning ? 'text-warning' : 'text-danger') %}
+            {% set toastTitle = isSuccess ? 'Sukces!' : (isWarning ? 'Uwaga!' : 'Błąd!') %}
 
             <div class="toast align-items-center show mb-3 d-flex"
                  role="alert"
@@ -19,7 +20,7 @@
 
                     <div class="flex-grow-1">
                         <strong class="d-block mb-1">
-                            {{ isSuccess ? 'Sukces!' : 'Błąd!' }}
+                            {{ toastTitle }}
                         </strong>
                         <div>
                             {{ message }}

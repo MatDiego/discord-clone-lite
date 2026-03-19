@@ -18,8 +18,10 @@
             {% endblock %}
         {% endblock %}
     </head>
-    <body>
+    <body{% if app.user %} data-current-user-id="{{ app.user.id }}" data-csrf-friend-invite="{{ csrf_token('friend_invite') }}"{% endif %}>
         {% block body %}{% endblock %}
-        <twig:Common:FlashToasts />
+        <div id="flash-container">
+            <twig:Common:FlashToasts />
+        </div>
     </body>
 </html>

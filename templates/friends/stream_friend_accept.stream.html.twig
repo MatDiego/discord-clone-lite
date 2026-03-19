@@ -1,0 +1,13 @@
+<turbo-stream action="replace" target="friend-list-widget">
+    <template>
+        <div id="friend-list-widget">
+            <twig:Friend:List />
+        </div>
+    </template>
+</turbo-stream>
+
+<turbo-stream action="update" target="flash-container">
+    <template>
+        <twig:Common:FlashToasts />
+    </template>
+</turbo-stream>

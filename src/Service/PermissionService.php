@@ -76,10 +76,6 @@ final readonly class PermissionService
     {
         $roleIds = $this->memberRoleRepository->findRoleIdsByMember($member);
 
-        if (empty($roleIds)) {
-            return false;
-        }
-
         return $this->rolePermissionRepository->hasPermissionInRoles($roleIds, $permission);
     }
 

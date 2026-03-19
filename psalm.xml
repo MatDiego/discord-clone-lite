@@ -11,6 +11,7 @@
         <ignoreFiles>
             <directory name="vendor"/>
             <directory name="var"/>
+            <file name="tests/Mock/MockRedis.php"/>
         </ignoreFiles>
     </projectFiles>
 
@@ -53,6 +54,7 @@
         <UnusedClass>
             <errorLevel type="suppress">
                 <directory name="src"/>
+                <directory name="tests/Mock"/>
             </errorLevel>
         </UnusedClass>
         <PossiblyUnusedProperty>

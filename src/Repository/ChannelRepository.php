@@ -28,6 +28,7 @@ class ChannelRepository extends ServiceEntityRepository
             ->setParameter('server', $server)
             ->setParameter('type', ChannelTypeEnum::TEXT)
             ->orderBy('c.createdAt', 'ASC')
+            ->addOrderBy('c.id', 'ASC')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

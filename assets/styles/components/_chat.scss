@@ -6,19 +6,72 @@
 .messages-area {
     background-color: $app-bg-dark;
     @include dark-scrollbar;
-    scroll-behavior: smooth;
+    overflow-anchor: none;
 }
 
 .message-item {
     position: relative;
     padding: 0.25rem 1rem 0.25rem 1rem;
     margin-bottom: 0.125rem;
-    transition: background-color 0.1s ease;
+    transition: background-color 0.1s ease, border-color 0.1s ease;
     border-radius: 0.25rem;
+    border: 1px solid transparent;
 
     &:hover {
         background-color: $app-bg-elevated;
     }
+}
+
+.unread-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+
+    &--fade-out {
+        animation: unreadDividerFadeOut 0.4s ease-out forwards;
+    }
+
+    &::before,
+    &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background-color: $app-danger;
+    }
+
+    span {
+        color: $app-danger;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+}
+
+@keyframes messageFadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes unreadDividerFadeOut {
+    to {
+        opacity: 0;
+        height: 0;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+    }
+}
+
+.message-loaded-animated {
+    animation: messageFadeInDown 0.5s ease-out forwards;
 }
 
 .message-avatar-frame {
@@ -90,6 +143,10 @@
     }
 }
 
+.chat-send-btn--disabled {
+    opacity: 0.4;
+}
+
 .chat-attach-icon {
     color: $app-text-secondary;
     transition: color 0.2s;
@@ -111,6 +168,38 @@
     background-color: $app-bg-dark;
     border-bottom: 1px solid $app-border;
     min-height: 3rem;
+}
+
+.demo-timer {
+    font-size: 0.75rem;
+    color: $app-text-secondary;
+
+    &__label {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        white-space: nowrap;
+    }
+
+    &__time {
+        color: $app-text-primary;
+        font-variant-numeric: tabular-nums;
+    }
+
+    &__bar-track {
+        width: 4rem;
+        height: 4px;
+        background-color: $app-bg-elevated;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    &__bar {
+        height: 100%;
+        width: 100%;
+        border-radius: 2px;
+        transition: width 1s linear;
+    }
 }
 
 .chat-empty-state {

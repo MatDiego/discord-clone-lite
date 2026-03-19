@@ -1,0 +1,24 @@
+<turbo-frame id="notification-dropdown-frame">
+    <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom border-secondary flex-shrink-0">
+        <span class="small fw-bold text-uppercase text-app-secondary">Powiadomienia</span>
+        {% if notifications|length > 0 %}
+            <form method="post" action="{{ path('app_notifications_read_all') }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('notifications_read_all') }}">
+                <button type="submit" class="p-0 small text-app-muted btn btn-link text-decoration-none">
+                    Wyczyść wszystkie
+                </button>
+            </form>
+        {% endif %}
+    </div>
+
+    <div id="notification-list" class="overflow-y-auto" style="max-height: 380px;">
+        {% for notification in notifications %}
+            <twig:Notification:InvitationItem :notification="notification" />
+        {% else %}
+            <div class="d-flex flex-column align-items-center py-4 text-app-muted">
+                {{ ux_icon('bi:bell-slash', {class: 'mb-2 fs-3 opacity-50'}) }}
+                <span class="small">Brak nowych powiadomień</span>
+            </div>
+        {% endfor %}
+    </div>
+</turbo-frame>

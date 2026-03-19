@@ -1,0 +1,28 @@
+<div id="notification-badge" class="dropup">
+
+    <button type="button"
+            class="sidebar-btn-icon btn p-1 position-relative border-0 bg-transparent"
+            data-bs-toggle="dropdown"
+            data-bs-auto-close="outside"
+            aria-expanded="false"
+            title="Powiadomienia">
+        {{ ux_icon('bi:bell-fill') }}
+        <span id="notification-count">
+            {% if count > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                      style="font-size: 0.6rem; pointer-events: none">
+                    {{ count > 99 ? '99+' : count }}
+                </span>
+            {% endif %}
+        </span>
+    </button>
+
+    <div class="dropdown-menu dropdown-menu-dark dropdown-menu-end p-0 notification-panel shadow">
+        <turbo-frame id="notification-dropdown-frame" src="{{ path('app_notifications_dropdown') }}" loading="lazy">
+            <div class="d-flex justify-content-center py-4">
+                <div class="spinner-border spinner-border-sm text-app-muted" role="status"></div>
+            </div>
+        </turbo-frame>
+    </div>
+
+</div>

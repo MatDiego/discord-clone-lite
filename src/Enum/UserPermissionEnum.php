@@ -25,4 +25,24 @@ enum UserPermissionEnum: string
     case MANAGE_PERMISSIONS = 'MANAGE_PERMISSIONS';
     case VIEW_CHANNEL = 'VIEW_CHANNEL';
     case ADD_MEMBER = 'ADD_MEMBER';
+
+    public function trans(): string
+    {
+        return match ($this) {
+            self::MANAGE_SERVER => 'Zarządzanie serwerem',
+            self::MANAGE_ROLES => 'Zarządzanie rolami',
+            self::MANAGE_CHANNELS => 'Zarządzanie kanałami',
+            self::KICK_MEMBERS => 'Wyrzucanie członków',
+            self::BAN_MEMBERS => 'Banowanie członków',
+            self::MANAGE_NICKNAMES => 'Zarządzanie pseudonimami',
+            self::VIEW_CHANNELS => 'Wyświetlanie kanałów',
+            self::SEND_MESSAGES => 'Wysyłanie wiadomości',
+            self::MANAGE_MESSAGES => 'Zarządzanie wiadomościami',
+            self::CREATE_INVITE => 'Tworzenie zaproszeń',
+            self::MANAGE_CHANNEL => 'Zarządzanie kanałem',
+            self::MANAGE_PERMISSIONS => 'Zarządzanie uprawnieniami',
+            self::VIEW_CHANNEL => 'Wyświetlanie kanału',
+            self::ADD_MEMBER => 'Dodawanie członków',
+        };
+    }
 }

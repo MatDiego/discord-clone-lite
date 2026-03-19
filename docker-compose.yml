@@ -53,8 +53,23 @@ services:
         ports:
             - "3000:443"
 
+    redis:
+        image: redis:7-alpine
+        command: redis-server /usr/local/etc/redis/redis.conf
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis_data:/data
+            - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+
 volumes:
     database_data:
+    redis_data:
 
     mercure_data:
     mercure_config:

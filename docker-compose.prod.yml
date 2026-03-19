@@ -22,6 +22,9 @@ services:
             MERCURE_HUB_URL: http://localhost:8080/.well-known/mercure
             MAILER_DSN: "null://null"
 
+            REDIS_DSN: redis://redis:6379
+            SESSION_LIFETIME: 600
+
         ports:
             - "80:80"
             - "443:443"
@@ -32,6 +35,52 @@ services:
         depends_on:
             database:
                 condition: service_healthy
+            redis:
+                condition: service_healthy
+
+    demo-reset:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        command: /usr/local/bin/demo-reset-loop.sh
+        environment:
+            APP_ENV: prod
+            REDIS_DSN: redis://redis:6379
+            SESSION_LIFETIME: 600
+            MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET}
+            MERCURE_URL: http://frankenphp:8080/.well-known/mercure
+            MERCURE_PUBLIC_URL: https://matnas.pl/.well-known/mercure
+            MERCURE_HUB_URL: http://frankenphp:8080/.well-known/mercure
+            DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@database:5432/communicator_prod?serverVersion=16&charset=utf8
+        depends_on:
+            database:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            frankenphp:
+                condition: service_started
+
+    session-monitor:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        command: php bin/console app:session:monitor
+        environment:
+            APP_ENV: prod
+            REDIS_DSN: redis://redis:6379
+            SESSION_LIFETIME: 600
+            MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET}
+            MERCURE_URL: http://frankenphp:8080/.well-known/mercure
+            MERCURE_PUBLIC_URL: https://matnas.pl/.well-known/mercure
+            MERCURE_HUB_URL: http://frankenphp:8080/.well-known/mercure
+            DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@database:5432/communicator_prod?serverVersion=16&charset=utf8
+        depends_on:
+            redis:
+                condition: service_healthy
+            frankenphp:
+                condition: service_started
 
     database:
         image: postgres:16-alpine
@@ -48,8 +97,21 @@ services:
         volumes:
             - database_data_prod:/var/lib/postgresql/data
 
+    redis:
+        image: redis:7-alpine
+        restart: unless-stopped
+        command: redis-server /usr/local/etc/redis/redis.conf
+        volumes:
+            - redis_data_prod:/data
+            - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            timeout: 5s
+            retries: 5
+            start_period: 10s
 
 volumes:
     database_data_prod:
     caddy_data:
     caddy_config:
+    redis_data_prod:

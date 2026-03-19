@@ -2,39 +2,48 @@
 
 <div class="flex-grow-1 overflow-auto dark-scrollbar p-2">
     {% if currentServer %}
+        {% set serverTopic = 'http://servers/' ~ currentServer.id %}
+        <div data-controller="mercure-stream"
+             data-mercure-stream-url-value="{{ mercure(serverTopic) }}"></div>
+
         <div class="px-2 pt-3 pb-1 text-app-secondary d-flex align-items-center justify-content-between">
             <span class="text-uppercase small fw-bold">
                 Kanały tekstowe
             </span>
-            <a href="{{ path('app_channel_create', {serverId: currentServer.id}) }}"
-               class="text-app-secondary text-decoration-none d-flex align-items-center create-icon px-1 py-2 fw-bold"
-               title="Utwórz kanał"
-               data-turbo-frame="main_content">
-                {{ ux_icon('octicon:plus-16', {class: 'fs-5'} ) }}
-            </a>
+            {% if is_granted('SERVER_CREATE_CHANNEL', currentServer) %}
+                <a href="{{ path('app_channel_create', {serverId: currentServer.id}) }}"
+                   class="text-app-secondary text-decoration-none d-flex align-items-center create-icon px-1 py-2 fw-bold"
+                   title="Utwórz kanał"
+                   data-turbo-frame="main_content">
+                    {{ ux_icon('octicon:plus-16', {class: 'fs-5'} ) }}
+                </a>
+            {% endif %}
         </div>
 
-        {% for channel in currentServer.channels %}
-            {% if channel.type.value == 'TEXT' %}
-                <div class="channel-item d-flex justify-content-between  rounded
-                    {{ currentChannel and currentChannel.id == channel.id ? 'active' : '' }}">
-                    <a href="{{ path('app_chat_channel', {serverId: currentServer.id, channelId: channel.id}) }}"
-                       class="text-reset d-flex align-items-center flex-grow-1 text-decoration-none rounded px-2 py-2 mb-1 ">
-                        <span class="fs-5 me-2 lh-1 opacity-75">#</span>
-                        <span class="text-truncate flex-grow-1">{{ channel.name }}</span>
+        <div id="channelListItems">
+            {% for channel in currentServer.channels %}
+                {% if channel.type.value == 'TEXT' %}
+                    <div id="channel-{{ channel.id }}"
+                         class="channel-item d-flex justify-content-between  rounded
+                        {{ currentChannel and currentChannel.id == channel.id ? 'active' : '' }}">
+                        <a href="{{ path('app_chat_channel', {serverId: currentServer.id, channelId: channel.id}) }}"
+                           class="text-reset d-flex align-items-center flex-grow-1 text-decoration-none rounded px-2 py-2 mb-1 ">
+                            <span class="fs-5 me-2 lh-1 opacity-75">#</span>
+                            <span class="text-truncate flex-grow-1">{{ channel.name }}</span>
 
-                    </a>
-                    {% if is_granted('CHANNEL_EDIT', channel) %}
-                        <a href="{{ path('app_channel_edit', {serverId: currentServer.id, channelId: channel.id}) }}"
-                           class="settings-icon text-app-secondary text-decoration-none d-flex align-items-center px-3 rounded"
-                           title="Edytuj kanał">
-                            {{ ux_icon('bi:gear-fill', {class: 'fs-6'}) }}
                         </a>
-                    {% endif %}
+                        {% if is_granted('CHANNEL_EDIT', channel) %}
+                            <a href="{{ path('app_channel_edit', {serverId: currentServer.id, channelId: channel.id}) }}"
+                               class="settings-icon text-app-secondary text-decoration-none d-flex align-items-center px-3 rounded"
+                               title="Edytuj kanał">
+                                {{ ux_icon('bi:gear-fill', {class: 'fs-6'}) }}
+                            </a>
+                        {% endif %}
 
-                </div>
+                    </div>
 
-            {% endif %}
-        {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
     {% endif %}
 </div>

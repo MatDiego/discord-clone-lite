@@ -2,7 +2,10 @@
 
 {% set avatarColor = avatar_color(message.author.username) %}
 
-<div class="message-item d-flex gap-3 mt-1">
+<div class="message-item d-flex gap-3 mt-1"
+     data-author-id="{{ message.author.id }}"
+     data-message-id="{{ message.id }}"
+     data-read-tracker-target="message">
 
     <div class="position-relative">
         <div class="message-avatar-frame rounded-circle avatar-gradient-{{ avatarColor }}">
@@ -11,7 +14,7 @@
 
     </div>
 
-    <div class="flex-grow-1 overflow-hidden">
+    <div class="flex-grow-1 overflow-hidden position-relative">
 
         <div class="d-flex align-items-baseline">
             <span class="fw-semibold text-app-primary cursor-pointer pb-2">

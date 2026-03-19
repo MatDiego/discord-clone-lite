@@ -8,7 +8,6 @@ use App\Enum\ChannelTypeEnum;
 use App\Factory\ChannelFactory;
 use App\Factory\ServerFactory;
 use App\Factory\UserFactory;
-use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Zenstruck\Foundry\Test\Factories;
@@ -56,20 +55,14 @@ final class ChannelControllerTest extends WebTestCase
         $server = ServerFactory::createOne(['owner' => $serverOwner]);
         $client->loginUser($serverOwner->_real());
 
-        ChannelFactory::createOne([
-            'server' => $server,
-            'type' => ChannelTypeEnum::VOICE,
-            'createdAt' => new DateTime('-5 days')
-        ]);
-
-        $targetChannel = $server->getChannels()->first();
-        $this->assertNotFalse($targetChannel, 'Target channel not found.');
-
-        ChannelFactory::createOne([
-            'server' => $server,
+        $defaultChannel = ChannelFactory::repository()->findOneBy([
+            'server' => $server->_real(),
             'type' => ChannelTypeEnum::TEXT,
-            'createdAt' => new DateTime('-5 days')
         ]);
+        $this->assertNotNull($defaultChannel, 'Default text channel not found.');
+
+        ChannelFactory::createOne(['server' => $server, 'type' => ChannelTypeEnum::VOICE]);
+        ChannelFactory::createOne(['server' => $server, 'type' => ChannelTypeEnum::TEXT]);
 
         // Act
         $client->request('GET', sprintf('/servers/%s/channels', $server->getId()->toRfc4122()));
@@ -78,7 +71,7 @@ final class ChannelControllerTest extends WebTestCase
         $this->assertResponseRedirects(sprintf(
             '/servers/%s/channels/%s',
             $server->getId()->toRfc4122(),
-            $targetChannel->getId()->toRfc4122()
+            $defaultChannel->getId()->toRfc4122()
         ));
     }
 
@@ -164,7 +157,7 @@ final class ChannelControllerTest extends WebTestCase
             $channelToDelete->getId()->toRfc4122()
         ));
 
-        $csrfToken = $crawler->filter('input[name="_csrf_token"]')->attr('value');
+        $csrfToken = $crawler->filter('#deleteChannelModal input[name="_csrf_token"]')->attr('value');
 
         // Act
         $client->request(

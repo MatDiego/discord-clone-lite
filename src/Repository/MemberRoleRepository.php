@@ -20,6 +20,21 @@ class MemberRoleRepository extends ServiceEntityRepository
         parent::__construct($registry, MemberRole::class);
     }
 
+    public function add(MemberRole $entity): void
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
+    public function remove(MemberRole $entity): void
+    {
+        $this->getEntityManager()->remove($entity);
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
     /**
      * @return Uuid[]
      */

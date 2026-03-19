@@ -17,6 +17,11 @@ security:
             lazy: true
             provider: app_user_provider
             user_checker: App\Security\UserChecker
+            entry_point: App\Security\SessionExpiredEntryPoint
+            login_throttling:
+                max_attempts: 5
+                interval: '1 minute'
+                lock_factory: null
             form_login:
                 login_path: app_login
                 check_path: app_login

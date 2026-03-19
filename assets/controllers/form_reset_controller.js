@@ -5,6 +5,9 @@ export default class extends Controller {
         this.element.reset();
 
         const input = this.element.querySelector('input, textarea');
-        if (input) input.focus();
+        if (input) {
+            input.focus();
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
     }
 }

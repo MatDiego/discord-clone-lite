@@ -7,18 +7,20 @@ namespace App\Controller;
 use App\Dto\CreateChannelRequest;
 use App\Entity\Channel;
 use App\Entity\Server;
+use App\Entity\User;
 use App\Form\ChannelType;
 use App\Form\CreateChannelType;
 use App\Security\Voter\ChannelVoter;
 use App\Security\Voter\ServerVoter;
+use App\Service\ChannelReadStateService;
 use App\Service\ChannelService;
+use App\Service\MercureNotificationPublisher;
 use App\Service\MessageService;
 use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mercure\Authorization;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -36,18 +38,30 @@ final class ChannelController extends AbstractController
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(mapping: ['channelId' => 'id', 'serverId' => 'server'])] Channel $channel,
         MessageService $messageService,
-        Authorization $authorization,
-        Request $request,
+        ChannelReadStateService $readStateService,
     ): Response {
-        $messages = $messageService->getMessages($channel);
+        /** @var User $user */
+        $user = $this->getUser();
+        $lastReadMessage = $readStateService->getLastReadMessageForUserInChannel($user, $channel);
+        $messages = $messageService->getMessagesAround($channel, $lastReadMessage);
 
-        $topic = sprintf('http://channels/%s', $channel->getId());
-        $authorization->setCookie($request, [$topic]);
+        $firstUnreadMessage = null;
+        if ($lastReadMessage) {
+            $lastReadId = $lastReadMessage->getId()->toRfc4122();
+            foreach ($messages as $msg) {
+                if ($msg->getId()->toRfc4122() > $lastReadId) {
+                    $firstUnreadMessage = $msg;
+                    break;
+                }
+            }
+        }
 
         return $this->render('server/view.html.twig', [
             'server' => $server,
             'channel' => $channel,
             'messages' => $messages,
+            'lastReadMessage' => $lastReadMessage,
+            'firstUnreadMessage' => $firstUnreadMessage,
         ]);
     }
 
@@ -60,7 +74,9 @@ final class ChannelController extends AbstractController
         $firstChannel = $channelService->getDefaultChannelForServer($server);
 
         if (!$firstChannel) {
-            throw $this->createNotFoundException('This server has no channels available.');
+            return $this->render('server/empty.html.twig', [
+                'server' => $server,
+            ]);
         }
 
         return $this->redirectToRoute('app_chat_channel', [
@@ -74,6 +90,7 @@ final class ChannelController extends AbstractController
     public function create(
         Request $request,
         ChannelService $channelService,
+        MercureNotificationPublisher $mercurePublisher,
         #[MapEntity(id: 'serverId')] Server $server
     ): Response {
         $form = $this->createForm(CreateChannelType::class);
@@ -84,6 +101,7 @@ final class ChannelController extends AbstractController
 
             /** @var CreateChannelRequest $channelData */
             $channel = $channelService->createChannel($channelData, $server);
+            $mercurePublisher->publishChannelCreated($channel);
 
             $this->addFlash('success', 'Pomyślnie utworzono nowy kanał.');
 
@@ -140,12 +158,14 @@ final class ChannelController extends AbstractController
         Request $request,
         #[MapEntity(id: 'serverId')] Server $server,
         #[MapEntity(id: 'channelId')] Channel $channel,
-        ChannelService $channelService
+        ChannelService $channelService,
+        MercureNotificationPublisher $mercurePublisher,
     ): Response {
 
         $token = $request->request->getString('_csrf_token');
 
         if ($this->isCsrfTokenValid('delete_channel_' . $channel->getId()->toRfc4122(), $token)) {
+            $mercurePublisher->publishChannelDeleted($channel, $server);
             $channelService->removeChannel($channel);
             $this->addFlash('success', 'Pomyślnie usunięto kanał.');
             return $this->redirectToRoute('app_server_default_channel', [
