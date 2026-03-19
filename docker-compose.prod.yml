@@ -74,6 +74,12 @@ services:
             dockerfile: Dockerfile
         restart: unless-stopped
         command: php bin/console messenger:consume async --time-limit=3600 --memory-limit=128M
+        healthcheck:
+            test: ["CMD-SHELL", "ps aux | grep -v grep | grep 'messenger:consume' || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
         environment:
             APP_ENV: prod
             REDIS_DSN: redis://redis:6379
@@ -86,6 +92,8 @@ services:
             MERCURE_HUB_URL: http://frankenphp:8080/.well-known/mercure
             DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@database:5432/communicator_prod?serverVersion=16&charset=utf8
         depends_on:
+            database:
+                condition: service_healthy
             redis:
                 condition: service_healthy
             frankenphp:
