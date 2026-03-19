@@ -26,6 +26,19 @@
                 {{ ux_icon('bi:gear', {width: 16, height: 16}) }}
             </a>
         {% endif %}
+        <div class="demo-timer d-flex align-items-center gap-2"
+             data-controller="demo-timer"
+             data-demo-timer-url-value="{{ path('api_demo_timer') }}">
+            <div class="demo-timer__label">
+                {{ ux_icon('bi:clock', {width: 14, height: 14}) }}
+                <span>Reset za</span>
+                <span class="demo-timer__time fw-bold" data-demo-timer-target="time">--:--</span>
+            </div>
+            <div class="demo-timer__bar-track">
+                <div class="demo-timer__bar bg-info" data-demo-timer-target="bar"></div>
+            </div>
+        </div>
+
         <small class="text-app-secondary fw-medium d-none d-lg-block">{{ app.user.email }}</small>
         <a href="{{ path('app_logout') }}"
            class="btn btn-sm btn-danger d-flex align-items-center gap-2 fw-medium shadow-sm"

@@ -170,6 +170,38 @@
     min-height: 3rem;
 }
 
+.demo-timer {
+    font-size: 0.75rem;
+    color: $app-text-secondary;
+
+    &__label {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        white-space: nowrap;
+    }
+
+    &__time {
+        color: $app-text-primary;
+        font-variant-numeric: tabular-nums;
+    }
+
+    &__bar-track {
+        width: 4rem;
+        height: 4px;
+        background-color: $app-bg-elevated;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    &__bar {
+        height: 100%;
+        width: 100%;
+        border-radius: 2px;
+        transition: width 1s linear;
+    }
+}
+
 .chat-empty-state {
     max-width: 25rem;
     margin: auto;

@@ -10,7 +10,7 @@ RUN install-php-extensions \
     zip \
     xsl \
     redis \
-    && apk add --no-cache git unzip
+    && apk add --no-cache git unzip dcron
 
 COPY Caddyfile /etc/frankenphp/Caddyfile
 
@@ -27,6 +27,9 @@ RUN php bin/console sass:build \
     && php bin/console asset-map:compile \
     && php bin/console cache:clear \
     && php bin/console cache:warmup
+
+COPY docker/demo-reset-loop.sh /usr/local/bin/demo-reset-loop.sh
+RUN chmod +x /usr/local/bin/demo-reset-loop.sh
 
 RUN chown -R root:root /app/var \
     && chmod -R 777 /app/var
