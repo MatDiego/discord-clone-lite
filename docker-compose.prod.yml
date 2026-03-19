@@ -20,9 +20,10 @@ services:
             MERCURE_URL: http://localhost:8080/.well-known/mercure
             MERCURE_PUBLIC_URL: https://matnas.pl/.well-known/mercure
             MERCURE_HUB_URL: http://localhost:8080/.well-known/mercure
-            MAILER_DSN: "null://null"
+            MAILER_DSN: ${MAILER_DSN}
 
             REDIS_DSN: redis://redis:6379
+            MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
             SESSION_LIFETIME: 600
 
         ports:
