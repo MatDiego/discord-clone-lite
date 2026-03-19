@@ -7,6 +7,7 @@
         "php": ">=8.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-redis": "*",
         "doctrine/doctrine-bundle": "^2.18.2",
         "doctrine/doctrine-fixtures-bundle": "^4.3.1",
         "doctrine/doctrine-migrations-bundle": "^3.7",
@@ -35,6 +36,7 @@
         "symfony/property-info": "7.3.*",
         "symfony/rate-limiter": "7.3.*",
         "symfony/redis-messenger": "7.3.*",
+        "symfony/resend-mailer": "7.3.*",
         "symfony/runtime": "7.3.*",
         "symfony/security-bundle": "7.3.*",
         "symfony/serializer": "7.3.*",
@@ -56,8 +58,7 @@
         "twig/extra-bundle": "^2.12|^3.23",
         "twig/inky-extra": "^3.23",
         "twig/twig": "^2.12|^3.23",
-        "zenstruck/foundry": "^2.9.2",
-        "ext-redis": "*"
+        "zenstruck/foundry": "^2.9.2"
     },
     "config": {
         "allow-plugins": {
