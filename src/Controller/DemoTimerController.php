@@ -29,6 +29,6 @@ final class DemoTimerController extends AbstractController
         return $this->json([
             'secondsLeft' => $secondsLeft,
             'totalSeconds' => $sessionLifetime,
-        ]);
+        ], headers: ['Cache-Control' => 'no-store']);
     }
 }
