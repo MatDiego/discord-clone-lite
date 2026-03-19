@@ -44,3 +44,6 @@ when@test:
                     class: Symfony\Component\Mercure\Jwt\StaticTokenProvider
                     arguments: ['test_token']
                 $publisher: '@app.mercure.mock_publisher'
+
+        Redis:
+            class: Redis
