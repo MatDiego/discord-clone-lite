@@ -68,6 +68,58 @@ services:
             frankenphp:
                 condition: service_started
 
+    messenger-worker:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        command: php bin/console messenger:consume async --time-limit=3600 --memory-limit=128M
+        environment:
+            APP_ENV: prod
+            REDIS_DSN: redis://redis:6379
+            MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
+            MAILER_DSN: ${MAILER_DSN}
+            SESSION_LIFETIME: 600
+            MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET}
+            MERCURE_URL: http://frankenphp:8080/.well-known/mercure
+            MERCURE_PUBLIC_URL: https://matnas.pl/.well-known/mercure
+            MERCURE_HUB_URL: http://frankenphp:8080/.well-known/mercure
+            DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@database:5432/communicator_prod?serverVersion=16&charset=utf8
+        depends_on:
+            redis:
+                condition: service_healthy
+            frankenphp:
+                condition: service_started
+
+    cleanup-unverified:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        command: sh -c 'while true; do php bin/console app:users:cleanup --max-age=60 --no-interaction; sleep 600; done'
+        healthcheck:
+            test: ["CMD-SHELL", "pgrep -f 'users:cleanup' || pgrep sleep"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 15s
+        environment:
+            APP_ENV: prod
+            REDIS_DSN: redis://redis:6379
+            MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
+            MAILER_DSN: ${MAILER_DSN}
+            SESSION_LIFETIME: 600
+            MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET}
+            MERCURE_URL: http://frankenphp:8080/.well-known/mercure
+            MERCURE_PUBLIC_URL: https://matnas.pl/.well-known/mercure
+            MERCURE_HUB_URL: http://frankenphp:8080/.well-known/mercure
+            DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@database:5432/communicator_prod?serverVersion=16&charset=utf8
+        depends_on:
+            database:
+                condition: service_healthy
+            frankenphp:
+                condition: service_started
+
     session-monitor:
         build:
             context: .
