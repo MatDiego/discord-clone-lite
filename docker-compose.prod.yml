@@ -44,6 +44,12 @@ services:
             dockerfile: Dockerfile
         restart: unless-stopped
         command: /usr/local/bin/demo-reset-loop.sh
+        healthcheck:
+            test: ["CMD-SHELL", "pgrep crond"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
         environment:
             APP_ENV: prod
             REDIS_DSN: redis://redis:6379
@@ -67,6 +73,12 @@ services:
             dockerfile: Dockerfile
         restart: unless-stopped
         command: php bin/console app:session:monitor
+        healthcheck:
+            test: ["CMD-SHELL", "pgrep -f 'session:monitor'"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 15s
         environment:
             APP_ENV: prod
             REDIS_DSN: redis://redis:6379
