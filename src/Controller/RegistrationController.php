@@ -11,6 +11,7 @@ use App\Service\RegistrationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -51,7 +52,14 @@ final class RegistrationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var RegistrationRequest $registrationRequest */
             $registrationRequest = $form->getData();
-            $user = $this->registrationService->register($registrationRequest);
+
+            try {
+                $user = $this->registrationService->register($registrationRequest);
+            } catch (UniqueConstraintViolationException) {
+                $this->addFlash('error', 'Ten adres email jest już zajęty.');
+
+                return $this->redirectToRoute('app_register');
+            }
 
             $this->addFlash('success', 'Rejestracja udana! Sprawdź email, aby aktywować konto.');
             $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $user->getEmail());
