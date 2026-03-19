@@ -1,0 +1,12 @@
+<turbo-stream action="append" target="channelListItems">
+    <template>
+        <div id="channel-{{ channel.id }}"
+             class="channel-item d-flex justify-content-between rounded">
+            <a href="{{ path('app_chat_channel', {serverId: channel.server.id, channelId: channel.id}) }}"
+               class="text-reset d-flex align-items-center flex-grow-1 text-decoration-none rounded px-2 py-2 mb-1">
+                <span class="fs-5 me-2 lh-1 opacity-75">#</span>
+                <span class="text-truncate flex-grow-1">{{ channel.name }}</span>
+            </a>
+        </div>
+    </template>
+</turbo-stream>

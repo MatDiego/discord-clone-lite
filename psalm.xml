@@ -53,6 +53,7 @@
         <UnusedClass>
             <errorLevel type="suppress">
                 <directory name="src"/>
+                <directory name="tests/Mock"/>
             </errorLevel>
         </UnusedClass>
         <PossiblyUnusedProperty>

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Channel;
 use App\Entity\Server;
 use App\Entity\User;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Twig\Environment;
@@ -18,6 +20,7 @@ final readonly class MercureNotificationPublisher
     public function __construct(
         private HubInterface $hub,
         private Environment $twig,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -98,6 +101,51 @@ final readonly class MercureNotificationPublisher
         $topic = sprintf('http://notifications/%s', $user->getId()->toRfc4122());
 
         $this->hub->publish(new Update($topic, $content, true));
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function publishChannelCreated(Channel $channel): void
+    {
+        $server = $channel->getServer();
+        $topic = sprintf('http://servers/%s', $server->getId());
+
+        $content = $this->twig->render('server/stream_channel_created.stream.html.twig', [
+            'channel' => $channel,
+        ]);
+
+        $this->hub->publish(new Update($topic, $content, true));
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function publishChannelDeleted(Channel $channel, Server $server): void
+    {
+        $channelId = $channel->getId()->toRfc4122();
+
+        $removeContent = $this->twig->render('server/stream_channel_deleted.stream.html.twig', [
+            'channelId' => $channelId,
+        ]);
+
+        $serverTopic = sprintf('http://servers/%s', $server->getId());
+        $this->hub->publish(new Update($serverTopic, $removeContent, true));
+
+        $redirectUrl = $this->urlGenerator->generate('app_server_default_channel', [
+            'serverId' => $server->getId(),
+        ]);
+
+        $redirectContent = $this->twig->render('server/stream_channel_deleted_redirect.stream.html.twig', [
+            'redirectUrl' => $redirectUrl,
+        ]);
+
+        $channelTopic = sprintf('http://channels/%s', $channelId);
+        $this->hub->publish(new Update($channelTopic, $redirectContent, true));
     }
 
     /**

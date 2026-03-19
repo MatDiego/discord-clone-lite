@@ -30,3 +30,17 @@ services:
             $options:
                 prefix: 'sf_sess:'
                 ttl: '%env(int:SESSION_LIFETIME)%'
+
+when@test:
+    services:
+        app.mercure.mock_publisher:
+            class: App\Tests\Mock\MockMercurePublisher
+
+        Symfony\Component\Mercure\HubInterface:
+            class: Symfony\Component\Mercure\MockHub
+            arguments:
+                $url: 'https://localhost/.well-known/mercure'
+                $jwtProvider: !service
+                    class: Symfony\Component\Mercure\Jwt\StaticTokenProvider
+                    arguments: ['test_token']
+                $publisher: '@app.mercure.mock_publisher'
