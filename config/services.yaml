@@ -46,4 +46,4 @@ when@test:
                 $publisher: '@app.mercure.mock_publisher'
 
         Redis:
-            class: Redis
+            class: App\Tests\Mock\MockRedis
