@@ -148,13 +148,14 @@ jobs:
                         echo "SYMFONY_DECRYPTION_SECRET=${{ secrets.SYMFONY_DECRYPTION_SECRET }}" >> .env.local
                         echo "MERCURE_JWT_SECRET=${{ secrets.MERCURE_JWT_SECRET }}" >> .env.local
 
-                        echo "MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0" >> .env.local
-                        echo "MAILER_DSN=null://null" >> .env.local
+                        echo "MESSENGER_TRANSPORT_DSN=redis://localhost:6379/messages" >> .env.local
+                        echo "MAILER_DSN=${{ secrets.MAILER_DSN }}" >> .env.local
 
                         echo "MERCURE_URL=http://localhost:8080/.well-known/mercure" >> .env.local
                         echo "MERCURE_PUBLIC_URL=https://matnas.pl/.well-known/mercure" >> .env.local
                         echo "MERCURE_HUB_URL=http://localhost:8080/.well-known/mercure" >> .env.local
 
+                        export MAILER_DSN="${{ secrets.MAILER_DSN }}"
                         export POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
                         export MERCURE_JWT_SECRET="${{ secrets.MERCURE_JWT_SECRET }}"
                         export SYMFONY_DECRYPTION_SECRET="${{ secrets.SYMFONY_DECRYPTION_SECRET }}"
