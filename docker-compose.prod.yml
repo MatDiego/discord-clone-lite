@@ -45,7 +45,7 @@ services:
         restart: unless-stopped
         command: /usr/local/bin/demo-reset-loop.sh
         healthcheck:
-            test: ["CMD-SHELL", "pgrep crond"]
+            test: ["CMD-SHELL", "pgrep -f 'demo-reset-loop.sh' || pgrep sleep"]
             interval: 10s
             timeout: 5s
             retries: 3

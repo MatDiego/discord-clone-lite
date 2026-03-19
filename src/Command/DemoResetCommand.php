@@ -79,6 +79,7 @@ final class DemoResetCommand extends Command
             '--no-interaction' => true,
             '--purge-with-truncate' => true,
         ]);
+        $fixturesInput->setInteractive(false);
 
         $command->run($fixturesInput, $output);
     }

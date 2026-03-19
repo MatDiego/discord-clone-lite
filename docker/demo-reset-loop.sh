@@ -1,9 +1,15 @@
 #!/bin/sh
+set -e
+
+echo "[demo-reset] Starting demo reset worker..."
 
 echo "[demo-reset] Running initial reset at $(date)"
 php /app/bin/console app:demo:reset --no-interaction || echo "[demo-reset] Initial reset failed"
 
-echo "*/10 * * * * php /app/bin/console app:demo:reset --no-interaction >> /var/log/demo-reset.log 2>&1" | crontab -
+while true; do
+    echo "[demo-reset] Sleeping for 600 seconds..."
+    sleep 600
 
-echo "[demo-reset] Cron installed (every 10 minutes). Starting crond..."
-crond -f -l 2
+    echo "[demo-reset] Running periodic reset at $(date)"
+    php /app/bin/console app:demo:reset --no-interaction
+done
