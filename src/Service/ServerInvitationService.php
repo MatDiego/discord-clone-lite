@@ -20,6 +20,7 @@ final readonly class ServerInvitationService
         private ServerMemberRepository $memberRepository,
         private ServerMemberService $serverMemberService,
         private NotificationService $notificationService,
+        private MercureNotificationPublisher $publisher,
     ) {
     }
 
@@ -71,7 +72,7 @@ final readonly class ServerInvitationService
         $this->notificationService->markReadByInvitation($invitation);
         $this->notificationService->publishBadgeUpdateForUser($invitation->getRecipient());
         $this->notificationService->createInvitationAcceptedNotification($invitation);
-        $this->notificationService->publishMemberJoinedStream($member->getServer());
+        $this->publisher->publishMemberJoined($member->getServer());
     }
 
     public function decline(ServerInvitation $invitation, User $currentUser): void

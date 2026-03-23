@@ -20,6 +20,7 @@ final readonly class FriendInvitationService
         private FriendInvitationRepository $invitationRepository,
         private UserRepository $userRepository,
         private NotificationService $notificationService,
+        private MercureNotificationPublisher $publisher,
         private LoggerInterface $logger,
     ) {
     }
@@ -72,8 +73,8 @@ final readonly class FriendInvitationService
         $this->notificationService->publishBadgeUpdateForUser($invitation->getRecipient());
         $this->notificationService->createFriendAcceptedNotification($invitation);
         try {
-            $this->notificationService->publishFriendListUpdate($invitation->getSender());
-            $this->notificationService->publishFriendListUpdate($invitation->getRecipient());
+            $this->publisher->publishFriendList($invitation->getSender());
+            $this->publisher->publishFriendList($invitation->getRecipient());
         } catch (\Throwable $e) {
             $this->logger->error('Mercure friend list publish failed: {msg}', ['msg' => $e->getMessage(), 'exception' => $e]);
         }
@@ -110,8 +111,8 @@ final readonly class FriendInvitationService
         $this->invitationRepository->flush();
 
         try {
-            $this->notificationService->publishFriendListUpdate($sender);
-            $this->notificationService->publishFriendListUpdate($recipient);
+            $this->publisher->publishFriendList($sender);
+            $this->publisher->publishFriendList($recipient);
         } catch (\Throwable $e) {
             $this->logger->error('Mercure friend list publish failed: {msg}', ['msg' => $e->getMessage(), 'exception' => $e]);
         }

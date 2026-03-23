@@ -83,19 +83,9 @@ final readonly class NotificationService
         $this->persist($notification);
     }
 
-    public function publishMemberJoinedStream(Server $server): void
-    {
-        $this->publisher->publishMemberJoined($server);
-    }
-
     public function publishBadgeUpdateForUser(User $user): void
     {
         $this->publisher->publishBadge($user, $this->notificationRepository->countUnread($user));
-    }
-
-    public function publishFriendListUpdate(User $user): void
-    {
-        $this->publisher->publishFriendList($user);
     }
 
     public function markAllAsRead(User $user): void

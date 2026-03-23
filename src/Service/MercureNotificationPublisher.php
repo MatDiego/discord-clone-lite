@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Channel;
+use App\Entity\Message;
 use App\Entity\Server;
 use App\Entity\User;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -172,6 +173,22 @@ final readonly class MercureNotificationPublisher
         $content = $this->twig->render('session/stream_session_kicked.stream.html.twig');
 
         $topic = sprintf('http://notifications/%s', $userId);
+
+        $this->hub->publish(new Update($topic, $content, true));
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function publishMessage(Message $message): void
+    {
+        $content = $this->twig->render('chat/message.stream.html.twig', [
+            'message' => $message,
+        ]);
+
+        $topic = sprintf('http://channels/%s', $message->getChannel()->getId());
 
         $this->hub->publish(new Update($topic, $content, true));
     }
