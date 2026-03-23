@@ -44,7 +44,7 @@ final class ChannelFactory extends PersistentProxyObjectFactory
         return [
             'name' => self::faker()->randomElement($channelNames) . '-' . self::faker()->numberBetween(1, 99),
             'server' => ServerFactory::new(),
-            'type' => self::faker()->randomElement(ChannelTypeEnum::cases()),
+            'type' => ChannelTypeEnum::TEXT,
             'createdAt' => $currentDate,
         ];
     }

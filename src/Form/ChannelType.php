@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Channel;
-use App\Enum\ChannelTypeEnum;
 use Override;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,15 +28,6 @@ final class ChannelType extends AbstractType
                     'autofocus' => true,
                     'class' => 'form-control text-white'
                 ],
-            ])
-            ->add('type', EnumType::class, [
-                'class' => ChannelTypeEnum::class,
-                'label' => 'channel.label_type',
-                'expanded' => true,
-                'multiple' => false,
-                'choice_attr' => function () {
-                    return ['class' => 'btn-check'];
-                },
             ])
         ;
     }

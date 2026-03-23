@@ -1,8 +1,4 @@
 {{ form_start(form) }}
-{% set channel_icons = {
-    'TEXT': 'bi:hash',
-    'VOICE': 'bi:volume-up-fill'
-} %}
 <div>
     {{ form_label(form.name) }}
 
@@ -11,33 +7,6 @@
     <div class="small text-danger mt-1">
         {{ form_errors(form.name) }}
     </div>
-</div>
-
-<div>
-    <div class="form-label text-uppercase fw-bold small text-app-secondary">
-        Typ Kanału
-    </div>
-
-    <div class="d-flex flex-column gap-2">
-        {% for child in form.type %}
-            <div>
-                {{ form_widget(child) }}
-
-                <label for="{{ child.vars.id }}" class="channel-type-option d-flex align-items-center p-3 rounded-2">
-                    <span class="me-3 text-app-secondary fs-4 d-flex align-items-center">
-                        {{ ux_icon(channel_icons[child.vars.value]) }}
-                    </span>
-
-                    <span class="fw-bold small flex-grow-1">
-                        {{ child.vars.label|trans }}
-                    </span>
-
-                </label>
-            </div>
-        {% endfor %}
-    </div>
-
-    {{ form_errors(form.type) }}
 </div>
 
 <div class="pt-2">

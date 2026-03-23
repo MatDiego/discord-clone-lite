@@ -58,8 +58,7 @@ final class ChannelServiceTest extends TestCase
     {
         // Arrange
         $dto = new CreateChannelRequest();
-        $dto->name = 'Voice chat';
-        $dto->type = ChannelTypeEnum::VOICE;
+        $dto->name = 'general-chat';
 
         $savedChannel = null;
         $this->channelRepository
@@ -78,13 +77,13 @@ final class ChannelServiceTest extends TestCase
 
         // Assert
         $this->assertInstanceOf(Channel::class, $result);
-        $this->assertSame('Voice chat', $result->getName());
-        $this->assertSame(ChannelTypeEnum::VOICE, $result->getType());
+        $this->assertSame('general-chat', $result->getName());
+        $this->assertSame(ChannelTypeEnum::TEXT, $result->getType());
         $this->assertTrue($this->server->getChannels()->contains($result));
 
         $this->assertNotNull($savedChannel);
-        $this->assertSame('Voice chat', $savedChannel->getName());
-        $this->assertSame(ChannelTypeEnum::VOICE, $savedChannel->getType());
+        $this->assertSame('general-chat', $savedChannel->getName());
+        $this->assertSame(ChannelTypeEnum::TEXT, $savedChannel->getType());
         $this->assertSame($this->server, $savedChannel->getServer());
     }
 

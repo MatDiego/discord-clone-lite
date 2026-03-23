@@ -61,7 +61,7 @@ final class ChannelControllerTest extends WebTestCase
         ]);
         $this->assertNotNull($defaultChannel, 'Default text channel not found.');
 
-        ChannelFactory::createOne(['server' => $server, 'type' => ChannelTypeEnum::VOICE]);
+        ChannelFactory::createOne(['server' => $server, 'type' => ChannelTypeEnum::TEXT]);
         ChannelFactory::createOne(['server' => $server, 'type' => ChannelTypeEnum::TEXT]);
 
         // Act

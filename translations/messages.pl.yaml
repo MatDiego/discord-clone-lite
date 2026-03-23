@@ -20,7 +20,6 @@ channel:
     label_type: 'Typ kanału'
     type:
         text: 'Tekstowy'
-        voice: 'Głosowy'
 
 server:
     label_name: 'Nazwa serwera'
