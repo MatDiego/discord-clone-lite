@@ -10,19 +10,16 @@ use App\Entity\Message;
 use App\Entity\Server;
 use App\Entity\User;
 use App\Repository\MessageRepository;
+use App\Service\MercureNotificationPublisher;
 use App\Service\MessageService;
 use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
-use Twig\Environment;
 
 
 final class MessageServiceTest extends TestCase
 {
-    private HubInterface $hub;
-    private Environment $twig;
+    private MercureNotificationPublisher $publisher;
     private MessageRepository $messageRepository;
     private MessageService $service;
 
@@ -33,8 +30,7 @@ final class MessageServiceTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->hub = $this->createMock(HubInterface::class);
-        $this->twig = $this->createMock(Environment::class);
+        $this->publisher = $this->createMock(MercureNotificationPublisher::class);
 
         $this->messageRepository = new class () extends MessageRepository {
             public array $messages = [];
@@ -57,9 +53,8 @@ final class MessageServiceTest extends TestCase
         };
 
         $this->service = new MessageService(
-            $this->hub,
-            $this->twig,
             $this->messageRepository,
+            $this->publisher,
         );
 
         $this->author = new User('test@example.com', 'TestUser', 'password');
@@ -105,55 +100,22 @@ final class MessageServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_should_render_twig_template_for_the_new_message(): void
+    public function it_should_publish_message_via_mercure_publisher(): void
     {
         // Arrange
         $dto = new CreateMessageRequest();
         $dto->content = 'This is a test message';
 
-        $this->twig
+        $this->publisher
             ->expects($this->once())
-            ->method('render')
-            ->with(
-                'chat/message.stream.html.twig',
-                $this->callback(function (array $context) use ($dto) {
-                    return isset($context['message'])
-                        && $context['message'] instanceof Message
-                        && $context['message']->getContent() === $dto->content;
-                })
-            )
-            ->willReturn('<div>rendered</div>');
-
-        // Act
-        $this->service->postMessage($dto, $this->channel, $this->author);
-
-        // Assert is implicit
-    }
-
-    #[Test]
-    public function it_should_publish_rendered_message_to_mercure_hub(): void
-    {
-        // Arrange
-        $dto = new CreateMessageRequest();
-        $dto->content = 'This is a test message';
-        $renderedHtml = '<div>rendered</div>';
-
-        $this->twig->method('render')->willReturn($renderedHtml);
-
-        $expectedTopic = sprintf('http://channels/%s', $this->channel->getId());
-
-        $this->hub
-            ->expects($this->once())
-            ->method('publish')
-            ->with($this->callback(function (Update $update) use ($expectedTopic, $renderedHtml) {
-                return $update->getTopics() === [$expectedTopic]
-                    && $update->getData() === $renderedHtml
-                    && $update->isPrivate() === true;
+            ->method('publishMessage')
+            ->with($this->callback(function (Message $message) use ($dto) {
+                return $message->getContent() === $dto->content
+                    && $message->getAuthor() === $this->author
+                    && $message->getChannel() === $this->channel;
             }));
 
         // Act
         $this->service->postMessage($dto, $this->channel, $this->author);
-
-        // Assert is implicit
     }
 }

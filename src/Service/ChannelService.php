@@ -26,7 +26,6 @@ final readonly class ChannelService
     {
 
         $channel = new Channel($dto->name, $server);
-        $channel->setType($dto->type);
         $server->addChannel($channel);
 
         $this->channelRepository->add($channel);

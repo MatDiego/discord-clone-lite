@@ -22,7 +22,6 @@
 
         <div id="channelListItems">
             {% for channel in currentServer.channels %}
-                {% if channel.type.value == 'TEXT' %}
                     <div id="channel-{{ channel.id }}"
                          class="channel-item d-flex justify-content-between  rounded
                         {{ currentChannel and currentChannel.id == channel.id ? 'active' : '' }}">
@@ -41,8 +40,6 @@
                         {% endif %}
 
                     </div>
-
-                {% endif %}
             {% endfor %}
         </div>
     {% endif %}
